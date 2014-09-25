@@ -72,7 +72,7 @@
         GameObject *targetNode = (GameObject *)target;
         //CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
         //CGPoint targetPosition = CGPointMake(targetNode.rowIndex, targetNode.columnIndex);
-        [targetNode runAction:[SKAction sequence:@[[SKAction scaleTo:.5 duration:.3], [SKAction scaleTo:1 duration:.3], [SKAction runBlock:^{
+        [targetNode runAction:[SKAction sequence:@[[SKAction scaleTo:.5 duration:.3], [SKAction scaleTo:1 duration:2], [SKAction runBlock:^{
             targetNode.isRunningAction = NO;
         }]]]];
         //targetNode.color = [UIColor colorWithRed:[CommonTools getRandomFloatFromFloat:0 toFloat:1] green:[CommonTools getRandomFloatFromFloat:0 toFloat:1] blue:[CommonTools getRandomFloatFromFloat:0 toFloat:1] alpha:1];
@@ -85,7 +85,7 @@
     bgConn.userInfo = [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithInt:50], [NSNumber numberWithInt:10]] forKeys:@[kConnectionParameter_counter, kConnectionParameter_dispersion]];
     
     NSArray *bgColorCodes = [NSArray arrayWithObjects:@"F20C23", @"DE091E", @"CC081C", @"B50415", nil];
-    _bgPad = [[PadNode alloc] initWithColor:[UIColor blueColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:CGSizeMake(60, 40) withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_touch];
+    _bgPad = [[PadNode alloc] initWithColor:[UIColor blueColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:CGSizeMake(60, 40) withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_swipe];
     _bgPad.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
     [_bgPad loadActionDescriptor:colorizeDescriptor andConnectionDescriptor:bgConn];
     [self addChild:_bgPad];
@@ -154,7 +154,7 @@
     if (_currentBgTriggerInterval > _bgTriggerInterval) {
         _currentBgTriggerInterval = 0;
         _bgTriggerInterval = [CommonTools getRandomFloatFromFloat:.3 toFloat:.5];
-        [_bgPad triggerRandomNode];
+        //[_bgPad triggerRandomNode];
     }
 }
 
