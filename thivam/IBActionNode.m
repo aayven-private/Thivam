@@ -45,6 +45,16 @@
     
 }*/
 
+/*-(void)cleanNode
+{
+    if (!CGPointEqualToPoint(_actionSource, CGPointMake(-1, -1))) {
+        _actionSource = CGPointMake(-1, -1);
+        for (IBActionNode *connectedNode in _connections) {
+            [connectedNode cleanNode];
+        }
+    }
+}*/
+
 -(void)triggerConnectionsWithSource:(CGPoint)source shouldPropagate:(BOOL)shouldPropagate
 {
     if (_autoFire) {

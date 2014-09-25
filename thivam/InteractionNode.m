@@ -16,7 +16,6 @@
 
 @implementation InteractionNode
 
-@synthesize isRunningAction = _isRunningAction;
 @synthesize rowIndex = _rowIndex;
 @synthesize columnIndex = _columnIndex;
 
@@ -24,14 +23,14 @@
 {
     if (self = [super initWithColor:color size:size]) {
         //self.objectType = kObjectTypeInteractionNode;
-        self.userInteractionEnabled = YES;
+        self.userInteractionEnabled = NO;
         /*self.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:size];
         self.physicsBody.dynamic = NO;
         self.physicsBody.affectedByGravity = NO;
         self.zRotation = 0;
         self.physicsBody.collisionBitMask = 0;
         self.physicsBody.contactTestBitMask = 0;*/
-        self.isRunningAction = NO;
+        //self.isRunningAction = NO;
     }
     return self;
 }

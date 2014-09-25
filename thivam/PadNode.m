@@ -22,7 +22,7 @@
 -(id)initWithColor:(UIColor *)color size:(CGSize)size andGridSize:(CGSize)gridSize withPhysicsBody:(BOOL)withBody withActionDescriptor:(IBActionDescriptor *)actionDescriptor andNodeColorCodes:(NSArray *)colorCodes andConnectionDescriptor:(IBConnectionDescriptor *)connectionDescriptor
 {
     if (self = [super initWithColor:color size:size]) {
-        self.userInteractionEnabled = YES;
+        self.userInteractionEnabled = NO;
         self.gridSize = gridSize;
         self.anchorPoint = CGPointMake(0.5, 0.5);
         self.actionPad = [[IBActionPad alloc] initGridWithSize:gridSize andNodeInitBlock:^id<IBActionNodeActor>(int row, int column){
@@ -73,6 +73,26 @@
 -(void)triggerNodeAtPosition:(CGPoint)position
 {
     [_actionPad triggerNodeAtPosition:position];
+}
+
+-(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    UITouch *touch = [touches anyObject];
+    CGPoint positionInScene = [touch locationInNode:self];
+    CGPoint previousPosition = [touch previousLocationInNode:self];
+    
+    SKNode *touchedObject = [self nodeAtPoint:positionInScene];
+     //for (SKNode *node in touchedObjects) {
+     if ([touchedObject isKindOfClass:[GameObject class]]) {
+         if ([touchedObject isKindOfClass:[PadNode class]]) {
+             return;
+         }
+         [self.actionPad triggerNodeAtPosition:CGPointMake(((GameObject *)touchedObject).columnIndex, ((GameObject *)touchedObject).rowIndex)];
+         //NSLog(@"%@", NSStringFromCGPoint(CGPointMake(((GameObject *)touchedObject).columnIndex, ((GameObject *)touchedObject).rowIndex)));
+         //NSLog(@"Node: %@", [touchedObject class]);
+         
+     }
+
 }
 
 @end

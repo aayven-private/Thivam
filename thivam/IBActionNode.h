@@ -29,5 +29,6 @@
 //-(void)fireActions;
 
 -(void)triggerConnectionsWithSource:(CGPoint)source shouldPropagate:(BOOL)shouldPropagate;
+//-(void)cleanNode;
 
 @end

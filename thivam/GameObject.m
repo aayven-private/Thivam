@@ -14,6 +14,7 @@
 {
     if (self = [super initWithColor:color size:size]) {
         self.actions = [NSMutableArray array];
+        self.isRunningAction = NO;
         /*self.infoLabel = [SKLabelNode labelNodeWithFontNamed:@"Chalkduster"];
         self.infoLabel.color = [UIColor whiteColor];
         self.infoLabel.fontSize = 8;
@@ -25,8 +26,10 @@
 
 -(void)fireAction:(IBActionDescriptor *)actionDescriptor userInfo:(NSDictionary *)userInfo
 {
-    //[self removeAllActions];
-    actionDescriptor.action(self, userInfo);
+    if (!self.isRunningAction) {
+        self.isRunningAction = YES;
+        actionDescriptor.action(self, userInfo);
+    }
 }
 
 @end

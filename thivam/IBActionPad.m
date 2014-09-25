@@ -185,6 +185,7 @@
 {
     if (!_isCoolingDown) {
         IBActionNode *node = [_objectGrid getElementAtRow:position.y andColumn:position.x];
+        //[node cleanNode];
         [node triggerConnectionsWithSource:position shouldPropagate:YES];
         if (_coolDownPeriod > 0) {
             _isCoolingDown = YES;
