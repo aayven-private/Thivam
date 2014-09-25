@@ -24,7 +24,7 @@
     return self;
 }
 
--(void)fireActions
+/*-(void)fireActions
 {
     if (_repeatCount < _maxRepeatNum || _maxRepeatNum < 0) {
         _repeatCount++;
@@ -43,7 +43,7 @@
 -(void)triggerConnections
 {
     
-}
+}*/
 
 -(void)triggerConnectionsWithSource:(CGPoint)source shouldPropagate:(BOOL)shouldPropagate
 {

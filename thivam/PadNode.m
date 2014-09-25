@@ -19,33 +19,14 @@
 
 @implementation PadNode
 
--(id)initWithColor:(UIColor *)color size:(CGSize)size andGridSize:(CGSize)gridSize withPhysicsBody:(BOOL)withBody withActionDescriptor:(IBActionDescriptor *)actionDescriptor
+-(id)initWithColor:(UIColor *)color size:(CGSize)size andGridSize:(CGSize)gridSize withPhysicsBody:(BOOL)withBody withActionDescriptor:(IBActionDescriptor *)actionDescriptor andNodeColorCodes:(NSArray *)colorCodes andConnectionDescriptor:(IBConnectionDescriptor *)connectionDescriptor
 {
     if (self = [super initWithColor:color size:size]) {
         self.userInteractionEnabled = YES;
         self.anchorPoint = CGPointMake(0.5, 0.5);
         self.actionPad = [[IBActionPad alloc] initGridWithSize:gridSize andNodeInitBlock:^id<IBActionNodeActor>(int row, int column){
-            UIColor *blockColor;
-            int colorIndex = [CommonTools getRandomNumberFromInt:0 toInt:4];
-            switch (colorIndex) {
-                case 0: {
-                    blockColor = [CommonTools stringToColor:@"3049E9"];
-                } break;
-                case 1: {
-                    blockColor = [CommonTools stringToColor:@"485087"];
-                } break;
-                case 2: {
-                    blockColor = [CommonTools stringToColor:@"A4A8BF"];
-                } break;
-                case 3: {
-                    blockColor = [CommonTools stringToColor:@"061786"];
-                } break;
-                case 4: {
-                    blockColor = [CommonTools stringToColor:@"485398"];
-                } break;
-                default:
-                    break;
-            }
+            int colorIndex = [CommonTools getRandomNumberFromInt:0 toInt:((int)colorCodes.count - 1)];
+            UIColor *blockColor = [CommonTools stringToColor:[colorCodes objectAtIndex:colorIndex]];
             CGSize blockSize = CGSizeMake(size.width / gridSize.width, size.height / gridSize.height);
             InteractionNode *node = [[InteractionNode alloc] initWithColor:blockColor size:blockSize];
             node.anchorPoint = CGPointMake(0.5, 0.5);
@@ -63,12 +44,7 @@
         //self.gamePad1.coolDownPeriod = 3;
         
         self.actionPad.unifiedActionDescriptors = @[actionDescriptor];
-        
-        IBConnectionDescriptor *conn = [[IBConnectionDescriptor alloc] init];
-        conn.connectionType = kConnectionTypeNeighbours_square;
-        conn.isAutoFired = YES;
-        conn.userInfo = [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithInt:2], [NSNumber numberWithInt:1]] forKeys:@[kConnectionParameter_counter, kConnectionParameter_repeatCount]];
-        [self.actionPad loadConnectionMapWithDescriptor:conn];
+        [self.actionPad loadConnectionMapWithDescriptor:connectionDescriptor];
         
         if (withBody) {
             self.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:size];

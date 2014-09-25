@@ -47,6 +47,8 @@
 
 @property (nonatomic) NSTimeInterval lastUpdateTimeInterval;
 @property (nonatomic) NSTimeInterval sensorCheckInterval;
+@property (nonatomic) NSTimeInterval currentBgTriggerInterval;
+@property (nonatomic) NSTimeInterval bgTriggerInterval;
 
 @property (nonatomic) PadNode *bgPad;
 
@@ -71,7 +73,8 @@
 -(void)initEnvironment
 {
     [self removeAllChildren];
-    
+    _bgTriggerInterval = [CommonTools getRandomFloatFromFloat:.5 toFloat:.8];
+    _currentBgTriggerInterval = 0;
     IBActionDescriptor *colorizeDescriptor = [[IBActionDescriptor alloc] init];
     colorizeDescriptor.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
         GameObject *targetNode = (GameObject *)target;
@@ -79,12 +82,24 @@
         //CGPoint targetPosition = CGPointMake(targetNode.rowIndex, targetNode.columnIndex);
         [targetNode runAction:[SKAction sequence:@[[SKAction scaleTo:.5 duration:.3], [SKAction scaleTo:1 duration:.3]]]];
     };
+
+    IBConnectionDescriptor *bgConn = [[IBConnectionDescriptor alloc] init];
+    bgConn.connectionType = kConnectionTypeRandom;
+    bgConn.isAutoFired = NO;
+    bgConn.userInfo = [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithInt:50], [NSNumber numberWithInt:10]] forKeys:@[kConnectionParameter_counter, kConnectionParameter_dispersion]];
     
-    _bgPad = [[PadNode alloc] initWithColor:[UIColor blueColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:CGSizeMake(40, 40) withPhysicsBody:NO withActionDescriptor:colorizeDescriptor];
+    NSArray *bgColorCodes = [NSArray arrayWithObjects:@"F20C23", @"DE091E", @"CC081C", @"B50415", nil];
+    _bgPad = [[PadNode alloc] initWithColor:[UIColor blueColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:CGSizeMake(40, 40) withPhysicsBody:NO withActionDescriptor:colorizeDescriptor andNodeColorCodes:bgColorCodes andConnectionDescriptor:bgConn];
     _bgPad.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
     [self addChild:_bgPad];
     
-    _padNode = [[PadNode alloc] initWithColor:[UIColor redColor] size:CGSizeMake(50, 50) andGridSize:CGSizeMake(5, 5) withPhysicsBody:YES withActionDescriptor:colorizeDescriptor];
+    IBConnectionDescriptor *padConn = [[IBConnectionDescriptor alloc] init];
+    padConn.connectionType = kConnectionTypeNeighbours_square;
+    padConn.isAutoFired = YES;
+    padConn.userInfo = [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithInt:2], [NSNumber numberWithInt:1]] forKeys:@[kConnectionParameter_counter, kConnectionParameter_repeatCount]];
+    
+    NSArray *padColorCodes = [NSArray arrayWithObjects:@"0505F2", @"0202DE", @"0404C2", @"0202A6", nil];
+    _padNode = [[PadNode alloc] initWithColor:[UIColor redColor] size:CGSizeMake(50, 50) andGridSize:CGSizeMake(5, 5) withPhysicsBody:YES withActionDescriptor:colorizeDescriptor andNodeColorCodes:padColorCodes andConnectionDescriptor:padConn];
     _padNode.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
     [self addChild:_padNode];
     
@@ -323,6 +338,13 @@
 -(void)updateWithTimeSinceLastUpdate:(CFTimeInterval)timeSinceLast
 {
     _padNode.position = CGPointMake(_padNode.position.x + _xAccel * 15, _padNode.position.y + _yAccel * 15);
+    
+    _currentBgTriggerInterval += timeSinceLast;
+    if (_currentBgTriggerInterval > _bgTriggerInterval) {
+        _currentBgTriggerInterval = 0;
+        _bgTriggerInterval = [CommonTools getRandomFloatFromFloat:.5 toFloat:.8];
+        [_bgPad triggerRandomNode];
+    }
 }
 
 -(void)wipeScreen
