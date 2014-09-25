@@ -45,7 +45,7 @@
     
 }*/
 
-/*-(void)cleanNode
+-(void)cleanNode
 {
     if (!CGPointEqualToPoint(_actionSource, CGPointMake(-1, -1))) {
         _actionSource = CGPointMake(-1, -1);
@@ -53,7 +53,7 @@
             [connectedNode cleanNode];
         }
     }
-}*/
+}
 
 -(void)triggerConnectionsWithSource:(CGPoint)source shouldPropagate:(BOOL)shouldPropagate
 {
@@ -68,6 +68,11 @@
                         [connectedNode triggerConnectionsWithSource:_actionSource shouldPropagate:_autoFire];
                     }
                 });
+            }
+        }
+        if (_cleanupOnManualTrigger) {
+            if (_connections.count == 0) {
+                [self cleanNode];
             }
         }
     } else {
@@ -85,6 +90,7 @@
             }*/
         }
     }
+    
 }
 
 -(void)fireOwnActions

@@ -24,11 +24,12 @@
 @property (nonatomic) int repeatCount;
 @property (nonatomic) CGFloat triggerDelay;
 @property (nonatomic) CGPoint actionSource;
+@property (nonatomic) BOOL cleanupOnManualTrigger;
 
 //-(void)triggerConnections;
 //-(void)fireActions;
 
 -(void)triggerConnectionsWithSource:(CGPoint)source shouldPropagate:(BOOL)shouldPropagate;
-//-(void)cleanNode;
+-(void)cleanNode;
 
 @end

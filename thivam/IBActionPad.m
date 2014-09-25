@@ -63,6 +63,7 @@
             for (int j=0; j<_objectGrid.rows;j++) {
                 IBActionNode *sourceNode = [_objectGrid getElementAtRow:j andColumn:i];
                 sourceNode.actionSource = CGPointMake(-1, -1);
+                sourceNode.cleanupOnManualTrigger = NO;
                 //sourceNode.maxRepeatNum = maxRepeatNum.intValue;
                 [sourceNode.connections removeAllObjects];
                 sourceNode.autoFire = connectionDescriptor.isAutoFired;
@@ -97,6 +98,7 @@
                 IBActionNode *sourceNode = [_objectGrid getElementAtRow:j andColumn:i];
                 sourceNode.actionSource = CGPointMake(-1, -1);
                 sourceNode.autoFire = connectionDescriptor.isAutoFired;
+                sourceNode.cleanupOnManualTrigger = NO;
                 int numberOfConnections = [CommonTools getRandomNumberFromInt:connectionCounter.intValue - dispersion.intValue toInt:connectionCounter.intValue + dispersion.intValue];
                 NSMutableArray *alreadyConnected = [NSMutableArray array];
                 [sourceNode.connections removeAllObjects];
@@ -124,6 +126,7 @@
                 sourceNode.actionSource = CGPointMake(-1, -1);
                 [sourceNode.connections removeAllObjects];
                 sourceNode.autoFire = connectionDescriptor.isAutoFired;
+                sourceNode.cleanupOnManualTrigger = NO;
                 
                 NSMutableArray *possibleNeighbours = [NSMutableArray array];
                 
@@ -162,6 +165,7 @@
             for (int j=0; j<_objectGrid.rows;j++) {
                 IBActionNode *sourceNode = [_objectGrid getElementAtRow:j andColumn:i];
                 sourceNode.actionSource = CGPointMake(-1, -1);
+                sourceNode.cleanupOnManualTrigger = YES;
                 //sourceNode.maxRepeatNum = maxRepeatNum.intValue;
                 [sourceNode.connections removeAllObjects];
                 sourceNode.autoFire = connectionDescriptor.isAutoFired;
@@ -185,7 +189,9 @@
 {
     if (!_isCoolingDown) {
         IBActionNode *node = [_objectGrid getElementAtRow:position.y andColumn:position.x];
-        //[node cleanNode];
+        if (node.cleanupOnManualTrigger) {
+            [node cleanNode];
+        }
         [node triggerConnectionsWithSource:position shouldPropagate:YES];
         if (_coolDownPeriod > 0) {
             _isCoolingDown = YES;

@@ -37,6 +37,7 @@
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
+    NSLog(@"%@", NSStringFromCGPoint(CGPointMake(_rowIndex, _columnIndex)));
     [self.delegate nodeTriggeredAtRow:_rowIndex andColumn:_columnIndex];
 }
 

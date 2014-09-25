@@ -34,7 +34,7 @@
         self.actionPad = [[IBActionPad alloc] initGridWithSize:gridSize andNodeInitBlock:^id<IBActionNodeActor>(int row, int column){
             int colorIndex = [CommonTools getRandomNumberFromInt:0 toInt:((int)colorCodes.count - 1)];
             UIColor *blockColor = [CommonTools stringToColor:[colorCodes objectAtIndex:colorIndex]];
-            CGSize blockSize = CGSizeMake(size.width / gridSize.width, size.height / gridSize.height);
+            CGSize blockSize = CGSizeMake(size.width / gridSize.height, size.height / gridSize.width);
             InteractionNode *node = [[InteractionNode alloc] initWithColor:blockColor size:blockSize];
             if ([interactionMode isEqualToString:kInteractionMode_touch]) {
                 node.userInteractionEnabled = YES;
@@ -43,7 +43,7 @@
             }
             node.anchorPoint = CGPointMake(0.5, 0.5);
             node.delegate = self;
-            CGPoint blockPosition = CGPointMake(column * node.size.width+ node.size.width / 2.0 - self.size.width / 2.0, row * node.size.height + node.size.height / 2.0 - self.size.height / 2.0);
+            CGPoint blockPosition = CGPointMake(column * node.size.width - self.size.width / 2.0 + node.size.width / 2.0, row * node.size.height - self.size.height / 2.0 + node.size.height / 2.0);
             node.position = blockPosition;
             //node.zPosition = 2;
             [self addChild:node];
@@ -80,7 +80,7 @@
 
 -(void)triggerRandomNode
 {
-    [_actionPad triggerNodeAtPosition:CGPointMake([CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.width - 1], [CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.height - 1])];
+    [_actionPad triggerNodeAtPosition:CGPointMake([CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.height - 1], [CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.width - 1])];
 }
 
 -(void)triggerNodeAtPosition:(CGPoint)position
