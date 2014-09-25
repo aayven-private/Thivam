@@ -8,11 +8,15 @@
 
 #import "GameObject.h"
 #import "IBActionPad.h"
+#import <QuartzCore/QuartzCore.h>
 
 @interface PadNode : GameObject<GameObjectDelegate>
+
+@property (nonatomic) CGSize gridSize;
 
 -(id)initWithColor:(UIColor *)color size:(CGSize)size andGridSize:(CGSize)gridSize withPhysicsBody:(BOOL)withBody withActionDescriptor:(IBActionDescriptor *)actionDescriptor andNodeColorCodes:(NSArray *)colorCodes andConnectionDescriptor:(IBConnectionDescriptor *)connectionDescriptor;
 
 -(void)triggerRandomNode;
+-(void)triggerNodeAtPosition:(CGPoint)position;
 
 @end

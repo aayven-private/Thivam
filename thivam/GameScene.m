@@ -80,12 +80,12 @@
         GameObject *targetNode = (GameObject *)target;
         //CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
         //CGPoint targetPosition = CGPointMake(targetNode.rowIndex, targetNode.columnIndex);
-        [targetNode runAction:[SKAction sequence:@[[SKAction scaleTo:.5 duration:.3], [SKAction scaleTo:1 duration:.3]]]];
+        [targetNode runAction:[SKAction sequence:@[[SKAction scaleTo:.5 duration:.3], [SKAction scaleTo:1 duration:2]]]];
     };
 
     IBConnectionDescriptor *bgConn = [[IBConnectionDescriptor alloc] init];
-    bgConn.connectionType = kConnectionTypeRandom;
-    bgConn.isAutoFired = NO;
+    bgConn.connectionType = kConnectionTypeLinear_bottomUp;
+    bgConn.isAutoFired = YES;
     bgConn.userInfo = [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithInt:50], [NSNumber numberWithInt:10]] forKeys:@[kConnectionParameter_counter, kConnectionParameter_dispersion]];
     
     NSArray *bgColorCodes = [NSArray arrayWithObjects:@"F20C23", @"DE091E", @"CC081C", @"B50415", nil];
@@ -94,7 +94,7 @@
     [self addChild:_bgPad];
     [_bgPad triggerRandomNode];
     
-    IBConnectionDescriptor *padConn = [[IBConnectionDescriptor alloc] init];
+    /*IBConnectionDescriptor *padConn = [[IBConnectionDescriptor alloc] init];
     padConn.connectionType = kConnectionTypeNeighbours_square;
     padConn.isAutoFired = YES;
     padConn.userInfo = [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithInt:2], [NSNumber numberWithInt:1]] forKeys:@[kConnectionParameter_counter, kConnectionParameter_repeatCount]];
@@ -102,7 +102,7 @@
     NSArray *padColorCodes = [NSArray arrayWithObjects:@"0505F2", @"0202DE", @"0404C2", @"0202A6", nil];
     _padNode = [[PadNode alloc] initWithColor:[UIColor redColor] size:CGSizeMake(50, 50) andGridSize:CGSizeMake(5, 5) withPhysicsBody:YES withActionDescriptor:colorizeDescriptor andNodeColorCodes:padColorCodes andConnectionDescriptor:padConn];
     _padNode.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
-    [self addChild:_padNode];
+    [self addChild:_padNode];*/
     
     //[self readImageData];
     
@@ -292,9 +292,9 @@
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
-    UITouch *touch = [touches anyObject];
+    /*UITouch *touch = [touches anyObject];
     CGPoint positionInScene = [touch locationInNode:self];
-    CGPoint previousPosition = [touch previousLocationInNode:self];
+    CGPoint previousPosition = [touch previousLocationInNode:self];*/
     
     /*NSArray *nodes = [self nodesAtPoint:positionInScene];
     if ([nodes containsObject:_gridHolder1]) {
@@ -345,6 +345,9 @@
         _currentBgTriggerInterval = 0;
         _bgTriggerInterval = [CommonTools getRandomFloatFromFloat:.4 toFloat:.5];
         [_bgPad triggerRandomNode];
+        /*for (int i=0; i<_bgPad.gridSize.height; i++) {
+            [_bgPad triggerNodeAtPosition:CGPointMake(i, 0)];
+        }*/
     }
 }
 

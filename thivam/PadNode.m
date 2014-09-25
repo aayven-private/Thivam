@@ -23,6 +23,7 @@
 {
     if (self = [super initWithColor:color size:size]) {
         self.userInteractionEnabled = YES;
+        self.gridSize = gridSize;
         self.anchorPoint = CGPointMake(0.5, 0.5);
         self.actionPad = [[IBActionPad alloc] initGridWithSize:gridSize andNodeInitBlock:^id<IBActionNodeActor>(int row, int column){
             int colorIndex = [CommonTools getRandomNumberFromInt:0 toInt:((int)colorCodes.count - 1)];
@@ -67,6 +68,11 @@
 -(void)triggerRandomNode
 {
     [_actionPad triggerNodeAtPosition:CGPointMake([CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.width - 1], [CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.height - 1])];
+}
+
+-(void)triggerNodeAtPosition:(CGPoint)position
+{
+    [_actionPad triggerNodeAtPosition:position];
 }
 
 @end

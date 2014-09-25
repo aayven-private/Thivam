@@ -26,6 +26,7 @@ static NSString *kConnectionParameter_repeatCount = @"connection_parameter_repea
 static NSString *kConnectionTypeNeighbours_square = @"grid_connection_neighbours_square";
 static NSString *kConnectionTypeNeighbours_close = @"grid_connection_neighbours_close";
 static NSString *kConnectionTypeRandom = @"grid_connection_random";
+static NSString *kConnectionTypeLinear_bottomUp = @"grid_connection_linear_bottomup";
 
 @interface IBActionPad : NSObject<IBActionNodeControllerDelegate>
 

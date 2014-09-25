@@ -157,6 +157,21 @@
                 }
             }
         }
+    } else if ([connectionType isEqualToString:kConnectionTypeLinear_bottomUp]) {
+        for (int i=0; i<_objectGrid.columns; i++) {
+            for (int j=0; j<_objectGrid.rows;j++) {
+                IBActionNode *sourceNode = [_objectGrid getElementAtRow:j andColumn:i];
+                sourceNode.actionSource = CGPointMake(-1, -1);
+                //sourceNode.maxRepeatNum = maxRepeatNum.intValue;
+                [sourceNode.connections removeAllObjects];
+                sourceNode.autoFire = connectionDescriptor.isAutoFired;
+                if (j<_objectGrid.rows - 1) {
+                    IBActionNode *targetNode = [_objectGrid getElementAtRow:j+1 andColumn:i];
+                    
+                    [sourceNode.connections addObject:targetNode];
+                }
+            }
+        }
     }
 }
 
@@ -170,7 +185,6 @@
 {
     if (!_isCoolingDown) {
         IBActionNode *node = [_objectGrid getElementAtRow:position.y andColumn:position.x];
-        //[node triggerConnections];
         [node triggerConnectionsWithSource:position shouldPropagate:YES];
         if (_coolDownPeriod > 0) {
             _isCoolingDown = YES;
