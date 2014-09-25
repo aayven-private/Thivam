@@ -19,33 +19,40 @@
 
 @implementation PadNode
 
--(id)initWithColor:(UIColor *)color size:(CGSize)size andGridSize:(CGSize)gridSize withPhysicsBody:(BOOL)withBody withActionDescriptor:(IBActionDescriptor *)actionDescriptor andNodeColorCodes:(NSArray *)colorCodes andConnectionDescriptor:(IBConnectionDescriptor *)connectionDescriptor
+-(id)initWithColor:(UIColor *)color size:(CGSize)size andGridSize:(CGSize)gridSize withPhysicsBody:(BOOL)withBody andNodeColorCodes:(NSArray *)colorCodes andInteractionMode:(NSString *)interactionMode
 {
     if (self = [super initWithColor:color size:size]) {
-        self.userInteractionEnabled = NO;
+        
+        if ([interactionMode isEqualToString:kInteractionMode_swipe]) {
+            self.userInteractionEnabled = YES;
+        } else {
+            self.userInteractionEnabled = NO;
+        }
         self.gridSize = gridSize;
         self.anchorPoint = CGPointMake(0.5, 0.5);
+        
         self.actionPad = [[IBActionPad alloc] initGridWithSize:gridSize andNodeInitBlock:^id<IBActionNodeActor>(int row, int column){
             int colorIndex = [CommonTools getRandomNumberFromInt:0 toInt:((int)colorCodes.count - 1)];
             UIColor *blockColor = [CommonTools stringToColor:[colorCodes objectAtIndex:colorIndex]];
             CGSize blockSize = CGSizeMake(size.width / gridSize.width, size.height / gridSize.height);
             InteractionNode *node = [[InteractionNode alloc] initWithColor:blockColor size:blockSize];
+            if ([interactionMode isEqualToString:kInteractionMode_touch]) {
+                node.userInteractionEnabled = YES;
+            } else {
+                node.userInteractionEnabled = NO;
+            }
             node.anchorPoint = CGPointMake(0.5, 0.5);
             node.delegate = self;
             CGPoint blockPosition = CGPointMake(column * node.size.width+ node.size.width / 2.0 - self.size.width / 2.0, row * node.size.height + node.size.height / 2.0 - self.size.height / 2.0);
             node.position = blockPosition;
             //node.zPosition = 2;
             [self addChild:node];
-            
             node.columnIndex = column;
             node.rowIndex = row;
             return node;
         }];
         [self.actionPad createGrid];
         //self.gamePad1.coolDownPeriod = 3;
-        
-        self.actionPad.unifiedActionDescriptors = @[actionDescriptor];
-        [self.actionPad loadConnectionMapWithDescriptor:connectionDescriptor];
         
         if (withBody) {
             self.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:size];
@@ -58,6 +65,12 @@
         }
     }
     return self;
+}
+
+-(void)loadActionDescriptor:(IBActionDescriptor *)actionDescriptor andConnectionDescriptor:(IBConnectionDescriptor *)connectionDescriptor
+{
+    self.actionPad.unifiedActionDescriptors = @[actionDescriptor];
+    [self.actionPad loadConnectionMapWithDescriptor:connectionDescriptor];
 }
 
 -(void)nodeTriggeredAtRow:(int)row andColumn:(int)column

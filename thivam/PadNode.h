@@ -10,11 +10,16 @@
 #import "IBActionPad.h"
 #import <QuartzCore/QuartzCore.h>
 
+static NSString *kInteractionMode_touch = @"interaction_mode_touch";
+static NSString *kInteractionMode_swipe = @"interaction_mode_swipe";
+static NSString *kInteractionMode_none = @"interaction_mode_none";
+
 @interface PadNode : GameObject<GameObjectDelegate>
 
 @property (nonatomic) CGSize gridSize;
 
--(id)initWithColor:(UIColor *)color size:(CGSize)size andGridSize:(CGSize)gridSize withPhysicsBody:(BOOL)withBody withActionDescriptor:(IBActionDescriptor *)actionDescriptor andNodeColorCodes:(NSArray *)colorCodes andConnectionDescriptor:(IBConnectionDescriptor *)connectionDescriptor;
+-(id)initWithColor:(UIColor *)color size:(CGSize)size andGridSize:(CGSize)gridSize withPhysicsBody:(BOOL)withBody andNodeColorCodes:(NSArray *)colorCodes andInteractionMode:(NSString *)interactionMode;
+-(void)loadActionDescriptor:(IBActionDescriptor *)actionDescriptor andConnectionDescriptor:(IBConnectionDescriptor *)connectionDescriptor;
 
 -(void)triggerRandomNode;
 -(void)triggerNodeAtPosition:(CGPoint)position;
