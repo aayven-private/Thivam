@@ -22,7 +22,7 @@
 @property (nonatomic) BOOL autoFire;
 @property (nonatomic) int maxRepeatNum;
 @property (nonatomic) int repeatCount;
-@property (nonatomic) CGFloat autoFireDelay;
+@property (nonatomic) CGFloat triggerDelay;
 @property (nonatomic) CGPoint actionSource;
 
 //-(void)triggerConnections;

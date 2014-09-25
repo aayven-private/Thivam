@@ -18,7 +18,7 @@
         self.repeatCount = 0;
         self.connections = [NSMutableArray array];
         //self.actions = [NSMutableArray array];
-        self.autoFireDelay = .15;
+        self.triggerDelay = .15;
         self.actionSource = CGPointMake(-1, -1);
     }
     return self;
@@ -52,7 +52,7 @@
             _actionSource = source;
             [self fireOwnActions];
             if (shouldPropagate) {
-                dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, _autoFireDelay * NSEC_PER_SEC);
+                dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, _triggerDelay * NSEC_PER_SEC);
                 dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
                     for (IBActionNode *connectedNode in _connections) {
                         [connectedNode triggerConnectionsWithSource:_actionSource shouldPropagate:_autoFire];
@@ -64,9 +64,15 @@
         _actionSource = source;
         [self fireOwnActions];
         if (shouldPropagate) {
-            for (IBActionNode *connectedNode in _connections) {
+            dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, _triggerDelay * NSEC_PER_SEC);
+            dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+                for (IBActionNode *connectedNode in _connections) {
+                    [connectedNode triggerConnectionsWithSource:_actionSource shouldPropagate:_autoFire];
+                }
+            });
+            /*for (IBActionNode *connectedNode in _connections) {
                 [connectedNode triggerConnectionsWithSource:_actionSource shouldPropagate:NO];
-            }
+            }*/
         }
     }
 }

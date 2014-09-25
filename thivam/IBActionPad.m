@@ -67,13 +67,13 @@
                 [sourceNode.connections removeAllObjects];
                 sourceNode.autoFire = connectionDescriptor.isAutoFired;
                 int fromRow = j > connectionCounter.intValue ? j - connectionCounter.intValue : 0;
-                int toRow = j + connectionCounter.intValue < _objectGrid.rows ? j + connectionCounter.intValue : _objectGrid.rows;
+                int toRow = j + connectionCounter.intValue < _objectGrid.rows ? j + connectionCounter.intValue : _objectGrid.rows - 1;
                 
                 int fromColumn = i > connectionCounter.intValue ? i - connectionCounter.intValue : 0;
-                int toColumn = i + connectionCounter.intValue < _objectGrid.columns ? i + connectionCounter.intValue : _objectGrid.columns;
+                int toColumn = i + connectionCounter.intValue < _objectGrid.columns ? i + connectionCounter.intValue : _objectGrid.columns - 1;
                 
-                for (int c=fromColumn; c < toColumn; c++) {
-                    for (int r=fromRow; r<toRow; r++) {
+                for (int c=fromColumn; c <= toColumn; c++) {
+                    for (int r=fromRow; r <= toRow; r++) {
                         
                         if (j==r && i==c) {
                             continue;

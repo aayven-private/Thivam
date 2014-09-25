@@ -25,6 +25,7 @@
 
 -(void)fireAction:(IBActionDescriptor *)actionDescriptor userInfo:(NSDictionary *)userInfo
 {
+    //[self removeAllActions];
     actionDescriptor.action(self, userInfo);
 }
 
