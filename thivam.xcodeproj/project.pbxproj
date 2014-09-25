@@ -1,0 +1,583 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B0E3A65019D01A790085BC2F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A64F19D01A790085BC2F /* main.m */; };
+		B0E3A65319D01A790085BC2F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A65219D01A790085BC2F /* AppDelegate.m */; };
+		B0E3A65619D01A790085BC2F /* GameScene.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A65519D01A790085BC2F /* GameScene.m */; };
+		B0E3A65819D01A790085BC2F /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = B0E3A65719D01A790085BC2F /* GameScene.sks */; };
+		B0E3A65B19D01A790085BC2F /* GameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A65A19D01A790085BC2F /* GameViewController.m */; };
+		B0E3A65E19D01A790085BC2F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B0E3A65C19D01A790085BC2F /* Main.storyboard */; };
+		B0E3A66019D01A790085BC2F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B0E3A65F19D01A790085BC2F /* Images.xcassets */; };
+		B0E3A66319D01A790085BC2F /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = B0E3A66119D01A790085BC2F /* LaunchScreen.xib */; };
+		B0E3A66F19D01A790085BC2F /* thivamTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A66E19D01A790085BC2F /* thivamTests.m */; };
+		B0E3A67D19D01DEB0085BC2F /* GameObject.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A67C19D01DEB0085BC2F /* GameObject.m */; };
+		B0E3A68419D01EF20085BC2F /* InteractionNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A68319D01EF20085BC2F /* InteractionNode.m */; };
+		B0E3A68A19D0304D0085BC2F /* InteractionObject.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A68919D0304D0085BC2F /* InteractionObject.m */; };
+		B0E3A68E19D0629E0085BC2F /* IBMatrix.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A68D19D0629E0085BC2F /* IBMatrix.m */; };
+		B0E3A69119D0766C0085BC2F /* CommonTools.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A69019D0766C0085BC2F /* CommonTools.m */; };
+		B0E3A69319D09B110085BC2F /* figura.png in Resources */ = {isa = PBXBuildFile; fileRef = B0E3A69219D09B110085BC2F /* figura.png */; };
+		B0E3A69919D161560085BC2F /* IMG_0136.png in Resources */ = {isa = PBXBuildFile; fileRef = B0E3A69819D161560085BC2F /* IMG_0136.png */; };
+		B0E3A69D19D17B2C0085BC2F /* IBActionPad.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A69C19D17B2C0085BC2F /* IBActionPad.m */; };
+		B0E3A6A019D188220085BC2F /* IBActionNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A69F19D188220085BC2F /* IBActionNode.m */; };
+		B0E3A6A419D18E480085BC2F /* IBActionDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A6A319D18E480085BC2F /* IBActionDescriptor.m */; };
+		B0E3A6A719D1987D0085BC2F /* IBConnectionDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A6A619D1987D0085BC2F /* IBConnectionDescriptor.m */; };
+		B0E3A6AA19D1C08D0085BC2F /* ImageHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A6A919D1C08D0085BC2F /* ImageHelper.m */; };
+		B0E3A6AE19D409710085BC2F /* PadNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A6AD19D409710085BC2F /* PadNode.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B0E3A66919D01A790085BC2F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B0E3A64219D01A780085BC2F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B0E3A64919D01A790085BC2F;
+			remoteInfo = thivam;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		B0E3A64A19D01A790085BC2F /* thivam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = thivam.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B0E3A64E19D01A790085BC2F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B0E3A64F19D01A790085BC2F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		B0E3A65119D01A790085BC2F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		B0E3A65219D01A790085BC2F /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		B0E3A65419D01A790085BC2F /* GameScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GameScene.h; sourceTree = "<group>"; };
+		B0E3A65519D01A790085BC2F /* GameScene.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GameScene.m; sourceTree = "<group>"; };
+		B0E3A65719D01A790085BC2F /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
+		B0E3A65919D01A790085BC2F /* GameViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GameViewController.h; sourceTree = "<group>"; };
+		B0E3A65A19D01A790085BC2F /* GameViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GameViewController.m; sourceTree = "<group>"; };
+		B0E3A65D19D01A790085BC2F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		B0E3A65F19D01A790085BC2F /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		B0E3A66219D01A790085BC2F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		B0E3A66819D01A790085BC2F /* thivamTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = thivamTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B0E3A66D19D01A790085BC2F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B0E3A66E19D01A790085BC2F /* thivamTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = thivamTests.m; sourceTree = "<group>"; };
+		B0E3A67B19D01DEB0085BC2F /* GameObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameObject.h; sourceTree = "<group>"; };
+		B0E3A67C19D01DEB0085BC2F /* GameObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameObject.m; sourceTree = "<group>"; };
+		B0E3A67F19D01E320085BC2F /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
+		B0E3A68219D01EF20085BC2F /* InteractionNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InteractionNode.h; sourceTree = "<group>"; };
+		B0E3A68319D01EF20085BC2F /* InteractionNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InteractionNode.m; sourceTree = "<group>"; };
+		B0E3A68819D0304D0085BC2F /* InteractionObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InteractionObject.h; sourceTree = "<group>"; };
+		B0E3A68919D0304D0085BC2F /* InteractionObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InteractionObject.m; sourceTree = "<group>"; };
+		B0E3A68B19D03C820085BC2F /* GameObjectDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameObjectDelegate.h; sourceTree = "<group>"; };
+		B0E3A68C19D0629E0085BC2F /* IBMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IBMatrix.h; sourceTree = "<group>"; };
+		B0E3A68D19D0629E0085BC2F /* IBMatrix.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IBMatrix.m; sourceTree = "<group>"; };
+		B0E3A68F19D0766C0085BC2F /* CommonTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonTools.h; sourceTree = "<group>"; };
+		B0E3A69019D0766C0085BC2F /* CommonTools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommonTools.m; sourceTree = "<group>"; };
+		B0E3A69219D09B110085BC2F /* figura.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = figura.png; sourceTree = "<group>"; };
+		B0E3A69819D161560085BC2F /* IMG_0136.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IMG_0136.png; sourceTree = "<group>"; };
+		B0E3A69B19D17B2C0085BC2F /* IBActionPad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IBActionPad.h; sourceTree = "<group>"; };
+		B0E3A69C19D17B2C0085BC2F /* IBActionPad.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IBActionPad.m; sourceTree = "<group>"; };
+		B0E3A69E19D188220085BC2F /* IBActionNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IBActionNode.h; sourceTree = "<group>"; };
+		B0E3A69F19D188220085BC2F /* IBActionNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IBActionNode.m; sourceTree = "<group>"; };
+		B0E3A6A119D18D5D0085BC2F /* IBActionNodeActor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IBActionNodeActor.h; sourceTree = "<group>"; };
+		B0E3A6A219D18E480085BC2F /* IBActionDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IBActionDescriptor.h; sourceTree = "<group>"; };
+		B0E3A6A319D18E480085BC2F /* IBActionDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IBActionDescriptor.m; sourceTree = "<group>"; };
+		B0E3A6A519D1987D0085BC2F /* IBConnectionDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IBConnectionDescriptor.h; sourceTree = "<group>"; };
+		B0E3A6A619D1987D0085BC2F /* IBConnectionDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IBConnectionDescriptor.m; sourceTree = "<group>"; };
+		B0E3A6A819D1C08D0085BC2F /* ImageHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageHelper.h; sourceTree = "<group>"; };
+		B0E3A6A919D1C08D0085BC2F /* ImageHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageHelper.m; sourceTree = "<group>"; };
+		B0E3A6AB19D301DB0085BC2F /* IBActionNodeControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IBActionNodeControllerDelegate.h; sourceTree = "<group>"; };
+		B0E3A6AC19D409710085BC2F /* PadNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PadNode.h; sourceTree = "<group>"; };
+		B0E3A6AD19D409710085BC2F /* PadNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PadNode.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B0E3A64719D01A790085BC2F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B0E3A66519D01A790085BC2F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		B0E3A64119D01A780085BC2F = {
+			isa = PBXGroup;
+			children = (
+				B0E3A64C19D01A790085BC2F /* thivam */,
+				B0E3A66B19D01A790085BC2F /* thivamTests */,
+				B0E3A64B19D01A790085BC2F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B0E3A64B19D01A790085BC2F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B0E3A64A19D01A790085BC2F /* thivam.app */,
+				B0E3A66819D01A790085BC2F /* thivamTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B0E3A64C19D01A790085BC2F /* thivam */ = {
+			isa = PBXGroup;
+			children = (
+				B0E3A69A19D178C40085BC2F /* ActionManagement */,
+				B0E3A68719D030300085BC2F /* Helpers */,
+				B0E3A68519D022650085BC2F /* Protocols */,
+				B0E3A67E19D01E200085BC2F /* Resources */,
+				B0E3A67A19D01B590085BC2F /* GameObjects */,
+				B0E3A67919D01B4F0085BC2F /* ViewControllers */,
+				B0E3A67819D01B480085BC2F /* Scenes */,
+				B0E3A65119D01A790085BC2F /* AppDelegate.h */,
+				B0E3A65219D01A790085BC2F /* AppDelegate.m */,
+				B0E3A65C19D01A790085BC2F /* Main.storyboard */,
+				B0E3A65F19D01A790085BC2F /* Images.xcassets */,
+				B0E3A66119D01A790085BC2F /* LaunchScreen.xib */,
+				B0E3A64D19D01A790085BC2F /* Supporting Files */,
+			);
+			path = thivam;
+			sourceTree = "<group>";
+		};
+		B0E3A64D19D01A790085BC2F /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				B0E3A64E19D01A790085BC2F /* Info.plist */,
+				B0E3A64F19D01A790085BC2F /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		B0E3A66B19D01A790085BC2F /* thivamTests */ = {
+			isa = PBXGroup;
+			children = (
+				B0E3A66E19D01A790085BC2F /* thivamTests.m */,
+				B0E3A66C19D01A790085BC2F /* Supporting Files */,
+			);
+			path = thivamTests;
+			sourceTree = "<group>";
+		};
+		B0E3A66C19D01A790085BC2F /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				B0E3A66D19D01A790085BC2F /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		B0E3A67819D01B480085BC2F /* Scenes */ = {
+			isa = PBXGroup;
+			children = (
+				B0E3A65419D01A790085BC2F /* GameScene.h */,
+				B0E3A65519D01A790085BC2F /* GameScene.m */,
+				B0E3A65719D01A790085BC2F /* GameScene.sks */,
+			);
+			name = Scenes;
+			sourceTree = "<group>";
+		};
+		B0E3A67919D01B4F0085BC2F /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				B0E3A65919D01A790085BC2F /* GameViewController.h */,
+				B0E3A65A19D01A790085BC2F /* GameViewController.m */,
+			);
+			name = ViewControllers;
+			sourceTree = "<group>";
+		};
+		B0E3A67A19D01B590085BC2F /* GameObjects */ = {
+			isa = PBXGroup;
+			children = (
+				B0E3A67B19D01DEB0085BC2F /* GameObject.h */,
+				B0E3A67C19D01DEB0085BC2F /* GameObject.m */,
+				B0E3A68219D01EF20085BC2F /* InteractionNode.h */,
+				B0E3A68319D01EF20085BC2F /* InteractionNode.m */,
+				B0E3A6AC19D409710085BC2F /* PadNode.h */,
+				B0E3A6AD19D409710085BC2F /* PadNode.m */,
+			);
+			name = GameObjects;
+			sourceTree = "<group>";
+		};
+		B0E3A67E19D01E200085BC2F /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B0E3A69819D161560085BC2F /* IMG_0136.png */,
+				B0E3A69219D09B110085BC2F /* figura.png */,
+				B0E3A67F19D01E320085BC2F /* Constants.h */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		B0E3A68519D022650085BC2F /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				B0E3A68B19D03C820085BC2F /* GameObjectDelegate.h */,
+			);
+			name = Protocols;
+			sourceTree = "<group>";
+		};
+		B0E3A68719D030300085BC2F /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				B0E3A68F19D0766C0085BC2F /* CommonTools.h */,
+				B0E3A69019D0766C0085BC2F /* CommonTools.m */,
+				B0E3A68819D0304D0085BC2F /* InteractionObject.h */,
+				B0E3A68919D0304D0085BC2F /* InteractionObject.m */,
+				B0E3A6A819D1C08D0085BC2F /* ImageHelper.h */,
+				B0E3A6A919D1C08D0085BC2F /* ImageHelper.m */,
+			);
+			name = Helpers;
+			sourceTree = "<group>";
+		};
+		B0E3A69A19D178C40085BC2F /* ActionManagement */ = {
+			isa = PBXGroup;
+			children = (
+				B0E3A69B19D17B2C0085BC2F /* IBActionPad.h */,
+				B0E3A69C19D17B2C0085BC2F /* IBActionPad.m */,
+				B0E3A69E19D188220085BC2F /* IBActionNode.h */,
+				B0E3A69F19D188220085BC2F /* IBActionNode.m */,
+				B0E3A6A219D18E480085BC2F /* IBActionDescriptor.h */,
+				B0E3A6A319D18E480085BC2F /* IBActionDescriptor.m */,
+				B0E3A6A119D18D5D0085BC2F /* IBActionNodeActor.h */,
+				B0E3A6A519D1987D0085BC2F /* IBConnectionDescriptor.h */,
+				B0E3A6A619D1987D0085BC2F /* IBConnectionDescriptor.m */,
+				B0E3A6AB19D301DB0085BC2F /* IBActionNodeControllerDelegate.h */,
+				B0E3A68C19D0629E0085BC2F /* IBMatrix.h */,
+				B0E3A68D19D0629E0085BC2F /* IBMatrix.m */,
+			);
+			name = ActionManagement;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		B0E3A64919D01A790085BC2F /* thivam */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B0E3A67219D01A790085BC2F /* Build configuration list for PBXNativeTarget "thivam" */;
+			buildPhases = (
+				B0E3A64619D01A790085BC2F /* Sources */,
+				B0E3A64719D01A790085BC2F /* Frameworks */,
+				B0E3A64819D01A790085BC2F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = thivam;
+			productName = thivam;
+			productReference = B0E3A64A19D01A790085BC2F /* thivam.app */;
+			productType = "com.apple.product-type.application";
+		};
+		B0E3A66719D01A790085BC2F /* thivamTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B0E3A67519D01A790085BC2F /* Build configuration list for PBXNativeTarget "thivamTests" */;
+			buildPhases = (
+				B0E3A66419D01A790085BC2F /* Sources */,
+				B0E3A66519D01A790085BC2F /* Frameworks */,
+				B0E3A66619D01A790085BC2F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B0E3A66A19D01A790085BC2F /* PBXTargetDependency */,
+			);
+			name = thivamTests;
+			productName = thivamTests;
+			productReference = B0E3A66819D01A790085BC2F /* thivamTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B0E3A64219D01A780085BC2F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0600;
+				ORGANIZATIONNAME = ivanborsa;
+				TargetAttributes = {
+					B0E3A64919D01A790085BC2F = {
+						CreatedOnToolsVersion = 6.0.1;
+					};
+					B0E3A66719D01A790085BC2F = {
+						CreatedOnToolsVersion = 6.0.1;
+						TestTargetID = B0E3A64919D01A790085BC2F;
+					};
+				};
+			};
+			buildConfigurationList = B0E3A64519D01A780085BC2F /* Build configuration list for PBXProject "thivam" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = B0E3A64119D01A780085BC2F;
+			productRefGroup = B0E3A64B19D01A790085BC2F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B0E3A64919D01A790085BC2F /* thivam */,
+				B0E3A66719D01A790085BC2F /* thivamTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B0E3A64819D01A790085BC2F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B0E3A66319D01A790085BC2F /* LaunchScreen.xib in Resources */,
+				B0E3A66019D01A790085BC2F /* Images.xcassets in Resources */,
+				B0E3A69319D09B110085BC2F /* figura.png in Resources */,
+				B0E3A65819D01A790085BC2F /* GameScene.sks in Resources */,
+				B0E3A65E19D01A790085BC2F /* Main.storyboard in Resources */,
+				B0E3A69919D161560085BC2F /* IMG_0136.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B0E3A66619D01A790085BC2F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B0E3A64619D01A790085BC2F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B0E3A6A019D188220085BC2F /* IBActionNode.m in Sources */,
+				B0E3A69D19D17B2C0085BC2F /* IBActionPad.m in Sources */,
+				B0E3A68419D01EF20085BC2F /* InteractionNode.m in Sources */,
+				B0E3A67D19D01DEB0085BC2F /* GameObject.m in Sources */,
+				B0E3A65B19D01A790085BC2F /* GameViewController.m in Sources */,
+				B0E3A68A19D0304D0085BC2F /* InteractionObject.m in Sources */,
+				B0E3A69119D0766C0085BC2F /* CommonTools.m in Sources */,
+				B0E3A65319D01A790085BC2F /* AppDelegate.m in Sources */,
+				B0E3A6A719D1987D0085BC2F /* IBConnectionDescriptor.m in Sources */,
+				B0E3A68E19D0629E0085BC2F /* IBMatrix.m in Sources */,
+				B0E3A65619D01A790085BC2F /* GameScene.m in Sources */,
+				B0E3A6AA19D1C08D0085BC2F /* ImageHelper.m in Sources */,
+				B0E3A6AE19D409710085BC2F /* PadNode.m in Sources */,
+				B0E3A65019D01A790085BC2F /* main.m in Sources */,
+				B0E3A6A419D18E480085BC2F /* IBActionDescriptor.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B0E3A66419D01A790085BC2F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B0E3A66F19D01A790085BC2F /* thivamTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B0E3A66A19D01A790085BC2F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B0E3A64919D01A790085BC2F /* thivam */;
+			targetProxy = B0E3A66919D01A790085BC2F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		B0E3A65C19D01A790085BC2F /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B0E3A65D19D01A790085BC2F /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		B0E3A66119D01A790085BC2F /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B0E3A66219D01A790085BC2F /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		B0E3A67019D01A790085BC2F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B0E3A67119D01A790085BC2F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B0E3A67319D01A790085BC2F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = thivam/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B0E3A67419D01A790085BC2F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = thivam/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		B0E3A67619D01A790085BC2F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = thivamTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/thivam.app/thivam";
+			};
+			name = Debug;
+		};
+		B0E3A67719D01A790085BC2F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = thivamTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/thivam.app/thivam";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		B0E3A64519D01A780085BC2F /* Build configuration list for PBXProject "thivam" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B0E3A67019D01A790085BC2F /* Debug */,
+				B0E3A67119D01A790085BC2F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B0E3A67219D01A790085BC2F /* Build configuration list for PBXNativeTarget "thivam" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B0E3A67319D01A790085BC2F /* Debug */,
+				B0E3A67419D01A790085BC2F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B0E3A67519D01A790085BC2F /* Build configuration list for PBXNativeTarget "thivamTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B0E3A67619D01A790085BC2F /* Debug */,
+				B0E3A67719D01A790085BC2F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B0E3A64219D01A780085BC2F /* Project object */;
+}

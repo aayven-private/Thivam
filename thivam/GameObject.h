@@ -1,0 +1,27 @@
+//
+//  GameObject.h
+//  thivam
+//
+//  Created by Ivan Borsa on 22/09/14.
+//  Copyright (c) 2014 ivanborsa. All rights reserved.
+//
+
+#import <SpriteKit/SpriteKit.h>
+#import "Constants.h"
+#import "GameObjectDelegate.h"
+#import "IBActionNodeActor.h"
+
+@interface GameObject : SKSpriteNode<IBActionNodeActor>
+
+@property (nonatomic, weak) id<GameObjectDelegate> delegate;
+
+@property (nonatomic) NSString *objectType;
+@property (nonatomic) NSMutableArray *actions;
+@property (nonatomic) BOOL isRunningAction;
+
+@property (nonatomic) int rowIndex;
+@property (nonatomic) int columnIndex;
+
+//@property (nonatomic) SKLabelNode *infoLabel;
+
+@end
