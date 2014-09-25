@@ -73,7 +73,7 @@
 -(void)initEnvironment
 {
     [self removeAllChildren];
-    _bgTriggerInterval = [CommonTools getRandomFloatFromFloat:.5 toFloat:.8];
+    _bgTriggerInterval = [CommonTools getRandomFloatFromFloat:7 toFloat:9];
     _currentBgTriggerInterval = 0;
     IBActionDescriptor *colorizeDescriptor = [[IBActionDescriptor alloc] init];
     colorizeDescriptor.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
@@ -84,14 +84,15 @@
     };
 
     IBConnectionDescriptor *bgConn = [[IBConnectionDescriptor alloc] init];
-    bgConn.connectionType = kConnectionTypeRandom;
-    bgConn.isAutoFired = NO;
-    bgConn.userInfo = [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithInt:50], [NSNumber numberWithInt:10]] forKeys:@[kConnectionParameter_counter, kConnectionParameter_dispersion]];
+    bgConn.connectionType = kConnectionTypeNeighbours_square;
+    bgConn.isAutoFired = YES;
+    bgConn.userInfo = [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithInt:2], [NSNumber numberWithInt:10]] forKeys:@[kConnectionParameter_counter, kConnectionParameter_dispersion]];
     
     NSArray *bgColorCodes = [NSArray arrayWithObjects:@"F20C23", @"DE091E", @"CC081C", @"B50415", nil];
     _bgPad = [[PadNode alloc] initWithColor:[UIColor blueColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:CGSizeMake(40, 40) withPhysicsBody:NO withActionDescriptor:colorizeDescriptor andNodeColorCodes:bgColorCodes andConnectionDescriptor:bgConn];
     _bgPad.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
     [self addChild:_bgPad];
+    [_bgPad triggerRandomNode];
     
     IBConnectionDescriptor *padConn = [[IBConnectionDescriptor alloc] init];
     padConn.connectionType = kConnectionTypeNeighbours_square;
@@ -342,7 +343,7 @@
     _currentBgTriggerInterval += timeSinceLast;
     if (_currentBgTriggerInterval > _bgTriggerInterval) {
         _currentBgTriggerInterval = 0;
-        _bgTriggerInterval = [CommonTools getRandomFloatFromFloat:.5 toFloat:.8];
+        _bgTriggerInterval = [CommonTools getRandomFloatFromFloat:7 toFloat:9];
         [_bgPad triggerRandomNode];
     }
 }
