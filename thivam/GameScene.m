@@ -67,8 +67,8 @@
     [self removeAllChildren];
     _bgTriggerInterval = [CommonTools getRandomFloatFromFloat:.4 toFloat:.5];
     _currentBgTriggerInterval = 0;
-    IBActionDescriptor *colorizeDescriptor = [[IBActionDescriptor alloc] init];
-    colorizeDescriptor.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
+    IBActionDescriptor *bgActionDesc = [[IBActionDescriptor alloc] init];
+    bgActionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
         GameObject *targetNode = (GameObject *)target;
         //CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
         //CGPoint targetPosition = CGPointMake(targetNode.rowIndex, targetNode.columnIndex);
@@ -87,9 +87,21 @@
     NSArray *bgColorCodes = [NSArray arrayWithObjects:@"F20C23", @"DE091E", @"CC081C", @"B50415", nil];
     _bgPad = [[PadNode alloc] initWithColor:[UIColor blueColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:CGSizeMake(60, 40) withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_swipe];
     _bgPad.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
-    [_bgPad loadActionDescriptor:colorizeDescriptor andConnectionDescriptor:bgConn];
+    [_bgPad loadActionDescriptor:bgActionDesc andConnectionDescriptor:bgConn];
     [self addChild:_bgPad];
     //[_bgPad triggerRandomNode];
+    
+    IBActionDescriptor *padActionDesc = [[IBActionDescriptor alloc] init];
+    padActionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
+        GameObject *targetNode = (GameObject *)target;
+        //CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
+        //CGPoint targetPosition = CGPointMake(targetNode.rowIndex, targetNode.columnIndex);
+        [targetNode runAction:[SKAction sequence:@[[SKAction scaleTo:.5 duration:.3], [SKAction scaleTo:1 duration:.3], [SKAction runBlock:^{
+            targetNode.isRunningAction = NO;
+        }]]]];
+        //targetNode.color = [UIColor colorWithRed:[CommonTools getRandomFloatFromFloat:0 toFloat:1] green:[CommonTools getRandomFloatFromFloat:0 toFloat:1] blue:[CommonTools getRandomFloatFromFloat:0 toFloat:1] alpha:1];
+        //targetNode.isRunningAction = NO;
+    };
     
     IBConnectionDescriptor *padConn = [[IBConnectionDescriptor alloc] init];
     padConn.connectionType = kConnectionTypeNeighbours_square;
@@ -98,7 +110,7 @@
     
     NSArray *padColorCodes = [NSArray arrayWithObjects:@"0505F2", @"0202DE", @"0404C2", @"0202A6", nil];
     _padNode = [[PadNode alloc] initWithColor:[UIColor clearColor] size:CGSizeMake(50, 50) andGridSize:CGSizeMake(5, 5) withPhysicsBody:YES andNodeColorCodes:padColorCodes andInteractionMode:kInteractionMode_touch];
-    [_padNode loadActionDescriptor:colorizeDescriptor andConnectionDescriptor:padConn];
+    [_padNode loadActionDescriptor:padActionDesc andConnectionDescriptor:padConn];
     _padNode.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
     [self addChild:_padNode];
     
