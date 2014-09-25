@@ -48,6 +48,8 @@
 @property (nonatomic) NSTimeInterval lastUpdateTimeInterval;
 @property (nonatomic) NSTimeInterval sensorCheckInterval;
 
+@property (nonatomic) PadNode *bgPad;
+
 @end
 
 @implementation GameScene
@@ -70,7 +72,19 @@
 {
     [self removeAllChildren];
     
-    _padNode = [[PadNode alloc] initWithColor:[UIColor clearColor] size:CGSizeMake(50, 50) andGridSize:CGSizeMake(5, 5)];
+    IBActionDescriptor *colorizeDescriptor = [[IBActionDescriptor alloc] init];
+    colorizeDescriptor.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
+        GameObject *targetNode = (GameObject *)target;
+        //CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
+        //CGPoint targetPosition = CGPointMake(targetNode.rowIndex, targetNode.columnIndex);
+        [targetNode runAction:[SKAction sequence:@[[SKAction scaleTo:.5 duration:.3], [SKAction scaleTo:1 duration:.3]]]];
+    };
+    
+    _bgPad = [[PadNode alloc] initWithColor:[UIColor blueColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:CGSizeMake(40, 40) withPhysicsBody:NO withActionDescriptor:colorizeDescriptor];
+    _bgPad.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
+    [self addChild:_bgPad];
+    
+    _padNode = [[PadNode alloc] initWithColor:[UIColor redColor] size:CGSizeMake(50, 50) andGridSize:CGSizeMake(5, 5) withPhysicsBody:YES withActionDescriptor:colorizeDescriptor];
     _padNode.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
     [self addChild:_padNode];
     

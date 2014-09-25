@@ -19,7 +19,7 @@
 
 @implementation PadNode
 
--(id)initWithColor:(UIColor *)color size:(CGSize)size andGridSize:(CGSize)gridSize
+-(id)initWithColor:(UIColor *)color size:(CGSize)size andGridSize:(CGSize)gridSize withPhysicsBody:(BOOL)withBody withActionDescriptor:(IBActionDescriptor *)actionDescriptor
 {
     if (self = [super initWithColor:color size:size]) {
         self.userInteractionEnabled = YES;
@@ -52,7 +52,7 @@
             node.delegate = self;
             CGPoint blockPosition = CGPointMake(column * node.size.width+ node.size.width / 2.0 - self.size.width / 2.0, row * node.size.height + node.size.height / 2.0 - self.size.height / 2.0);
             node.position = blockPosition;
-            node.zPosition = 2;
+            //node.zPosition = 2;
             [self addChild:node];
             
             node.columnIndex = column;
@@ -61,14 +61,8 @@
         }];
         [self.actionPad createGrid];
         //self.gamePad1.coolDownPeriod = 3;
-        IBActionDescriptor *colorizeDescriptor = [[IBActionDescriptor alloc] init];
-        colorizeDescriptor.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
-            GameObject *targetNode = (GameObject *)target;
-            //CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
-            //CGPoint targetPosition = CGPointMake(targetNode.rowIndex, targetNode.columnIndex);
-            [targetNode runAction:[SKAction sequence:@[[SKAction scaleTo:.5 duration:.3], [SKAction scaleTo:1 duration:.3]]]];
-        };
-        [self.actionPad setUnifiedActionDescriptors:@[colorizeDescriptor]];
+        
+        self.actionPad.unifiedActionDescriptors = @[actionDescriptor];
         
         IBConnectionDescriptor *conn = [[IBConnectionDescriptor alloc] init];
         conn.connectionType = kConnectionTypeNeighbours_square;
@@ -76,13 +70,15 @@
         conn.userInfo = [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithInt:2], [NSNumber numberWithInt:1]] forKeys:@[kConnectionParameter_counter, kConnectionParameter_repeatCount]];
         [self.actionPad loadConnectionMapWithDescriptor:conn];
         
-        self.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:size];
-        self.physicsBody.dynamic = YES;
-        self.physicsBody.affectedByGravity = NO;
-        self.physicsBody.contactTestBitMask = kObjectCategoryFrame;
-        self.physicsBody.categoryBitMask = kObjectCategoryActionPad;
-        self.physicsBody.collisionBitMask = kObjectCategoryFrame;
-        self.physicsBody.mass = 1;
+        if (withBody) {
+            self.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:size];
+            self.physicsBody.dynamic = YES;
+            self.physicsBody.affectedByGravity = NO;
+            self.physicsBody.contactTestBitMask = kObjectCategoryFrame;
+            self.physicsBody.categoryBitMask = kObjectCategoryActionPad;
+            self.physicsBody.collisionBitMask = kObjectCategoryFrame;
+            self.physicsBody.mass = 1;
+        }
     }
     return self;
 }
