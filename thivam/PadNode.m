@@ -30,10 +30,17 @@
         }
         self.gridSize = gridSize;
         self.anchorPoint = CGPointMake(0.5, 0.5);
+        self.isRecording = NO;
         
         self.actionPad = [[IBActionPad alloc] initGridWithSize:gridSize andNodeInitBlock:^id<IBActionNodeActor>(int row, int column){
-            int colorIndex = [CommonTools getRandomNumberFromInt:0 toInt:((int)colorCodes.count - 1)];
-            UIColor *blockColor = [CommonTools stringToColor:[colorCodes objectAtIndex:colorIndex]];
+            UIColor *blockColor;
+            if (colorCodes && colorCodes.count > 0) {
+                int colorIndex = [CommonTools getRandomNumberFromInt:0 toInt:((int)colorCodes.count - 1)];
+                blockColor = [CommonTools stringToColor:[colorCodes objectAtIndex:colorIndex]];
+            } else {
+                blockColor = color;
+            }
+            
             CGSize blockSize = CGSizeMake(size.width / gridSize.height, size.height / gridSize.width);
             InteractionNode *node = [[InteractionNode alloc] initWithColor:blockColor size:blockSize];
             if ([interactionMode isEqualToString:kInteractionMode_touch]) {
@@ -70,7 +77,9 @@
 -(void)loadActionDescriptor:(IBActionDescriptor *)actionDescriptor andConnectionDescriptor:(IBConnectionDescriptor *)connectionDescriptor
 {
     self.actionPad.unifiedActionDescriptors = @[actionDescriptor];
-    [self.actionPad loadConnectionMapWithDescriptor:connectionDescriptor];
+    if (connectionDescriptor) {
+        [self.actionPad loadConnectionMapWithDescriptor:connectionDescriptor];
+    }
 }
 
 -(void)nodeTriggeredAtRow:(int)row andColumn:(int)column
@@ -92,7 +101,7 @@
 {
     UITouch *touch = [touches anyObject];
     CGPoint positionInScene = [touch locationInNode:self];
-    CGPoint previousPosition = [touch previousLocationInNode:self];
+    //CGPoint previousPosition = [touch previousLocationInNode:self];
     
     SKNode *touchedObject = [self nodeAtPoint:positionInScene];
      //for (SKNode *node in touchedObjects) {
@@ -103,9 +112,44 @@
          [self.actionPad triggerNodeAtPosition:CGPointMake(((GameObject *)touchedObject).columnIndex, ((GameObject *)touchedObject).rowIndex)];
          //NSLog(@"%@", NSStringFromCGPoint(CGPointMake(((GameObject *)touchedObject).columnIndex, ((GameObject *)touchedObject).rowIndex)));
          //NSLog(@"Node: %@", [touchedObject class]);
-         
      }
+}
 
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    if (_isRecording) {
+        [_actionPad startRecordingGrid];
+    }
+}
+
+-(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    if (_isRecording) {
+        [_actionPad stopRecordingGrid];
+    }
+}
+
+-(void)startRecording
+{
+    [_actionPad createRecordGrid];
+    _isRecording = YES;
+}
+
+-(void)stopRecording
+{
+    _isRecording = NO;
+    [_actionPad stopRecordingGrid];
+    [_actionPad setUpWithRecordedConnectionsGridIsAutoFired:YES andManualNodeCleanup:YES];
+}
+
+-(void)setActionDescriptor:(IBActionDescriptor *)actionDescriptor
+{
+    [_actionPad setUnifiedActionDescriptors:@[actionDescriptor]];
+}
+
+-(void)loadConnectionsFromDescription:(NSDictionary *)description
+{
+    [_actionPad loadConnectionsFromDescription:description];
 }
 
 @end

@@ -12,6 +12,9 @@
 @interface IBActionPad()
 
 @property (nonatomic) BOOL isCoolingDown;
+@property (nonatomic) CGPoint lastGridPosition;
+
+@property (nonatomic) IBMatrix *recordMatrix;
 
 @end
 
@@ -24,9 +27,12 @@
     if (self = [super init]) {
         self.initRule = initBlock;
         self.objectGrid = [[IBMatrix alloc] initWithRows:size.width andColumns:size.height];
+        self.recordMatrix = [[IBMatrix alloc] initWithRows:size.width andColumns:size.height];
         self.isCoolingDown = NO;
         self.coolDownPeriod = 0;
         self.gridSize = size;
+        self.isRecording = NO;
+        self.lastGridPosition = CGPointMake(-1, -1);
     }
     return self;
 }
@@ -44,6 +50,17 @@
             actionNode.delegate = self;
             
             [_objectGrid setElement:actionNode atRow:j andColumn:i];
+        }
+    }
+}
+
+-(void)createRecordGrid
+{
+    for (int i=0; i<_recordMatrix.columns; i++) {
+        for (int j=0; j<_recordMatrix.rows; j++) {
+            NSMutableArray *recordNode = [NSMutableArray array];
+            
+            [_recordMatrix setElement:recordNode atRow:j andColumn:i];
         }
     }
 }
@@ -187,20 +204,106 @@
 
 -(void)triggerNodeAtPosition:(CGPoint)position
 {
-    if (!_isCoolingDown) {
+    if (_isRecording) {
         IBActionNode *node = [_objectGrid getElementAtRow:position.y andColumn:position.x];
-        if (node.cleanupOnManualTrigger) {
-            [node cleanNode];
+        if (!CGPointEqualToPoint(CGPointMake(-1, -1), _lastGridPosition) && !CGPointEqualToPoint(position, _lastGridPosition)) {
+            IBActionNode *sourceNode = [_objectGrid getElementAtRow:_lastGridPosition.y andColumn:_lastGridPosition.x];
+            [sourceNode.connections addObject:node];
+            NSMutableArray *recordArray = [_recordMatrix getElementAtRow:_lastGridPosition.y andColumn:_lastGridPosition.x];
+            [recordArray addObject:[NSString stringWithFormat:@"(%d,%d)", (int)(position.y), (int)(position.x)]];
         }
-        [node triggerConnectionsWithSource:position shouldPropagate:YES];
-        if (_coolDownPeriod > 0) {
-            _isCoolingDown = YES;
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-                dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, _coolDownPeriod * NSEC_PER_SEC);
-                dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-                    _isCoolingDown = NO;
+        _lastGridPosition = position;
+        [node triggerConnectionsWithSource:position shouldPropagate:NO];
+    } else {
+        if (!_isCoolingDown) {
+            IBActionNode *node = [_objectGrid getElementAtRow:position.y andColumn:position.x];
+            if (node.cleanupOnManualTrigger) {
+                [node cleanNode];
+            }
+            [node triggerConnectionsWithSource:position shouldPropagate:YES];
+            if (_coolDownPeriod > 0) {
+                _isCoolingDown = YES;
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+                    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, _coolDownPeriod * NSEC_PER_SEC);
+                    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+                        _isCoolingDown = NO;
+                    });
                 });
-            });
+            }
+        }
+    }
+}
+
+-(void)startRecordingGrid
+{
+    _isRecording = YES;
+}
+
+-(void)stopRecordingGrid
+{
+    _lastGridPosition = CGPointMake(-1, -1);
+    _isRecording = NO;
+}
+
+-(void)setUpWithRecordedConnectionsGridIsAutoFired:(BOOL)isAutoFired andManualNodeCleanup:(BOOL)hasManualCleanup
+{
+    NSMutableDictionary *connectionDescriptionDictionary = [NSMutableDictionary dictionary];
+    [connectionDescriptionDictionary setObject:[NSNumber numberWithInt:_recordMatrix.columns] forKey:@"columns"];
+    [connectionDescriptionDictionary setObject:[NSNumber numberWithInt:_recordMatrix.rows] forKey:@"rows"];
+    NSMutableDictionary *connectionDictionary = [NSMutableDictionary dictionary];
+    [connectionDescriptionDictionary setObject:connectionDictionary forKey:@"connections"];
+    for (int i=0; i<_recordMatrix.columns; i++) {
+        for (int j=0; j<_recordMatrix.rows; j++) {
+            NSMutableArray *connectionArray = [_recordMatrix getElementAtRow:j andColumn:i];
+            [connectionDictionary setObject:connectionArray forKey:[NSString stringWithFormat:@"(%d,%d)", j, i]];
+        }
+    }
+    
+    NSData *data = [NSJSONSerialization dataWithJSONObject:connectionDescriptionDictionary options:0 error:nil];
+    NSString *jsonStr = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    
+    [[NSUserDefaults standardUserDefaults] setObject:jsonStr forKey:@"saved_connections"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    for (int i=0; i<_objectGrid.columns; i++) {
+        for (int j=0; j<_objectGrid.rows;j++) {
+            IBActionNode *sourceNode = [_objectGrid getElementAtRow:j andColumn:i];
+            sourceNode.actionSource = CGPointMake(-1, -1);
+            sourceNode.cleanupOnManualTrigger = hasManualCleanup;
+            sourceNode.autoFire = isAutoFired;
+        }
+    }
+}
+
+-(void)loadConnectionsFromDescription:(NSDictionary *)description
+{
+    NSNumber *rows = [description objectForKey:@"rows"];
+    NSNumber *columns = [description objectForKey:@"columns"];
+    NSDictionary *connections = [description objectForKey:@"connections"];
+    if (rows.intValue != _recordMatrix.rows || columns.intValue != _recordMatrix.columns) {
+        NSLog(@"Connection matrix does not fit grid... Returning...");
+    } else {
+        for (int i=0 ; i<columns.intValue; i++) {
+            for (int j=0; j<rows.intValue; j++) {
+                NSArray *connectionsForElement = [connections objectForKey:[NSString stringWithFormat:@"(%d,%d)", j, i]];
+                NSLog(@"Connection for %@:", [NSString stringWithFormat:@"(%d,%d)", j, i]);
+                IBActionNode *node = [_objectGrid getElementAtRow:j andColumn:i];
+                [node.connections removeAllObjects];
+                node.actionSource = CGPointMake(-1, -1);
+                node.cleanupOnManualTrigger = YES;
+                node.autoFire = YES;
+                for (NSString *conn in connectionsForElement) {
+                    //NSLog(@" %@ ", conn);
+                    NSString *parsed = [conn stringByReplacingOccurrencesOfString:@"(" withString:@""];
+                    parsed = [parsed stringByReplacingOccurrencesOfString:@")" withString:@""];
+                    NSArray* members = [parsed componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @","]];
+                    int row = (int)[[members objectAtIndex:0] integerValue];
+                    int column = (int)[[members objectAtIndex:1] integerValue];
+                    
+                    IBActionNode *targetNode = [_objectGrid getElementAtRow:row andColumn:column];
+                    [node.connections addObject:targetNode];
+                }
+            }
         }
     }
 }
