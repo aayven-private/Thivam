@@ -217,18 +217,20 @@
     } else {
         if (!_isCoolingDown) {
             IBActionNode *node = [_objectGrid getElementAtRow:position.y andColumn:position.x];
-            if (node.cleanupOnManualTrigger) {
-                [node cleanNode];
-            }
-            [node triggerConnectionsWithSource:position shouldPropagate:YES];
-            if (_coolDownPeriod > 0) {
-                _isCoolingDown = YES;
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-                    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, _coolDownPeriod * NSEC_PER_SEC);
-                    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-                        _isCoolingDown = NO;
+            if (node.isActive) {
+                if (node.cleanupOnManualTrigger) {
+                    [node cleanNode];
+                }
+                [node triggerConnectionsWithSource:position shouldPropagate:YES];
+                if (_coolDownPeriod > 0) {
+                    _isCoolingDown = YES;
+                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+                        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, _coolDownPeriod * NSEC_PER_SEC);
+                        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+                            _isCoolingDown = NO;
+                        });
                     });
-                });
+                }
             }
         }
     }
@@ -286,22 +288,25 @@
         for (int i=0 ; i<columns.intValue; i++) {
             for (int j=0; j<rows.intValue; j++) {
                 NSArray *connectionsForElement = [connections objectForKey:[NSString stringWithFormat:@"(%d,%d)", j, i]];
-                NSLog(@"Connection for %@:", [NSString stringWithFormat:@"(%d,%d)", j, i]);
                 IBActionNode *node = [_objectGrid getElementAtRow:j andColumn:i];
                 [node.connections removeAllObjects];
                 node.actionSource = CGPointMake(-1, -1);
                 node.cleanupOnManualTrigger = YES;
                 node.autoFire = YES;
-                for (NSString *conn in connectionsForElement) {
-                    //NSLog(@" %@ ", conn);
-                    NSString *parsed = [conn stringByReplacingOccurrencesOfString:@"(" withString:@""];
-                    parsed = [parsed stringByReplacingOccurrencesOfString:@")" withString:@""];
-                    NSArray* members = [parsed componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @","]];
-                    int row = (int)[[members objectAtIndex:0] integerValue];
-                    int column = (int)[[members objectAtIndex:1] integerValue];
-                    
-                    IBActionNode *targetNode = [_objectGrid getElementAtRow:row andColumn:column];
-                    [node.connections addObject:targetNode];
+                if (!connectionsForElement || connectionsForElement.count == 0) {
+                    node.isActive = NO;
+                } else {
+                    for (NSString *conn in connectionsForElement) {
+                        //NSLog(@" %@ ", conn);
+                        NSString *parsed = [conn stringByReplacingOccurrencesOfString:@"(" withString:@""];
+                        parsed = [parsed stringByReplacingOccurrencesOfString:@")" withString:@""];
+                        NSArray* members = [parsed componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @","]];
+                        int row = (int)[[members objectAtIndex:0] integerValue];
+                        int column = (int)[[members objectAtIndex:1] integerValue];
+                        
+                        IBActionNode *targetNode = [_objectGrid getElementAtRow:row andColumn:column];
+                        [node.connections addObject:targetNode];
+                    }
                 }
             }
         }

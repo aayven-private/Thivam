@@ -25,6 +25,7 @@
 @property (nonatomic) CGFloat triggerDelay;
 @property (nonatomic) CGPoint actionSource;
 @property (nonatomic) BOOL cleanupOnManualTrigger;
+@property (nonatomic) BOOL isActive;
 
 //-(void)triggerConnections;
 //-(void)fireActions;

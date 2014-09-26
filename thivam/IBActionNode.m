@@ -20,6 +20,7 @@
         //self.actions = [NSMutableArray array];
         self.triggerDelay = .15;
         self.actionSource = CGPointMake(-1, -1);
+        self.isActive = YES;
     }
     return self;
 }

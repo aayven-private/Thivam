@@ -88,7 +88,8 @@
     self.physicsWorld.contactDelegate = self;
     
     //[self createRecordingGrid];
-    [self createGridFromSavedDescription];
+    //[self createGridFromSavedDescription];
+    [self createGrid_1];
 }
 
 -(void)createRecordingGrid
@@ -105,7 +106,7 @@
         //targetNode.isRunningAction = NO;
     };
     
-    _bgPad = [[PadNode alloc] initWithColor:[UIColor clearColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:CGSizeMake(5, 10) withPhysicsBody:NO andNodeColorCodes:nil andInteractionMode:kInteractionMode_swipe];
+    _bgPad = [[PadNode alloc] initWithColor:[UIColor clearColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:CGSizeMake(60, 40) withPhysicsBody:NO andNodeColorCodes:nil andInteractionMode:kInteractionMode_swipe];
     _bgPad.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
     [_bgPad loadActionDescriptor:bgActionDesc andConnectionDescriptor:nil];
     
@@ -121,19 +122,22 @@
     NSData *jsonData = [jsonStr dataUsingEncoding:NSUTF8StringEncoding];
     NSDictionary *deserialized = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:nil];
     
+    NSNumber *rows = [deserialized objectForKey:@"rows"];
+    NSNumber *columns = [deserialized objectForKey:@"columns"];
+    
     IBActionDescriptor *bgActionDesc = [[IBActionDescriptor alloc] init];
     bgActionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
         GameObject *targetNode = (GameObject *)target;
         //CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
         //CGPoint targetPosition = CGPointMake(targetNode.rowIndex, targetNode.columnIndex);
-        [targetNode runAction:[SKAction sequence:@[[SKAction scaleTo:.5 duration:.3], [SKAction scaleTo:1 duration:2], [SKAction runBlock:^{
+        [targetNode runAction:[SKAction sequence:@[[SKAction scaleTo:.5 duration:.3], [SKAction scaleTo:1 duration:2], [SKAction colorizeWithColor:[UIColor blueColor] colorBlendFactor:1 duration:.3], [SKAction runBlock:^{
             targetNode.isRunningAction = NO;
         }]]]];
         //targetNode.color = [UIColor colorWithRed:[CommonTools getRandomFloatFromFloat:0 toFloat:1] green:[CommonTools getRandomFloatFromFloat:0 toFloat:1] blue:[CommonTools getRandomFloatFromFloat:0 toFloat:1] alpha:1];
         //targetNode.isRunningAction = NO;
     };
     
-    _bgPad = [[PadNode alloc] initWithColor:[UIColor clearColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:CGSizeMake(5, 10) withPhysicsBody:NO andNodeColorCodes:@[@"FFFFFF"] andInteractionMode:kInteractionMode_swipe];
+    _bgPad = [[PadNode alloc] initWithColor:[UIColor clearColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:CGSizeMake(rows.intValue, columns.intValue) withPhysicsBody:NO andNodeColorCodes:@[@"FFFFFF"] andInteractionMode:kInteractionMode_swipe];
     _bgPad.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
     [_bgPad loadActionDescriptor:bgActionDesc andConnectionDescriptor:nil];
     [_bgPad loadConnectionsFromDescription:deserialized];
@@ -150,7 +154,7 @@
         GameObject *targetNode = (GameObject *)target;
         //CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
         //CGPoint targetPosition = CGPointMake(targetNode.rowIndex, targetNode.columnIndex);
-        [targetNode runAction:[SKAction sequence:@[[SKAction scaleTo:.5 duration:.3], [SKAction scaleTo:1 duration:2], [SKAction runBlock:^{
+        [targetNode runAction:[SKAction sequence:@[/*[SKAction scaleTo:.5 duration:.3],*/ [SKAction scaleTo:2.5 duration:.9], [SKAction scaleTo:1 duration:.3], [SKAction runBlock:^{
             targetNode.isRunningAction = NO;
         }]]]];
         //targetNode.color = [UIColor colorWithRed:[CommonTools getRandomFloatFromFloat:0 toFloat:1] green:[CommonTools getRandomFloatFromFloat:0 toFloat:1] blue:[CommonTools getRandomFloatFromFloat:0 toFloat:1] alpha:1];
@@ -169,7 +173,7 @@
     [self addChild:_bgPad];
     //[_bgPad triggerRandomNode];
     
-    IBActionDescriptor *padActionDesc = [[IBActionDescriptor alloc] init];
+    /*IBActionDescriptor *padActionDesc = [[IBActionDescriptor alloc] init];
     padActionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
         GameObject *targetNode = (GameObject *)target;
         //CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
@@ -190,7 +194,7 @@
     _padNode = [[PadNode alloc] initWithColor:[UIColor clearColor] size:CGSizeMake(50, 50) andGridSize:CGSizeMake(5, 5) withPhysicsBody:YES andNodeColorCodes:padColorCodes andInteractionMode:kInteractionMode_touch];
     [_padNode loadActionDescriptor:padActionDesc andConnectionDescriptor:padConn];
     _padNode.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
-    [self addChild:_padNode];
+    [self addChild:_padNode];*/
 }
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -227,10 +231,10 @@
 
 -(void)wipeScreen
 {
-    //[self removeAllActions];
-    //[self initEnvironment];
+    [self removeAllActions];
+    [self initEnvironment];
     
-    [_bgPad stopRecording];
+    /*[_bgPad stopRecording];
     IBActionDescriptor *bgActionDesc = [[IBActionDescriptor alloc] init];
     bgActionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
         GameObject *targetNode = (GameObject *)target;
@@ -242,7 +246,7 @@
         //targetNode.color = [UIColor colorWithRed:[CommonTools getRandomFloatFromFloat:0 toFloat:1] green:[CommonTools getRandomFloatFromFloat:0 toFloat:1] blue:[CommonTools getRandomFloatFromFloat:0 toFloat:1] alpha:1];
         //targetNode.isRunningAction = NO;
     };
-    [_bgPad setActionDescriptor:bgActionDesc];
+    [_bgPad setActionDescriptor:bgActionDesc];*/
 }
 
 -(void)startMotionManager
