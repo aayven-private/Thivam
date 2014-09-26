@@ -29,6 +29,8 @@
 		B0E3A6A719D1987D0085BC2F /* IBConnectionDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A6A619D1987D0085BC2F /* IBConnectionDescriptor.m */; };
 		B0E3A6AA19D1C08D0085BC2F /* ImageHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A6A919D1C08D0085BC2F /* ImageHelper.m */; };
 		B0E3A6AE19D409710085BC2F /* PadNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A6AD19D409710085BC2F /* PadNode.m */; };
+		B0E3A6C119D5B2700085BC2F /* DBAccessLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A6BC19D5B2700085BC2F /* DBAccessLayer.m */; };
+		B0E3A6C419D5B2A10085BC2F /* ThivamDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A6C219D5B2A10085BC2F /* ThivamDataModel.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,6 +88,9 @@
 		B0E3A6AB19D301DB0085BC2F /* IBActionNodeControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IBActionNodeControllerDelegate.h; sourceTree = "<group>"; };
 		B0E3A6AC19D409710085BC2F /* PadNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PadNode.h; sourceTree = "<group>"; };
 		B0E3A6AD19D409710085BC2F /* PadNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PadNode.m; sourceTree = "<group>"; };
+		B0E3A6BB19D5B2700085BC2F /* DBAccessLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBAccessLayer.h; sourceTree = "<group>"; };
+		B0E3A6BC19D5B2700085BC2F /* DBAccessLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBAccessLayer.m; sourceTree = "<group>"; };
+		B0E3A6C319D5B2A10085BC2F /* ThivamDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ThivamDataModel.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,6 +132,7 @@
 		B0E3A64C19D01A790085BC2F /* thivam */ = {
 			isa = PBXGroup;
 			children = (
+				B0E3A6B219D5B24A0085BC2F /* DBAccessLayer */,
 				B0E3A69A19D178C40085BC2F /* ActionManagement */,
 				B0E3A68719D030300085BC2F /* Helpers */,
 				B0E3A68519D022650085BC2F /* Protocols */,
@@ -252,6 +258,16 @@
 			name = ActionManagement;
 			sourceTree = "<group>";
 		};
+		B0E3A6B219D5B24A0085BC2F /* DBAccessLayer */ = {
+			isa = PBXGroup;
+			children = (
+				B0E3A6BB19D5B2700085BC2F /* DBAccessLayer.h */,
+				B0E3A6BC19D5B2700085BC2F /* DBAccessLayer.m */,
+				B0E3A6C219D5B2A10085BC2F /* ThivamDataModel.xcdatamodeld */,
+			);
+			name = DBAccessLayer;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -360,6 +376,7 @@
 				B0E3A68419D01EF20085BC2F /* InteractionNode.m in Sources */,
 				B0E3A67D19D01DEB0085BC2F /* GameObject.m in Sources */,
 				B0E3A65B19D01A790085BC2F /* GameViewController.m in Sources */,
+				B0E3A6C119D5B2700085BC2F /* DBAccessLayer.m in Sources */,
 				B0E3A68A19D0304D0085BC2F /* InteractionObject.m in Sources */,
 				B0E3A69119D0766C0085BC2F /* CommonTools.m in Sources */,
 				B0E3A65319D01A790085BC2F /* AppDelegate.m in Sources */,
@@ -368,6 +385,7 @@
 				B0E3A65619D01A790085BC2F /* GameScene.m in Sources */,
 				B0E3A6AA19D1C08D0085BC2F /* ImageHelper.m in Sources */,
 				B0E3A6AE19D409710085BC2F /* PadNode.m in Sources */,
+				B0E3A6C419D5B2A10085BC2F /* ThivamDataModel.xcdatamodeld in Sources */,
 				B0E3A65019D01A790085BC2F /* main.m in Sources */,
 				B0E3A6A419D18E480085BC2F /* IBActionDescriptor.m in Sources */,
 			);
@@ -578,6 +596,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		B0E3A6C219D5B2A10085BC2F /* ThivamDataModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				B0E3A6C319D5B2A10085BC2F /* ThivamDataModel.xcdatamodel */,
+			);
+			currentVersion = B0E3A6C319D5B2A10085BC2F /* ThivamDataModel.xcdatamodel */;
+			path = ThivamDataModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = B0E3A64219D01A780085BC2F /* Project object */;
 }
