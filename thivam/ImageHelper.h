@@ -12,6 +12,8 @@
 
 @interface ImageHelper : NSObject
 
++(UIColor *)getRandomColor;
+
 -(void)loadDataFromImage:(UIImage *)image;
 - (UIColor*)getPixelColorAtLocation:(CGPoint)point;
 

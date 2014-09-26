@@ -7,6 +7,7 @@
 //
 
 #import "ImageHelper.h"
+#import "CommonTools.h"
 
 @interface ImageHelper() {
     unsigned char* data;
@@ -17,6 +18,11 @@
 @end
 
 @implementation ImageHelper
+
++(UIColor *)getRandomColor
+{
+    return [UIColor colorWithRed:[CommonTools getRandomFloatFromFloat:0 toFloat:1] green:[CommonTools getRandomFloatFromFloat:0 toFloat:1] blue:[CommonTools getRandomFloatFromFloat:0 toFloat:1] alpha:1];
+}
 
 -(void)loadDataFromImage:(UIImage *)image
 {

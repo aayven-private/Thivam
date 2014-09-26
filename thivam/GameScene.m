@@ -53,11 +53,10 @@
 
 -(void)didMoveToView:(SKView *)view {
     /* Setup your scene here */
-    /*self.imageHelper = [[ImageHelper alloc] init];
+    //self.imageHelper = [[ImageHelper alloc] init];
     
-    self.sourceImage = [UIImage imageNamed:@"IMG_0136"];
-    [self.imageHelper loadDataFromImage:self.sourceImage];
-    self.effectStepper = 0;*/
+    //self.sourceImage = [UIImage imageNamed:@"IMG_0136"];
+    //[self.imageHelper loadDataFromImage:self.sourceImage];
     [self startMotionManager];
     [self initEnvironment];
 }
