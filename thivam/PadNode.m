@@ -52,13 +52,13 @@
             node.delegate = self;
             CGPoint blockPosition = CGPointMake(column * node.size.width - self.size.width / 2.0 + node.size.width / 2.0, row * node.size.height - self.size.height / 2.0 + node.size.height / 2.0);
             node.position = blockPosition;
-            //node.zPosition = 2;
+            //node.zPosition = 1;
             [self addChild:node];
             node.columnIndex = column;
             node.rowIndex = row;
             return node;
         }];
-        [self.actionPad createGrid];
+        [self.actionPad createGridWithNodesActivated:YES];
         //self.gamePad1.coolDownPeriod = 3;
         
         if (withBody) {
@@ -151,5 +151,10 @@
 {
     [_actionPad loadConnectionsFromDescription:description];
 }
+
+/*-(void)fireAction:(IBActionDescriptor *)actionDescriptor userInfo:(NSDictionary *)userInfo
+{
+    actionDescriptor.action(self, userInfo);
+}*/
 
 @end

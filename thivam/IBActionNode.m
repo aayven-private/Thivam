@@ -66,6 +66,7 @@
                 dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, _triggerDelay * NSEC_PER_SEC);
                 dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
                     for (IBActionNode *connectedNode in _connections) {
+                        connectedNode.isActive = YES;
                         [connectedNode triggerConnectionsWithSource:_actionSource shouldPropagate:_autoFire];
                     }
                 });
@@ -83,6 +84,7 @@
             dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, _triggerDelay * NSEC_PER_SEC);
             dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
                 for (IBActionNode *connectedNode in _connections) {
+                    connectedNode.isActive = YES;
                     [connectedNode triggerConnectionsWithSource:_actionSource shouldPropagate:_autoFire];
                 }
             });

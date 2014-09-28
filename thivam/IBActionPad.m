@@ -37,7 +37,7 @@
     return self;
 }
 
--(void)createGrid
+-(void)createGridWithNodesActivated:(BOOL)isActivated
 {
     for (int i=0; i<_objectGrid.columns; i++) {
         for (int j=0; j<_objectGrid.rows; j++) {
@@ -48,7 +48,8 @@
             actionNode.position = CGPointMake(j, i);
             actionNode.connections = [NSMutableArray array];
             actionNode.delegate = self;
-            
+            actionNode.isActive = isActivated;
+            //actionNode.cleanupOnManualTrigger = YES;
             [_objectGrid setElement:actionNode atRow:j andColumn:i];
         }
     }
@@ -247,6 +248,28 @@
     _isRecording = NO;
 }
 
+-(NSString *)saveRecordedConnections
+{
+    NSMutableDictionary *connectionDescriptionDictionary = [NSMutableDictionary dictionary];
+    [connectionDescriptionDictionary setObject:[NSNumber numberWithInt:_recordMatrix.columns] forKey:@"columns"];
+    [connectionDescriptionDictionary setObject:[NSNumber numberWithInt:_recordMatrix.rows] forKey:@"rows"];
+    NSMutableDictionary *connectionDictionary = [NSMutableDictionary dictionary];
+    [connectionDescriptionDictionary setObject:connectionDictionary forKey:@"connections"];
+    for (int i=0; i<_recordMatrix.columns; i++) {
+        for (int j=0; j<_recordMatrix.rows; j++) {
+            NSMutableArray *connectionArray = [_recordMatrix getElementAtRow:j andColumn:i];
+            if (connectionArray.count > 0) {
+                [connectionDictionary setObject:connectionArray forKey:[NSString stringWithFormat:@"(%d,%d)", j, i]];
+            }
+        }
+    }
+    
+    NSData *data = [NSJSONSerialization dataWithJSONObject:connectionDescriptionDictionary options:0 error:nil];
+    NSString *jsonStr = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    
+    return jsonStr;
+}
+
 -(void)setUpWithRecordedConnectionsGridIsAutoFired:(BOOL)isAutoFired andManualNodeCleanup:(BOOL)hasManualCleanup
 {
     NSMutableDictionary *connectionDescriptionDictionary = [NSMutableDictionary dictionary];
@@ -296,6 +319,7 @@
                 if (!connectionsForElement || connectionsForElement.count == 0) {
                     node.isActive = NO;
                 } else {
+                    node.isActive = YES;
                     for (NSString *conn in connectionsForElement) {
                         //NSLog(@" %@ ", conn);
                         NSString *parsed = [conn stringByReplacingOccurrencesOfString:@"(" withString:@""];
@@ -311,6 +335,18 @@
             }
         }
     }
+}
+
+-(void)setActions:(NSArray *)actions forNodeAtPosition:(CGPoint)position
+{
+    IBActionNode *node = [_objectGrid getElementAtRow:position.y andColumn:position.x];
+    node.actions = actions;
+}
+
+-(void)setnodeActivated:(BOOL)isActive atPosition:(CGPoint)position
+{
+    IBActionNode *node = [_objectGrid getElementAtRow:position.y andColumn:position.x];
+    node.isActive = isActive;
 }
 
 -(void)clearActionPad

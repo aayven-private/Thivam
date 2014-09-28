@@ -14,7 +14,7 @@ static NSString *kInteractionMode_touch = @"interaction_mode_touch";
 static NSString *kInteractionMode_swipe = @"interaction_mode_swipe";
 static NSString *kInteractionMode_none = @"interaction_mode_none";
 
-@interface PadNode : GameObject<GameObjectDelegate>
+@interface PadNode : GameObject<GameObjectDelegate, IBActionNodeActor>
 
 @property (nonatomic) CGSize gridSize;
 @property (nonatomic) BOOL isRecording;

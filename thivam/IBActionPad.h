@@ -39,7 +39,7 @@ static NSString *kConnectionTypeLinear_bottomUp = @"grid_connection_linear_botto
 @property (nonatomic) BOOL isRecording;
 
 -(id)initGridWithSize:(CGSize)size andNodeInitBlock:(nodeInit)initBlock;
--(void)createGrid;
+-(void)createGridWithNodesActivated:(BOOL)isActivated;
 -(void)createRecordGrid;
 -(void)loadConnectionMapWithDescriptor:(IBConnectionDescriptor *)connectionDescriptor;
 -(void)triggerNodeAtPosition:(CGPoint)position;
@@ -48,5 +48,7 @@ static NSString *kConnectionTypeLinear_bottomUp = @"grid_connection_linear_botto
 -(void)stopRecordingGrid;
 -(void)setUpWithRecordedConnectionsGridIsAutoFired:(BOOL)isAutoFired andManualNodeCleanup:(BOOL)hasManualCleanup;
 -(void)loadConnectionsFromDescription:(NSDictionary *)description;
+-(void)setActions:(NSArray *)actions forNodeAtPosition:(CGPoint)position;
+-(void)setnodeActivated:(BOOL)isActive atPosition:(CGPoint)position;
 
 @end
