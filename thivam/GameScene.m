@@ -46,7 +46,7 @@
 
 @property (nonatomic) IBActionPad *actionPad;
 
-@property (nonatomic) int actionFinishedCount;
+@property (atomic) int actionFinishedCount;
 @property (nonatomic) int nodeCount;
 
 @property (nonatomic) CGSize gridSize;
