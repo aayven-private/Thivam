@@ -46,6 +46,11 @@
 
 @property (nonatomic) IBActionPad *actionPad;
 
+@property (nonatomic) int actionFinishedCount;
+@property (nonatomic) int nodeCount;
+
+@property (nonatomic) CGSize gridSize;
+
 @end
 
 @implementation GameScene
@@ -56,6 +61,9 @@
 -(void)didMoveToView:(SKView *)view {
     /* Setup your scene here */
     //self.imageHelper = [[ImageHelper alloc] init];
+    
+    self.actionFinishedCount = 0;
+    self.nodeCount = 0;
     
     //self.sourceImage = [UIImage imageNamed:@"IMG_0136"];
     //[self.imageHelper loadDataFromImage:self.sourceImage];
@@ -68,13 +76,13 @@
     [self removeAllChildren];
     
     
-    self.bgImage = [[SKSpriteNode alloc] initWithTexture:[SKTexture textureWithImageNamed:@"IMG_0136"]];
+    /*self.bgImage = [[SKSpriteNode alloc] initWithTexture:[SKTexture textureWithImageNamed:@"IMG_0136"]];
     self.bgImage.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
     self.bgImage.size = CGSizeMake(self.size.width, self.size.height);
     //self.bgImage.alpha = 0.5;
     self.bgImage.zPosition = 0;
     self.bgImage.userInteractionEnabled = NO;
-    [self addChild:self.bgImage];
+    [self addChild:self.bgImage];*/
     
     self.colorAction = [SKAction colorizeWithColor:[UIColor colorWithRed:[CommonTools getRandomFloatFromFloat:0 toFloat:1] green:[CommonTools getRandomFloatFromFloat:0 toFloat:1] blue:[CommonTools getRandomFloatFromFloat:0 toFloat:1] alpha:1] colorBlendFactor:1 duration:.3];
     self.pulseAction = [SKAction sequence:@[[SKAction scaleTo:.2 duration:.3], [SKAction scaleTo:1 duration:.3]]];
@@ -88,9 +96,9 @@
     self.physicsBody.collisionBitMask = kObjectCategoryActionPad;
     self.physicsWorld.contactDelegate = self;
     
-    [self createRecordingGrid];
+    //[self createRecordingGrid];
     //[self createGridFromSavedDescription];
-    //[self createGrid_1];
+    [self createGrid_2];
     //[self createActionPad];
 }
 
@@ -246,6 +254,98 @@
     [self addChild:_padNode];*/
 }
 
+-(void)createGrid_2
+{
+    IBActionDescriptor *bgActionDesc = [[IBActionDescriptor alloc] init];
+    bgActionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
+        GameObject *targetNode = (GameObject *)target;
+
+        
+        CGPoint blockPosition = CGPointMake(targetNode.columnIndex * targetNode.size.width - self.size.width / 2.0 + targetNode.size.width / 2.0, targetNode.rowIndex * targetNode.size.height - self.size.height / 2.0 + targetNode.size.height / 2.0);
+        
+        [targetNode runAction:[SKAction sequence:@[[SKAction group:@[[SKAction rotateByAngle:-2*M_PI duration:2.5], [SKAction moveTo:blockPosition duration:2.5], [SKAction sequence:@[[SKAction fadeAlphaTo:0 duration:2.5], [SKAction fadeAlphaTo:1 duration:1.5]]]]], [SKAction runBlock:^{
+            targetNode.isRunningAction = NO;
+            _actionFinishedCount++;
+            if (_actionFinishedCount == _nodeCount) {
+                _actionFinishedCount = 0;
+                _bgPad.isDisabled = NO;
+                [self revertGrid_2];
+            }
+        }]]]];
+        
+        //[targetNode runAction:[SKAction moveTo:blockPosition duration:.5]];
+
+    };
+    
+    IBConnectionDescriptor *bgConn = [[IBConnectionDescriptor alloc] init];
+    bgConn.connectionType = kConnectionTypeNeighbours_close;
+    bgConn.isAutoFired = YES;
+    bgConn.userInfo = [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithInt:1], [NSNumber numberWithInt:10]] forKeys:@[kConnectionParameter_counter, kConnectionParameter_dispersion]];
+    
+    _gridSize = CGSizeMake(30, 20);
+    
+    NSArray *bgColorCodes = [NSArray arrayWithObjects:@"F20C23", @"DE091E", @"CC081C", @"B50415", nil];
+    _nodeCount = _gridSize.width * _gridSize.height;
+    _bgPad = [[PadNode alloc] initWithColor:[UIColor blueColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:_gridSize withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_touch];
+    _bgPad.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
+    [_bgPad loadActionDescriptor:bgActionDesc andConnectionDescriptor:bgConn];
+    [self addChild:_bgPad];
+    _bgPad.disableOnFirstTrigger = YES;
+    //[_bgPad triggerRandomNode];    
+}
+
+-(void)revertGrid_2
+{
+    IBActionDescriptor *revertAction = [[IBActionDescriptor alloc] init];
+    revertAction.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
+        GameObject *targetNode = (GameObject *)target;
+        
+        
+        CGPoint blockPosition = CGPointMake((_gridSize.height - 1 - targetNode.columnIndex) * targetNode.size.width - self.size.width / 2.0 + targetNode.size.width / 2.0, (_gridSize.width - 1 - targetNode.rowIndex) * targetNode.size.height - self.size.height / 2.0 + targetNode.size.height / 2.0);
+        
+        [targetNode runAction:[SKAction sequence:@[[SKAction group:@[[SKAction rotateByAngle:-2*M_PI duration:2.5], [SKAction moveTo:blockPosition duration:2.5], [SKAction sequence:@[[SKAction fadeAlphaTo:0 duration:2.5], [SKAction fadeAlphaTo:1 duration:1.5]]]]], [SKAction runBlock:^{
+            targetNode.isRunningAction = NO;
+            _actionFinishedCount++;
+            if (_actionFinishedCount == _nodeCount) {
+                _actionFinishedCount = 0;
+                _bgPad.isDisabled = NO;
+                [self loadGrid_2];
+            }
+        }]]]];
+        
+        //[targetNode runAction:[SKAction moveTo:blockPosition duration:.5]];
+        
+    };
+    [_bgPad loadActionDescriptor:revertAction andConnectionDescriptor:nil];
+    //[_bgPad triggerRandomNode];
+}
+
+-(void)loadGrid_2
+{
+    IBActionDescriptor *bgActionDesc = [[IBActionDescriptor alloc] init];
+    bgActionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
+        GameObject *targetNode = (GameObject *)target;
+        
+        
+        CGPoint blockPosition = CGPointMake(targetNode.columnIndex * targetNode.size.width - self.size.width / 2.0 + targetNode.size.width / 2.0, targetNode.rowIndex * targetNode.size.height - self.size.height / 2.0 + targetNode.size.height / 2.0);
+        
+        [targetNode runAction:[SKAction sequence:@[[SKAction group:@[[SKAction rotateByAngle:-2*M_PI duration:2.5], [SKAction moveTo:blockPosition duration:2.5], [SKAction sequence:@[[SKAction fadeAlphaTo:0 duration:2.5], [SKAction fadeAlphaTo:1 duration:1.5]]]]], [SKAction runBlock:^{
+            targetNode.isRunningAction = NO;
+            _actionFinishedCount++;
+            if (_actionFinishedCount == _nodeCount) {
+                _actionFinishedCount = 0;
+                _bgPad.isDisabled = NO;
+                [self revertGrid_2];
+            }
+        }]]]];
+        
+        //[targetNode runAction:[SKAction moveTo:blockPosition duration:.5]];
+        
+    };
+    [_bgPad loadActionDescriptor:bgActionDesc andConnectionDescriptor:nil];
+    //[_bgPad triggerRandomNode];
+}
+
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     
 }
@@ -284,7 +384,7 @@
         _bgTriggerInterval = [CommonTools getRandomFloatFromFloat:.1 toFloat:.2];
         //[_bgPad triggerRandomNode];
         
-        [_actionPad triggerNodeAtPosition:CGPointMake([CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.height - 1], [CommonTools getRandomNumberFromInt:0 toInt: _actionPad.gridSize.width - 1])];
+        //[_actionPad triggerNodeAtPosition:CGPointMake([CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.height - 1], [CommonTools getRandomNumberFromInt:0 toInt: _actionPad.gridSize.width - 1])];
     }
 }
 
@@ -293,7 +393,7 @@
     //[self removeAllActions];
     //[self initEnvironment];
     
-    [_bgPad stopRecording];
+    /*[_bgPad stopRecording];
     IBActionDescriptor *bgActionDesc = [[IBActionDescriptor alloc] init];
     bgActionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
         GameObject *targetNode = (GameObject *)target;
@@ -306,7 +406,7 @@
         //targetNode.isRunningAction = NO;
     };
     [_bgPad setActionDescriptor:bgActionDesc];
-    _bgImage.hidden = NO;
+    _bgImage.hidden = NO;*/
 }
 
 -(void)startMotionManager

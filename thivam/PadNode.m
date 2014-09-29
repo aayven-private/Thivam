@@ -22,7 +22,8 @@
 -(id)initWithColor:(UIColor *)color size:(CGSize)size andGridSize:(CGSize)gridSize withPhysicsBody:(BOOL)withBody andNodeColorCodes:(NSArray *)colorCodes andInteractionMode:(NSString *)interactionMode
 {
     if (self = [super initWithColor:color size:size]) {
-        
+        self.disableOnFirstTrigger = NO;
+        self.isDisabled = NO;
         if ([interactionMode isEqualToString:kInteractionMode_swipe]) {
             self.userInteractionEnabled = YES;
         } else {
@@ -50,7 +51,11 @@
             }
             node.anchorPoint = CGPointMake(0.5, 0.5);
             node.delegate = self;
-            CGPoint blockPosition = CGPointMake(column * node.size.width - self.size.width / 2.0 + node.size.width / 2.0, row * node.size.height - self.size.height / 2.0 + node.size.height / 2.0);
+            //CGPoint blockPosition = CGPointMake(column * node.size.width - self.size.width / 2.0 + node.size.width / 2.0, row * node.size.height - self.size.height / 2.0 + node.size.height / 2.0);
+            
+            CGPoint blockPosition = CGPointMake((gridSize.height - 1 - column) * node.size.width - self.size.width / 2.0 + node.size.width / 2.0, (gridSize.width - 1 - row) * node.size.height - self.size.height / 2.0 + node.size.height / 2.0);
+            //node.alpha = 0;
+            
             node.position = blockPosition;
             //node.zPosition = 1;
             [self addChild:node];
@@ -84,17 +89,33 @@
 
 -(void)nodeTriggeredAtRow:(int)row andColumn:(int)column
 {
-    [_actionPad triggerNodeAtPosition:CGPointMake(column, row)];
+    if (!_isDisabled) {
+        if (_disableOnFirstTrigger) {
+            _isDisabled = YES;
+        }
+        [_actionPad triggerNodeAtPosition:CGPointMake(column, row)];
+    }
 }
 
 -(void)triggerRandomNode
 {
-    [_actionPad triggerNodeAtPosition:CGPointMake([CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.height - 1], [CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.width - 1])];
+    
+    if (!_isDisabled) {
+        if (_disableOnFirstTrigger) {
+            _isDisabled = YES;
+        }
+        [_actionPad triggerNodeAtPosition:CGPointMake([CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.height - 1], [CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.width - 1])];
+    }
 }
 
 -(void)triggerNodeAtPosition:(CGPoint)position
 {
-    [_actionPad triggerNodeAtPosition:position];
+    if (!_isDisabled) {
+        if (_disableOnFirstTrigger) {
+            _isDisabled = YES;
+        }
+        [_actionPad triggerNodeAtPosition:position];
+    }
 }
 
 -(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event

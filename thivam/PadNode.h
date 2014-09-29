@@ -18,6 +18,8 @@ static NSString *kInteractionMode_none = @"interaction_mode_none";
 
 @property (nonatomic) CGSize gridSize;
 @property (nonatomic) BOOL isRecording;
+@property (nonatomic) BOOL disableOnFirstTrigger;
+@property (nonatomic) BOOL isDisabled;
 
 -(id)initWithColor:(UIColor *)color size:(CGSize)size andGridSize:(CGSize)gridSize withPhysicsBody:(BOOL)withBody andNodeColorCodes:(NSArray *)colorCodes andInteractionMode:(NSString *)interactionMode;
 -(void)loadActionDescriptor:(IBActionDescriptor *)actionDescriptor andConnectionDescriptor:(IBConnectionDescriptor *)connectionDescriptor;
