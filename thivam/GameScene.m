@@ -68,14 +68,13 @@
     [self removeAllChildren];
     
     
-    /*self.bgImage = [[SKSpriteNode alloc] initWithTexture:[SKTexture textureWithImageNamed:@"IMG_0136"]];
+    self.bgImage = [[SKSpriteNode alloc] initWithTexture:[SKTexture textureWithImageNamed:@"IMG_0136"]];
     self.bgImage.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
     self.bgImage.size = CGSizeMake(self.size.width, self.size.height);
     //self.bgImage.alpha = 0.5;
-    self.bgImage.zPosition = 1;
-    [self addChild:self.bgImage];*/
-    
-    self.anchorPoint = CGPointMake(0.5, 0.5);
+    self.bgImage.zPosition = 0;
+    self.bgImage.userInteractionEnabled = NO;
+    [self addChild:self.bgImage];
     
     self.colorAction = [SKAction colorizeWithColor:[UIColor colorWithRed:[CommonTools getRandomFloatFromFloat:0 toFloat:1] green:[CommonTools getRandomFloatFromFloat:0 toFloat:1] blue:[CommonTools getRandomFloatFromFloat:0 toFloat:1] alpha:1] colorBlendFactor:1 duration:.3];
     self.pulseAction = [SKAction sequence:@[[SKAction scaleTo:.2 duration:.3], [SKAction scaleTo:1 duration:.3]]];
@@ -89,16 +88,17 @@
     self.physicsBody.collisionBitMask = kObjectCategoryActionPad;
     self.physicsWorld.contactDelegate = self;
     
-    //[self createRecordingGrid];
+    [self createRecordingGrid];
     //[self createGridFromSavedDescription];
     //[self createGrid_1];
-    [self createActionPad];
+    //[self createActionPad];
 }
 
 -(void)createActionPad
 {
-    _actionPad = [[IBActionPad alloc] initGridWithSize:CGSizeMake(25, 15) andNodeInitBlock:^id<IBActionNodeActor>(int row, int column) {
-        PadNode *node = [[PadNode alloc] initWithColor:[UIColor clearColor] size:CGSizeMake(self.size.width / 15, self.size.height / 25) andGridSize:CGSizeMake(3, 3) withPhysicsBody:NO andNodeColorCodes:@[@"123456", @"654321", @"F1F1F1", @"987654"] andInteractionMode:kInteractionMode_none];
+    self.anchorPoint = CGPointMake(0.5, 0.5);
+    _actionPad = [[IBActionPad alloc] initGridWithSize:CGSizeMake(10, 5) andNodeInitBlock:^id<IBActionNodeActor>(int row, int column) {
+        PadNode *node = [[PadNode alloc] initWithColor:[UIColor clearColor] size:CGSizeMake(self.size.width / 5, self.size.height / 10) andGridSize:CGSizeMake(3, 3) withPhysicsBody:NO andNodeColorCodes:@[@"123456", @"654321", @"F1F1F1", @"987654"] andInteractionMode:kInteractionMode_none];
         CGPoint blockPosition = CGPointMake(column * node.size.width - self.size.width / 2.0 + node.size.width / 2.0, row * node.size.height - self.size.height / 2.0 + node.size.height / 2.0);
         node.position = blockPosition;
         //node.zPosition = 3;
@@ -129,7 +129,7 @@
         PadNode *targetNode = (PadNode *)target;
         [targetNode runAction:[SKAction sequence:@[[SKAction group:@[[SKAction runBlock:^{
             [targetNode triggerRandomNode];
-        }]]], [SKAction scaleTo:1.5 duration:.4], [SKAction scaleTo:1.0 duration:.4], [SKAction runBlock:^{
+        }], [SKAction scaleTo:1.5 duration:.4]]], [SKAction scaleTo:1.0 duration:.4], [SKAction runBlock:^{
             targetNode.isRunningAction = NO;
         }]]]];
     };
@@ -141,6 +141,8 @@
 
 -(void)createRecordingGrid
 {
+    _bgImage.hidden = YES;
+    self.userInteractionEnabled = NO;
     IBActionDescriptor *bgActionDesc = [[IBActionDescriptor alloc] init];
     bgActionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
         GameObject *targetNode = (GameObject *)target;
@@ -153,7 +155,7 @@
         //targetNode.isRunningAction = NO;
     };
     
-    _bgPad = [[PadNode alloc] initWithColor:[UIColor clearColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:CGSizeMake(60, 40) withPhysicsBody:NO andNodeColorCodes:nil andInteractionMode:kInteractionMode_swipe];
+    _bgPad = [[PadNode alloc] initWithColor:[UIColor clearColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:CGSizeMake(10, 8) withPhysicsBody:NO andNodeColorCodes:nil andInteractionMode:kInteractionMode_swipe];
     _bgPad.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
     [_bgPad loadActionDescriptor:bgActionDesc andConnectionDescriptor:nil];
     
@@ -189,7 +191,7 @@
     [_bgPad loadActionDescriptor:bgActionDesc andConnectionDescriptor:nil];
     [_bgPad loadConnectionsFromDescription:deserialized];
     
-    [self addChild:_bgPad];
+    [self insertChild:_bgImage atIndex:0];
 }
 
 -(void)createGrid_1
@@ -297,13 +299,14 @@
         GameObject *targetNode = (GameObject *)target;
         //CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
         //CGPoint targetPosition = CGPointMake(targetNode.rowIndex, targetNode.columnIndex);
-        [targetNode runAction:[SKAction sequence:@[[SKAction scaleTo:.5 duration:.3], [SKAction scaleTo:1 duration:2], [SKAction runBlock:^{
+        [targetNode runAction:[SKAction sequence:@[[SKAction scaleTo:.5 duration:.3], [SKAction fadeAlphaTo:.2 duration:.3], [SKAction scaleTo:1 duration:2], [SKAction fadeAlphaTo:1 duration:.3], [SKAction runBlock:^{
             targetNode.isRunningAction = NO;
         }]]]];
         //targetNode.color = [UIColor colorWithRed:[CommonTools getRandomFloatFromFloat:0 toFloat:1] green:[CommonTools getRandomFloatFromFloat:0 toFloat:1] blue:[CommonTools getRandomFloatFromFloat:0 toFloat:1] alpha:1];
         //targetNode.isRunningAction = NO;
     };
     [_bgPad setActionDescriptor:bgActionDesc];
+    _bgImage.hidden = NO;
 }
 
 -(void)startMotionManager

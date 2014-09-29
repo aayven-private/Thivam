@@ -211,7 +211,10 @@
             IBActionNode *sourceNode = [_objectGrid getElementAtRow:_lastGridPosition.y andColumn:_lastGridPosition.x];
             [sourceNode.connections addObject:node];
             NSMutableArray *recordArray = [_recordMatrix getElementAtRow:_lastGridPosition.y andColumn:_lastGridPosition.x];
-            [recordArray addObject:[NSString stringWithFormat:@"(%d,%d)", (int)(position.y), (int)(position.x)]];
+            NSString *targetConnection = [NSString stringWithFormat:@"(%d,%d)", (int)(position.y), (int)(position.x)];
+            if (![recordArray containsObject:targetConnection]) {
+                [recordArray addObject:targetConnection];
+            }
         }
         _lastGridPosition = position;
         [node triggerConnectionsWithSource:position shouldPropagate:NO];
@@ -300,7 +303,7 @@
     }
 }
 
--(void)loadConnectionsFromDescription:(NSDictionary *)description
+-(void)loadConnectionsFromDescription:(NSDictionary *)description withAutoFire:(BOOL)isautoFired andManualCleanup:(BOOL)cleanup
 {
     NSNumber *rows = [description objectForKey:@"rows"];
     NSNumber *columns = [description objectForKey:@"columns"];
@@ -314,8 +317,8 @@
                 IBActionNode *node = [_objectGrid getElementAtRow:j andColumn:i];
                 [node.connections removeAllObjects];
                 node.actionSource = CGPointMake(-1, -1);
-                node.cleanupOnManualTrigger = YES;
-                node.autoFire = YES;
+                node.cleanupOnManualTrigger = cleanup;
+                node.autoFire = isautoFired;
                 if (!connectionsForElement || connectionsForElement.count == 0) {
                     node.isActive = NO;
                 } else {

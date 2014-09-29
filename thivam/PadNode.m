@@ -149,7 +149,7 @@
 
 -(void)loadConnectionsFromDescription:(NSDictionary *)description
 {
-    [_actionPad loadConnectionsFromDescription:description];
+    [_actionPad loadConnectionsFromDescription:description withAutoFire:YES andManualCleanup:YES];
 }
 
 /*-(void)fireAction:(IBActionDescriptor *)actionDescriptor userInfo:(NSDictionary *)userInfo
