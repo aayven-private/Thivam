@@ -287,7 +287,7 @@
     IBConnectionDescriptor *bgConn = [[IBConnectionDescriptor alloc] init];
     bgConn.connectionType = kConnectionTypeNeighbours_close;
     bgConn.isAutoFired = YES;
-    bgConn.userInfo = [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithInt:1], [NSNumber numberWithInt:10]] forKeys:@[kConnectionParameter_counter, kConnectionParameter_dispersion]];
+    bgConn.userInfo = [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithInt:100], [NSNumber numberWithInt:10]] forKeys:@[kConnectionParameter_counter, kConnectionParameter_dispersion]];
     
     _gridSize = CGSizeMake(30, 20);
     
