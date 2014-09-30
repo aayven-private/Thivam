@@ -17,20 +17,22 @@
 @property (nonatomic, weak) id<IBActionNodeControllerDelegate> delegate;
 @property (nonatomic) CGPoint position;
 @property (nonatomic) id<IBActionNodeActor> nodeObject;
-@property (nonatomic) NSMutableArray *connections;
-@property (nonatomic) NSArray *actions;
-@property (nonatomic) BOOL autoFire;
-@property (nonatomic) int maxRepeatNum;
-@property (nonatomic) int repeatCount;
-@property (nonatomic) CGFloat triggerDelay;
+@property (nonatomic) NSMutableDictionary *connections;
+@property (nonatomic) NSMutableDictionary *actions;
+//@property (nonatomic) BOOL autoFire;
+//@property (nonatomic) int maxRepeatNum;
+//@property (nonatomic) int repeatCount;
+//@property (nonatomic) CGFloat triggerDelay;
 @property (nonatomic) CGPoint actionSource;
-@property (nonatomic) BOOL cleanupOnManualTrigger;
+//@property (nonatomic) BOOL cleanupOnManualTrigger;
 @property (nonatomic) BOOL isActive;
+//@property (nonatomic) BOOL ignoreSource;
+@property (nonatomic) NSMutableDictionary *connectionDescriptors;
 
 //-(void)triggerConnections;
 //-(void)fireActions;
 
--(void)triggerConnectionsWithSource:(CGPoint)source shouldPropagate:(BOOL)shouldPropagate;
--(void)cleanNode;
+-(void)triggerConnectionsWithSource:(CGPoint)source shouldPropagate:(BOOL)shouldPropagate forActionType:(NSString *)actionType;
+-(void)cleanNodeForActionType:(NSString *)actionType;
 
 @end

@@ -12,6 +12,9 @@
 
 @property (nonatomic) NSString *connectionType;
 @property (nonatomic) BOOL isAutoFired;
+@property (nonatomic) BOOL manualCleanup;
+@property (nonatomic) BOOL ignoreSource;
 @property (nonatomic) NSDictionary *userInfo;
+@property (nonatomic) float autoFireDelay;
 
 @end

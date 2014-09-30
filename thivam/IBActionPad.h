@@ -27,13 +27,14 @@ static NSString *kConnectionTypeNeighbours_square = @"grid_connection_neighbours
 static NSString *kConnectionTypeNeighbours_close = @"grid_connection_neighbours_close";
 static NSString *kConnectionTypeRandom = @"grid_connection_random";
 static NSString *kConnectionTypeLinear_bottomUp = @"grid_connection_linear_bottomup";
+static NSString *kConnectionTypeLinear_topBottom = @"grid_connection_linear_topBottom";
 
 @interface IBActionPad : NSObject<IBActionNodeControllerDelegate>
 
 @property (nonatomic) IBMatrix *objectGrid;
 @property (copy) nodeInit initRule;
 @property (nonatomic) NSString *connectionType;
-@property (nonatomic) NSArray *unifiedActionDescriptors;
+@property (nonatomic) NSMutableDictionary *unifiedActionDescriptors;
 @property (nonatomic) CGFloat coolDownPeriod;
 @property (nonatomic) CGSize gridSize;
 @property (nonatomic) BOOL isRecording;
@@ -41,14 +42,16 @@ static NSString *kConnectionTypeLinear_bottomUp = @"grid_connection_linear_botto
 -(id)initGridWithSize:(CGSize)size andNodeInitBlock:(nodeInit)initBlock;
 -(void)createGridWithNodesActivated:(BOOL)isActivated;
 -(void)createRecordGrid;
--(void)loadConnectionMapWithDescriptor:(IBConnectionDescriptor *)connectionDescriptor;
--(void)triggerNodeAtPosition:(CGPoint)position;
+-(void)loadConnectionMapWithDescriptor:(IBConnectionDescriptor *)connectionDescriptor forActionType:(NSString *)actionType;
+-(void)triggerNodeAtPosition:(CGPoint)position forActionType:(NSString *)actionType;
 -(void)clearActionPad;
 -(void)startRecordingGrid;
 -(void)stopRecordingGrid;
--(void)setUpWithRecordedConnectionsGridIsAutoFired:(BOOL)isAutoFired andManualNodeCleanup:(BOOL)hasManualCleanup;
--(void)loadConnectionsFromDescription:(NSDictionary *)description withAutoFire:(BOOL)isautoFired andManualCleanup:(BOOL)cleanup;
--(void)setActions:(NSArray *)actions forNodeAtPosition:(CGPoint)position;
+-(void)loadConnectionsFromDescription:(NSDictionary *)description withAutoFire:(BOOL)isautoFired andManualCleanup:(BOOL)cleanup forActionType:(NSString *)actionType andIgnoreSource:(BOOL)ignoreSource;
+-(void)setActions:(NSArray *)actions forNodeAtPosition:(CGPoint)position forActionType:(NSString *)actionType;
 -(void)setnodeActivated:(BOOL)isActive atPosition:(CGPoint)position;
+-(NSArray *)getUnifiedActionDescriptorsForActionType:(NSString *)actionType;
+
+//-(void)setUpWithRecordedConnectionsGridIsAutoFired:(BOOL)isAutoFired andManualNodeCleanup:(BOOL)hasManualCleanup;
 
 @end

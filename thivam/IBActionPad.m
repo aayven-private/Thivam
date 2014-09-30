@@ -33,6 +33,7 @@
         self.gridSize = size;
         self.isRecording = NO;
         self.lastGridPosition = CGPointMake(-1, -1);
+        self.unifiedActionDescriptors = [NSMutableDictionary dictionary];
     }
     return self;
 }
@@ -46,7 +47,7 @@
             IBActionNode *actionNode = [[IBActionNode alloc] init];
             actionNode.nodeObject = node;
             actionNode.position = CGPointMake(j, i);
-            actionNode.connections = [NSMutableArray array];
+            //actionNode.connections = [NSMutableDictionary dictionary];
             actionNode.delegate = self;
             actionNode.isActive = isActivated;
             //actionNode.cleanupOnManualTrigger = YES;
@@ -66,7 +67,7 @@
     }
 }
 
--(void)loadConnectionMapWithDescriptor:(IBConnectionDescriptor *)connectionDescriptor
+-(void)loadConnectionMapWithDescriptor:(IBConnectionDescriptor *)connectionDescriptor forActionType:(NSString *)actionType
 {
     NSString *connectionType = connectionDescriptor.connectionType;
     self.connectionType = connectionType;
@@ -80,11 +81,16 @@
         for (int i=0; i<_objectGrid.columns; i++) {
             for (int j=0; j<_objectGrid.rows;j++) {
                 IBActionNode *sourceNode = [_objectGrid getElementAtRow:j andColumn:i];
+                
+                NSMutableArray *connectionsForType = [NSMutableArray array];
+                //sourceNode.ignoreSource = connectionDescriptor.ignoreSource;
                 sourceNode.actionSource = CGPointMake(-1, -1);
-                sourceNode.cleanupOnManualTrigger = NO;
+                //sourceNode.cleanupOnManualTrigger = connectionDescriptor.manualCleanup;
                 //sourceNode.maxRepeatNum = maxRepeatNum.intValue;
-                [sourceNode.connections removeAllObjects];
-                sourceNode.autoFire = connectionDescriptor.isAutoFired;
+                [sourceNode.connections removeObjectForKey:actionType];
+                //sourceNode.autoFire = connectionDescriptor.isAutoFired;
+                //sourceNode.triggerDelay = connectionDescriptor.autoFireDelay;
+                [sourceNode.connectionDescriptors setObject:connectionDescriptor forKey:actionType];
                 int fromRow = j > connectionCounter.intValue ? j - connectionCounter.intValue : 0;
                 int toRow = j + connectionCounter.intValue < _objectGrid.rows ? j + connectionCounter.intValue : _objectGrid.rows - 1;
                 
@@ -100,9 +106,10 @@
                         
                         IBActionNode *targetnode = [_objectGrid getElementAtRow:r andColumn:c];
                         
-                        [sourceNode.connections addObject:targetnode];
+                        [connectionsForType addObject:targetnode];
                     }
                 }
+                [sourceNode.connections setObject:connectionsForType forKey:actionType];
             }
         }
     } else if ([connectionType isEqualToString:kConnectionTypeRandom]) {
@@ -114,12 +121,16 @@
         for (int i=0; i<_objectGrid.columns; i++) {
             for (int j=0; j<_objectGrid.rows;j++) {
                 IBActionNode *sourceNode = [_objectGrid getElementAtRow:j andColumn:i];
-                sourceNode.actionSource = CGPointMake(-1, -1);
-                sourceNode.autoFire = connectionDescriptor.isAutoFired;
-                sourceNode.cleanupOnManualTrigger = NO;
+                //sourceNode.ignoreSource = connectionDescriptor.ignoreSource;
+                NSMutableArray *connectionsForType = [NSMutableArray array];
+                //sourceNode.triggerDelay = connectionDescriptor.autoFireDelay;
+                //sourceNode.actionSource = CGPointMake(-1, -1);
+                //sourceNode.autoFire = connectionDescriptor.isAutoFired;
+                //sourceNode.cleanupOnManualTrigger = connectionDescriptor.manualCleanup;
+                [sourceNode.connectionDescriptors setObject:connectionDescriptor forKey:actionType];
                 int numberOfConnections = [CommonTools getRandomNumberFromInt:connectionCounter.intValue - dispersion.intValue toInt:connectionCounter.intValue + dispersion.intValue];
                 NSMutableArray *alreadyConnected = [NSMutableArray array];
-                [sourceNode.connections removeAllObjects];
+                [sourceNode.connections removeObjectForKey:actionType];
                 
                 for (int c=0; c<numberOfConnections; c++) {
                     int connRow = [CommonTools getRandomNumberFromInt:0 toInt:_objectGrid.rows - 1];
@@ -131,9 +142,10 @@
                         
                         IBActionNode *targetNode = [_objectGrid getElementAtRow:connRow andColumn:connCol];
                         
-                        [sourceNode.connections addObject:targetNode];
+                        [connectionsForType addObject:targetNode];
                     }
                 }
+                [sourceNode.connections setObject:connectionsForType forKey:actionType];
             }
         }
     } else if ([connectionType isEqualToString:kConnectionTypeNeighbours_close]) {
@@ -141,10 +153,14 @@
         for (int i=0; i<_objectGrid.columns; i++) {
             for (int j=0; j<_objectGrid.rows;j++) {
                 IBActionNode *sourceNode = [_objectGrid getElementAtRow:j andColumn:i];
+                //sourceNode.ignoreSource = connectionDescriptor.ignoreSource;
+                NSMutableArray *connectionsForType = [NSMutableArray array];
+                //sourceNode.triggerDelay = connectionDescriptor.autoFireDelay;
                 sourceNode.actionSource = CGPointMake(-1, -1);
-                [sourceNode.connections removeAllObjects];
-                sourceNode.autoFire = connectionDescriptor.isAutoFired;
-                sourceNode.cleanupOnManualTrigger = NO;
+                [sourceNode.connections removeObjectForKey:actionType];
+                [sourceNode.connectionDescriptors setObject:connectionDescriptor forKey:actionType];
+                //sourceNode.autoFire = connectionDescriptor.isAutoFired;
+                //sourceNode.cleanupOnManualTrigger = connectionDescriptor.manualCleanup;
                 
                 NSMutableArray *possibleNeighbours = [NSMutableArray array];
                 
@@ -173,43 +189,74 @@
                         targetNode = [_objectGrid getElementAtRow:j andColumn:i+1];
                     }
                     if (targetNode) {
-                        [sourceNode.connections addObject:targetNode];
+                        [connectionsForType addObject:targetNode];
                     }
                 }
+                [sourceNode.connections setObject:connectionsForType forKey:actionType];
             }
         }
     } else if ([connectionType isEqualToString:kConnectionTypeLinear_bottomUp]) {
         for (int i=0; i<_objectGrid.columns; i++) {
             for (int j=0; j<_objectGrid.rows;j++) {
                 IBActionNode *sourceNode = [_objectGrid getElementAtRow:j andColumn:i];
+                //sourceNode.ignoreSource = connectionDescriptor.ignoreSource;
+                NSMutableArray *connectionsForType = [NSMutableArray array];
+                //sourceNode.triggerDelay = connectionDescriptor.autoFireDelay;
                 sourceNode.actionSource = CGPointMake(-1, -1);
-                sourceNode.cleanupOnManualTrigger = YES;
+                //sourceNode.cleanupOnManualTrigger = connectionDescriptor.manualCleanup;
                 //sourceNode.maxRepeatNum = maxRepeatNum.intValue;
-                [sourceNode.connections removeAllObjects];
-                sourceNode.autoFire = connectionDescriptor.isAutoFired;
+                [sourceNode.connections removeObjectForKey:actionType];
+                [sourceNode.connectionDescriptors setObject:connectionDescriptor forKey:actionType];
+                //sourceNode.autoFire = connectionDescriptor.isAutoFired;
                 if (j<_objectGrid.rows - 1) {
                     IBActionNode *targetNode = [_objectGrid getElementAtRow:j+1 andColumn:i];
                     
-                    [sourceNode.connections addObject:targetNode];
+                    [connectionsForType addObject:targetNode];
                 }
+                [sourceNode.connections setObject:connectionsForType forKey:actionType];
+            }
+        }
+    } else if ([connectionType isEqualToString:kConnectionTypeLinear_topBottom]) {
+        for (int i=_objectGrid.columns - 1; i >= 0; i--) {
+            for (int j=_objectGrid.rows - 1; j >= 0; j--) {
+                IBActionNode *sourceNode = [_objectGrid getElementAtRow:j andColumn:i];
+                //sourceNode.ignoreSource = connectionDescriptor.ignoreSource;
+                NSMutableArray *connectionsForType = [NSMutableArray array];
+                //sourceNode.triggerDelay = connectionDescriptor.autoFireDelay;
+                sourceNode.actionSource = CGPointMake(-1, -1);
+                //sourceNode.cleanupOnManualTrigger = connectionDescriptor.manualCleanup;
+                //sourceNode.maxRepeatNum = maxRepeatNum.intValue;
+                [sourceNode.connections removeObjectForKey:actionType];
+                //sourceNode.autoFire = connectionDescriptor.isAutoFired;
+                [sourceNode.connectionDescriptors setObject:connectionDescriptor forKey:actionType];
+                if (j>0) {
+                    IBActionNode *targetNode = [_objectGrid getElementAtRow:j-1 andColumn:i];
+                    
+                    [connectionsForType addObject:targetNode];
+                }
+                [sourceNode.connections setObject:connectionsForType forKey:actionType];
             }
         }
     }
 }
 
--(NSArray *)getUnifiedActionDescriptors
+-(NSArray *)getUnifiedActionDescriptorsForActionType:(NSString *)actionType
 {
-    
-    return _unifiedActionDescriptors;
+    return [_unifiedActionDescriptors objectForKey:actionType];
 }
 
--(void)triggerNodeAtPosition:(CGPoint)position
+-(void)triggerNodeAtPosition:(CGPoint)position forActionType:(NSString *)actionType
 {
     if (_isRecording) {
         IBActionNode *node = [_objectGrid getElementAtRow:position.y andColumn:position.x];
         if (!CGPointEqualToPoint(CGPointMake(-1, -1), _lastGridPosition) && !CGPointEqualToPoint(position, _lastGridPosition)) {
             IBActionNode *sourceNode = [_objectGrid getElementAtRow:_lastGridPosition.y andColumn:_lastGridPosition.x];
-            [sourceNode.connections addObject:node];
+            NSMutableArray *connectionsForType = [sourceNode.connections objectForKey:actionType];
+            if (!connectionsForType) {
+                connectionsForType = [NSMutableArray array];
+                [sourceNode.connections setObject:connectionsForType forKey:actionType];
+            }
+            [connectionsForType addObject:node];
             NSMutableArray *recordArray = [_recordMatrix getElementAtRow:_lastGridPosition.y andColumn:_lastGridPosition.x];
             NSString *targetConnection = [NSString stringWithFormat:@"(%d,%d)", (int)(position.y), (int)(position.x)];
             if (![recordArray containsObject:targetConnection]) {
@@ -217,15 +264,15 @@
             }
         }
         _lastGridPosition = position;
-        [node triggerConnectionsWithSource:position shouldPropagate:NO];
+        [node triggerConnectionsWithSource:position shouldPropagate:NO forActionType:actionType];
     } else {
         if (!_isCoolingDown) {
             IBActionNode *node = [_objectGrid getElementAtRow:position.y andColumn:position.x];
             if (node.isActive) {
-                if (node.cleanupOnManualTrigger) {
-                    [node cleanNode];
-                }
-                [node triggerConnectionsWithSource:position shouldPropagate:YES];
+                //if (node.cleanupOnManualTrigger) {
+                    [node cleanNodeForActionType:actionType];
+                //}
+                [node triggerConnectionsWithSource:position shouldPropagate:YES forActionType:actionType];
                 if (_coolDownPeriod > 0) {
                     _isCoolingDown = YES;
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
@@ -273,7 +320,7 @@
     return jsonStr;
 }
 
--(void)setUpWithRecordedConnectionsGridIsAutoFired:(BOOL)isAutoFired andManualNodeCleanup:(BOOL)hasManualCleanup
+/*-(void)setUpWithRecordedConnectionsGridIsAutoFired:(BOOL)isAutoFired andManualNodeCleanup:(BOOL)hasManualCleanup
 {
     NSMutableDictionary *connectionDescriptionDictionary = [NSMutableDictionary dictionary];
     [connectionDescriptionDictionary setObject:[NSNumber numberWithInt:_recordMatrix.columns] forKey:@"columns"];
@@ -301,9 +348,9 @@
             sourceNode.autoFire = isAutoFired;
         }
     }
-}
+}*/
 
--(void)loadConnectionsFromDescription:(NSDictionary *)description withAutoFire:(BOOL)isautoFired andManualCleanup:(BOOL)cleanup
+-(void)loadConnectionsFromDescription:(NSDictionary *)description withAutoFire:(BOOL)isautoFired andManualCleanup:(BOOL)cleanup forActionType:(NSString *)actionType andIgnoreSource:(BOOL)ignoreSource
 {
     NSNumber *rows = [description objectForKey:@"rows"];
     NSNumber *columns = [description objectForKey:@"columns"];
@@ -315,10 +362,17 @@
             for (int j=0; j<rows.intValue; j++) {
                 NSArray *connectionsForElement = [connections objectForKey:[NSString stringWithFormat:@"(%d,%d)", j, i]];
                 IBActionNode *node = [_objectGrid getElementAtRow:j andColumn:i];
-                [node.connections removeAllObjects];
+                
+                IBConnectionDescriptor *desc = [[IBConnectionDescriptor alloc] init];
+                
+                desc.ignoreSource = ignoreSource;
+                NSMutableArray *connectionsForType= [NSMutableArray array];
+                
+                [node.connections removeObjectForKey:actionType];
                 node.actionSource = CGPointMake(-1, -1);
-                node.cleanupOnManualTrigger = cleanup;
-                node.autoFire = isautoFired;
+                desc.manualCleanup = cleanup;
+                desc.isAutoFired = isautoFired;
+                [node.connectionDescriptors setObject:desc forKey:actionType];
                 if (!connectionsForElement || connectionsForElement.count == 0) {
                     node.isActive = NO;
                 } else {
@@ -332,18 +386,19 @@
                         int column = (int)[[members objectAtIndex:1] integerValue];
                         
                         IBActionNode *targetNode = [_objectGrid getElementAtRow:row andColumn:column];
-                        [node.connections addObject:targetNode];
+                        [connectionsForType addObject:targetNode];
                     }
+                    [node.connections setObject:connectionsForType forKey:actionType];
                 }
             }
         }
     }
 }
 
--(void)setActions:(NSArray *)actions forNodeAtPosition:(CGPoint)position
+-(void)setActions:(NSArray *)actions forNodeAtPosition:(CGPoint)position forActionType:(NSString *)actionType
 {
     IBActionNode *node = [_objectGrid getElementAtRow:position.y andColumn:position.x];
-    node.actions = actions;
+    [node.actions setObject:actions forKey:actionType];
 }
 
 -(void)setnodeActivated:(BOOL)isActive atPosition:(CGPoint)position

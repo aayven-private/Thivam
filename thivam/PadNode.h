@@ -20,18 +20,19 @@ static NSString *kInteractionMode_none = @"interaction_mode_none";
 @property (nonatomic) BOOL isRecording;
 @property (nonatomic) BOOL disableOnFirstTrigger;
 @property (nonatomic) BOOL isDisabled;
+@property (nonatomic) NSString *userActionType;
 
--(id)initWithColor:(UIColor *)color size:(CGSize)size andGridSize:(CGSize)gridSize withPhysicsBody:(BOOL)withBody andNodeColorCodes:(NSArray *)colorCodes andInteractionMode:(NSString *)interactionMode;
--(void)loadActionDescriptor:(IBActionDescriptor *)actionDescriptor andConnectionDescriptor:(IBConnectionDescriptor *)connectionDescriptor;
+-(id)initWithColor:(UIColor *)color size:(CGSize)size andGridSize:(CGSize)gridSize withPhysicsBody:(BOOL)withBody andNodeColorCodes:(NSArray *)colorCodes andInteractionMode:(NSString *)interactionMode forActionType:(NSString *)actionType;
+-(void)loadActionDescriptor:(IBActionDescriptor *)actionDescriptor andConnectionDescriptor:(IBConnectionDescriptor *)connectionDescriptor forActionType:(NSString *)actionType;
 
--(void)triggerRandomNode;
--(void)triggerNodeAtPosition:(CGPoint)position;
+-(void)triggerRandomNodeForActionType:(NSString *)actionType;
+-(void)triggerNodeAtPosition:(CGPoint)position forActionType:(NSString *)actionType;
 
 -(void)startRecording;
 -(void)stopRecording;
 
--(void)setActionDescriptor:(IBActionDescriptor *)actionDescriptor;
+-(void)setActionDescriptor:(IBActionDescriptor *)actionDescriptor forActionType:(NSString *)actionType;
 
--(void)loadConnectionsFromDescription:(NSDictionary *)description;
+-(void)loadConnectionsFromDescription:(NSDictionary *)description forActionType:(NSString *)actionType andIgnoreSource:(BOOL)ignoreSource;
 
 @end

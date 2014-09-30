@@ -14,7 +14,7 @@
 {
     if (self = [super initWithColor:color size:size]) {
         self.actions = [NSMutableArray array];
-        self.isRunningAction = NO;
+        self.runningActionForTypes = [NSMutableDictionary dictionary];
         /*self.infoLabel = [SKLabelNode labelNodeWithFontNamed:@"Chalkduster"];
         self.infoLabel.color = [UIColor whiteColor];
         self.infoLabel.fontSize = 8;
@@ -24,10 +24,17 @@
     return self;
 }
 
--(void)fireAction:(IBActionDescriptor *)actionDescriptor userInfo:(NSDictionary *)userInfo
+-(void)fireAction:(IBActionDescriptor *)actionDescriptor userInfo:(NSDictionary *)userInfo forActionType:(NSString *)actionType
 {
-    if (!self.isRunningAction) {
-        self.isRunningAction = YES;
+    BOOL isRunningAction = NO;
+    NSNumber *isRunningActionForType = [_runningActionForTypes objectForKey:actionType];
+    if (isRunningActionForType) {
+        isRunningAction = isRunningActionForType.boolValue;
+    } else {
+        isRunningAction = NO;
+    }
+    if (!isRunningAction) {
+        [_runningActionForTypes setObject:[NSNumber numberWithBool:YES] forKey:actionType];
         actionDescriptor.action(self, userInfo);
     }
 }

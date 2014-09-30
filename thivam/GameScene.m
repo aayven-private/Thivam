@@ -106,7 +106,7 @@
 {
     self.anchorPoint = CGPointMake(0.5, 0.5);
     _actionPad = [[IBActionPad alloc] initGridWithSize:CGSizeMake(10, 5) andNodeInitBlock:^id<IBActionNodeActor>(int row, int column) {
-        PadNode *node = [[PadNode alloc] initWithColor:[UIColor clearColor] size:CGSizeMake(self.size.width / 5, self.size.height / 10) andGridSize:CGSizeMake(3, 3) withPhysicsBody:NO andNodeColorCodes:@[@"123456", @"654321", @"F1F1F1", @"987654"] andInteractionMode:kInteractionMode_none];
+        PadNode *node = [[PadNode alloc] initWithColor:[UIColor clearColor] size:CGSizeMake(self.size.width / 5, self.size.height / 10) andGridSize:CGSizeMake(3, 3) withPhysicsBody:NO andNodeColorCodes:@[@"123456", @"654321", @"F1F1F1", @"987654"] andInteractionMode:kInteractionMode_none forActionType:@"action"];
         CGPoint blockPosition = CGPointMake(column * node.size.width - self.size.width / 2.0 + node.size.width / 2.0, row * node.size.height - self.size.height / 2.0 + node.size.height / 2.0);
         node.position = blockPosition;
         //node.zPosition = 3;
@@ -115,15 +115,15 @@
         node.columnIndex = column;
         IBActionDescriptor *actionDesc = [[IBActionDescriptor alloc] init];
         actionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
-            GameObject *tergetNode = (GameObject *)target;
-            [tergetNode runAction:[SKAction sequence:@[[SKAction scaleTo:.5 duration:.3], [SKAction scaleTo:1.0 duration:.3], [SKAction colorizeWithColor:[ImageHelper getRandomColor] colorBlendFactor:1 duration:.1], [SKAction runBlock:^{
-                tergetNode.isRunningAction = NO;
+            GameObject *targetNode = (GameObject *)target;
+            [targetNode runAction:[SKAction sequence:@[[SKAction scaleTo:.5 duration:.3], [SKAction scaleTo:1.0 duration:.3], [SKAction colorizeWithColor:[ImageHelper getRandomColor] colorBlendFactor:1 duration:.1], [SKAction runBlock:^{
+                [targetNode.runningActionForTypes setObject:[NSNumber numberWithBool:NO] forKey:[userInfo objectForKey:@"actiontype"]];
             }]]]];
         };
         IBConnectionDescriptor *connDesc = [[IBConnectionDescriptor alloc] init];
         connDesc.connectionType = kConnectionTypeNeighbours_close;
         connDesc.isAutoFired = YES;
-        [node loadActionDescriptor:actionDesc andConnectionDescriptor:connDesc];
+        [node loadActionDescriptor:actionDesc andConnectionDescriptor:connDesc forActionType:@"action"];
         return node;
     }];
     [_actionPad createGridWithNodesActivated:YES];
@@ -136,14 +136,14 @@
     actionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
         PadNode *targetNode = (PadNode *)target;
         [targetNode runAction:[SKAction sequence:@[[SKAction group:@[[SKAction runBlock:^{
-            [targetNode triggerRandomNode];
+            [targetNode triggerRandomNodeForActionType:@"action"];
         }], [SKAction scaleTo:1.5 duration:.4]]], [SKAction scaleTo:1.0 duration:.4], [SKAction runBlock:^{
-            targetNode.isRunningAction = NO;
+            [targetNode.runningActionForTypes setObject:[NSNumber numberWithBool:NO] forKey:[userInfo objectForKey:@"actiontype"]];
         }]]]];
     };
     
-    _actionPad.unifiedActionDescriptors = @[actionDesc];
-    [_actionPad loadConnectionMapWithDescriptor:connDesc];
+    [_actionPad.unifiedActionDescriptors setObject:@[actionDesc] forKey:@"action"];
+    [_actionPad loadConnectionMapWithDescriptor:connDesc forActionType:@"action"];
 
 }
 
@@ -157,15 +157,15 @@
         //CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
         //CGPoint targetPosition = CGPointMake(targetNode.rowIndex, targetNode.columnIndex);
         [targetNode runAction:[SKAction sequence:@[[SKAction colorizeWithColor:[UIColor blueColor] colorBlendFactor:1 duration:0], [SKAction runBlock:^{
-            targetNode.isRunningAction = NO;
+            [targetNode.runningActionForTypes setObject:[NSNumber numberWithBool:NO] forKey:[userInfo objectForKey:@"actiontype"]];
         }]]]];
         //targetNode.color = [UIColor colorWithRed:[CommonTools getRandomFloatFromFloat:0 toFloat:1] green:[CommonTools getRandomFloatFromFloat:0 toFloat:1] blue:[CommonTools getRandomFloatFromFloat:0 toFloat:1] alpha:1];
         //targetNode.isRunningAction = NO;
     };
     
-    _bgPad = [[PadNode alloc] initWithColor:[UIColor clearColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:CGSizeMake(10, 8) withPhysicsBody:NO andNodeColorCodes:nil andInteractionMode:kInteractionMode_swipe];
+    _bgPad = [[PadNode alloc] initWithColor:[UIColor clearColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:CGSizeMake(10, 8) withPhysicsBody:NO andNodeColorCodes:nil andInteractionMode:kInteractionMode_swipe forActionType:@"action"];
     _bgPad.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
-    [_bgPad loadActionDescriptor:bgActionDesc andConnectionDescriptor:nil];
+    [_bgPad loadActionDescriptor:bgActionDesc andConnectionDescriptor:nil forActionType:@"action"];
     
     [self addChild:_bgPad];
     
@@ -188,16 +188,16 @@
         //CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
         //CGPoint targetPosition = CGPointMake(targetNode.rowIndex, targetNode.columnIndex);
         [targetNode runAction:[SKAction sequence:@[[SKAction scaleTo:.5 duration:.3], [SKAction scaleTo:1 duration:2], [SKAction colorizeWithColor:[UIColor blueColor] colorBlendFactor:1 duration:.3], [SKAction runBlock:^{
-            targetNode.isRunningAction = NO;
+            [targetNode.runningActionForTypes setObject:[NSNumber numberWithBool:NO] forKey:[userInfo objectForKey:@"actiontype"]];
         }]]]];
         //targetNode.color = [UIColor colorWithRed:[CommonTools getRandomFloatFromFloat:0 toFloat:1] green:[CommonTools getRandomFloatFromFloat:0 toFloat:1] blue:[CommonTools getRandomFloatFromFloat:0 toFloat:1] alpha:1];
         //targetNode.isRunningAction = NO;
     };
     
-    _bgPad = [[PadNode alloc] initWithColor:[UIColor clearColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:CGSizeMake(rows.intValue, columns.intValue) withPhysicsBody:NO andNodeColorCodes:@[@"FFFFFF"] andInteractionMode:kInteractionMode_swipe];
+    _bgPad = [[PadNode alloc] initWithColor:[UIColor clearColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:CGSizeMake(rows.intValue, columns.intValue) withPhysicsBody:NO andNodeColorCodes:@[@"FFFFFF"] andInteractionMode:kInteractionMode_swipe forActionType:@"action"];
     _bgPad.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
-    [_bgPad loadActionDescriptor:bgActionDesc andConnectionDescriptor:nil];
-    [_bgPad loadConnectionsFromDescription:deserialized];
+    [_bgPad loadActionDescriptor:bgActionDesc andConnectionDescriptor:nil forActionType:@"action"];
+    [_bgPad loadConnectionsFromDescription:deserialized forActionType:@"action" andIgnoreSource:NO];
     
     [self insertChild:_bgImage atIndex:0];
 }
@@ -212,7 +212,7 @@
         //CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
         //CGPoint targetPosition = CGPointMake(targetNode.rowIndex, targetNode.columnIndex);
         [targetNode runAction:[SKAction sequence:@[/*[SKAction scaleTo:.5 duration:.3],*/ [SKAction scaleTo:2.5 duration:.9], [SKAction scaleTo:1 duration:.3], [SKAction runBlock:^{
-            targetNode.isRunningAction = NO;
+            [targetNode.runningActionForTypes setObject:[NSNumber numberWithBool:NO] forKey:[userInfo objectForKey:@"actiontype"]];
         }]]]];
         //targetNode.color = [UIColor colorWithRed:[CommonTools getRandomFloatFromFloat:0 toFloat:1] green:[CommonTools getRandomFloatFromFloat:0 toFloat:1] blue:[CommonTools getRandomFloatFromFloat:0 toFloat:1] alpha:1];
         //targetNode.isRunningAction = NO;
@@ -224,9 +224,9 @@
     bgConn.userInfo = [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithInt:50], [NSNumber numberWithInt:10]] forKeys:@[kConnectionParameter_counter, kConnectionParameter_dispersion]];
     
     NSArray *bgColorCodes = [NSArray arrayWithObjects:@"F20C23", @"DE091E", @"CC081C", @"B50415", nil];
-    _bgPad = [[PadNode alloc] initWithColor:[UIColor blueColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:CGSizeMake(60, 40) withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_none];
+    _bgPad = [[PadNode alloc] initWithColor:[UIColor blueColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:CGSizeMake(60, 40) withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_none forActionType:@"action"];
     _bgPad.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
-    [_bgPad loadActionDescriptor:bgActionDesc andConnectionDescriptor:bgConn];
+    [_bgPad loadActionDescriptor:bgActionDesc andConnectionDescriptor:bgConn forActionType:@"action"];
     [self addChild:_bgPad];
     //[_bgPad triggerRandomNode];
     
@@ -256,7 +256,10 @@
 
 -(void)createGrid_2
 {
-    IBActionDescriptor *bgActionDesc = [[IBActionDescriptor alloc] init];
+    _bgTriggerInterval = [CommonTools getRandomFloatFromFloat:.4 toFloat:.8];
+    _currentBgTriggerInterval = 0;
+    
+    /*IBActionDescriptor *bgActionDesc = [[IBActionDescriptor alloc] init];
     bgActionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
         GameObject *targetNode = (GameObject *)target;
 
@@ -269,8 +272,8 @@
         int colorIndex = [CommonTools getRandomNumberFromInt:0 toInt:((int)colorCodes.count - 1)];
         UIColor *blockColor = [CommonTools stringToColor:[colorCodes objectAtIndex:colorIndex]];
         
-        [targetNode runAction:[SKAction sequence:@[[SKAction group:@[[SKAction colorizeWithColor:blockColor colorBlendFactor:1 duration:3], [SKAction rotateByAngle:-2*M_PI duration:2.5], [SKAction moveTo:blockPosition duration:2.5], [SKAction sequence:@[[SKAction fadeAlphaTo:0 duration:2.5], [SKAction fadeAlphaTo:1 duration:1.5]]]]], [SKAction runBlock:^{
-            targetNode.isRunningAction = NO;
+        [targetNode runAction:[SKAction sequence:@[[SKAction group:@[[SKAction colorizeWithColor:blockColor colorBlendFactor:1 duration:2.5], [SKAction rotateByAngle:-2*M_PI duration:2.5], [SKAction moveTo:blockPosition duration:2.5], [SKAction sequence:@[[SKAction fadeAlphaTo:0 duration:2.5], [SKAction fadeAlphaTo:1 duration:1.5]]]]], [SKAction runBlock:^{
+            [targetNode.runningActionForTypes setObject:[NSNumber numberWithBool:NO] forKey:[userInfo objectForKey:@"actiontype"]];
             _actionFinishedCount++;
             if (_actionFinishedCount == _nodeCount) {
                 _actionFinishedCount = 0;
@@ -283,21 +286,70 @@
         //[targetNode runAction:[SKAction moveTo:blockPosition duration:.5]];
 
     };
-    
+     
     IBConnectionDescriptor *bgConn = [[IBConnectionDescriptor alloc] init];
     bgConn.connectionType = kConnectionTypeNeighbours_close;
     bgConn.isAutoFired = YES;
     bgConn.userInfo = [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithInt:100], [NSNumber numberWithInt:10]] forKeys:@[kConnectionParameter_counter, kConnectionParameter_dispersion]];
+    bgConn.ignoreSource = NO;
+    bgConn.manualCleanup = YES;
+    bgConn.autoFireDelay = 0.05;
+     
+    */
+    
+    IBActionDescriptor *bgActionDesc = [[IBActionDescriptor alloc] init];
+    bgActionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
+        GameObject *targetNode = (GameObject *)target;
+        
+        //UIColor *originalColor = targetNode.color;
+        
+        [targetNode runAction:[SKAction sequence:@[[SKAction group:@[[SKAction scaleTo:1.5 duration:.1], [SKAction fadeAlphaTo:.5 duration:.1]]], [SKAction group:@[[SKAction scaleTo:1.0 duration:.2], [SKAction fadeAlphaTo:1.0 duration:.2]]], [SKAction runBlock:^{
+            [targetNode.runningActionForTypes setObject:[NSNumber numberWithBool:NO] forKey:[userInfo objectForKey:@"actiontype"]];
+        }]]]];
+        
+        //[targetNode runAction:[SKAction moveTo:blockPosition duration:.5]];
+        
+    };
+    
+    
+    IBActionDescriptor *fireActionDesc = [[IBActionDescriptor alloc] init];
+    fireActionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
+        GameObject *targetNode = (GameObject *)target;
+        //UIColor *originalColor = targetNode.color;
+        
+        [targetNode runAction:[SKAction sequence:@[[SKAction scaleTo:.5 duration:.1], [SKAction scaleTo:1 duration:.3], [SKAction runBlock:^{
+            [targetNode.runningActionForTypes setObject:[NSNumber numberWithBool:NO] forKey:[userInfo objectForKey:@"actiontype"]];
+        }]]]];
+        
+        //[targetNode runAction:[SKAction moveTo:blockPosition duration:.5]];
+        
+    };
+    
+    IBConnectionDescriptor *bgConn = [[IBConnectionDescriptor alloc] init];
+    bgConn.connectionType = kConnectionTypeLinear_topBottom;
+    bgConn.isAutoFired = YES;
+    bgConn.userInfo = [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithInt:100], [NSNumber numberWithInt:10]] forKeys:@[kConnectionParameter_counter, kConnectionParameter_dispersion]];
+    bgConn.ignoreSource = YES;
+    bgConn.manualCleanup = YES;
+    bgConn.autoFireDelay = 0.1;
+    
+    IBConnectionDescriptor *fireConn = [[IBConnectionDescriptor alloc] init];
+    fireConn.connectionType = kConnectionTypeLinear_bottomUp;
+    fireConn.isAutoFired = YES;
+    fireConn.userInfo = [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithInt:100], [NSNumber numberWithInt:10]] forKeys:@[kConnectionParameter_counter, kConnectionParameter_dispersion]];
+    fireConn.ignoreSource = YES;
+    fireConn.autoFireDelay = .1;
     
     _gridSize = CGSizeMake(30, 20);
     
     NSArray *bgColorCodes = [NSArray arrayWithObjects:@"F20C23", @"DE091E", @"CC081C", @"B50415", nil];
     _nodeCount = _gridSize.width * _gridSize.height;
-    _bgPad = [[PadNode alloc] initWithColor:[UIColor redColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:_gridSize withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_touch];
+    _bgPad = [[PadNode alloc] initWithColor:[UIColor blueColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:_gridSize withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_touch forActionType:@"fire"];
     _bgPad.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
-    [_bgPad loadActionDescriptor:bgActionDesc andConnectionDescriptor:bgConn];
+    [_bgPad loadActionDescriptor:bgActionDesc andConnectionDescriptor:bgConn forActionType:@"action"];
+    [_bgPad loadActionDescriptor:fireActionDesc andConnectionDescriptor:fireConn forActionType:@"fire"];
     [self addChild:_bgPad];
-    _bgPad.disableOnFirstTrigger = YES;
+    _bgPad.disableOnFirstTrigger = NO;
     //[_bgPad triggerRandomNode];    
 }
 
@@ -317,8 +369,8 @@
         int colorIndex = [CommonTools getRandomNumberFromInt:0 toInt:((int)colorCodes.count - 1)];
         UIColor *blockColor = [CommonTools stringToColor:[colorCodes objectAtIndex:colorIndex]];
         
-        [targetNode runAction:[SKAction sequence:@[[SKAction group:@[[SKAction colorizeWithColor:blockColor colorBlendFactor:1 duration:3], [SKAction rotateByAngle:-2*M_PI duration:2.5], [SKAction moveTo:blockPosition duration:2.5], [SKAction sequence:@[[SKAction fadeAlphaTo:0 duration:2.5], [SKAction fadeAlphaTo:1 duration:1.5]]]]], [SKAction runBlock:^{
-            targetNode.isRunningAction = NO;
+        [targetNode runAction:[SKAction sequence:@[[SKAction group:@[[SKAction colorizeWithColor:blockColor colorBlendFactor:1 duration:2.5], [SKAction rotateByAngle:-2*M_PI duration:2.5], [SKAction moveTo:blockPosition duration:2.5], [SKAction sequence:@[[SKAction fadeAlphaTo:0 duration:2.5], [SKAction fadeAlphaTo:1 duration:1.5]]]]], [SKAction runBlock:^{
+            [targetNode.runningActionForTypes setObject:[NSNumber numberWithBool:NO] forKey:[userInfo objectForKey:@"actiontype"]];
             _actionFinishedCount++;
             if (_actionFinishedCount == _nodeCount) {
                 _actionFinishedCount = 0;
@@ -331,7 +383,7 @@
         //[targetNode runAction:[SKAction moveTo:blockPosition duration:.5]];
         
     };
-    [_bgPad loadActionDescriptor:revertAction andConnectionDescriptor:nil];
+    [_bgPad loadActionDescriptor:revertAction andConnectionDescriptor:nil forActionType:@"action"];
     //[_bgPad triggerRandomNode];
 }
 
@@ -349,8 +401,8 @@
         int colorIndex = [CommonTools getRandomNumberFromInt:0 toInt:((int)colorCodes.count - 1)];
         UIColor *blockColor = [CommonTools stringToColor:[colorCodes objectAtIndex:colorIndex]];
         
-        [targetNode runAction:[SKAction sequence:@[[SKAction group:@[[SKAction colorizeWithColor:blockColor colorBlendFactor:1 duration:3], [SKAction rotateByAngle:-2*M_PI duration:2.5], [SKAction moveTo:blockPosition duration:2.5], [SKAction sequence:@[[SKAction fadeAlphaTo:0 duration:2.5], [SKAction fadeAlphaTo:1 duration:1.5]]]]], [SKAction runBlock:^{
-            targetNode.isRunningAction = NO;
+        [targetNode runAction:[SKAction sequence:@[[SKAction group:@[[SKAction colorizeWithColor:blockColor colorBlendFactor:1 duration:2.5], [SKAction rotateByAngle:-2*M_PI duration:2.5], [SKAction moveTo:blockPosition duration:2.5], [SKAction sequence:@[[SKAction fadeAlphaTo:0 duration:2.5], [SKAction fadeAlphaTo:1 duration:1.5]]]]], [SKAction runBlock:^{
+            [targetNode.runningActionForTypes setObject:[NSNumber numberWithBool:NO] forKey:[userInfo objectForKey:@"actiontype"]];
             _actionFinishedCount++;
             if (_actionFinishedCount == _nodeCount) {
                 _actionFinishedCount = 0;
@@ -363,7 +415,7 @@
         //[targetNode runAction:[SKAction moveTo:blockPosition duration:.5]];
         
     };
-    [_bgPad loadActionDescriptor:bgActionDesc andConnectionDescriptor:nil];
+    [_bgPad loadActionDescriptor:bgActionDesc andConnectionDescriptor:nil forActionType:@"action"];
     //[_bgPad triggerRandomNode];
 }
 
@@ -402,9 +454,16 @@
     _currentBgTriggerInterval += timeSinceLast;
     if (_currentBgTriggerInterval > _bgTriggerInterval) {
         _currentBgTriggerInterval = 0;
-        _bgTriggerInterval = [CommonTools getRandomFloatFromFloat:.1 toFloat:.2];
-        //[_bgPad triggerRandomNode];
+        _bgTriggerInterval = [CommonTools getRandomFloatFromFloat:.4 toFloat:.8];
         
+        int columnIndex = [CommonTools getRandomNumberFromInt:1 toInt:_bgPad.gridSize.height - 2];
+        
+        for (int i=-1; i<2; i++) {
+            [_bgPad triggerNodeAtPosition:CGPointMake(i + columnIndex, _bgPad.gridSize.width - 1) forActionType:@"action"];
+        }
+        
+        //[_bgPad triggerRandomNodeForActionType:@"action"];
+        //_bgPad.isDisabled = YES;
         //[_actionPad triggerNodeAtPosition:CGPointMake([CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.height - 1], [CommonTools getRandomNumberFromInt:0 toInt: _actionPad.gridSize.width - 1])];
     }
 }
@@ -459,11 +518,11 @@
 {
     if (contact.bodyA.categoryBitMask == kObjectCategoryFrame) {
         if (contact.bodyB.categoryBitMask == kObjectCategoryActionPad) {
-            [_padNode triggerRandomNode];
+            [_padNode triggerRandomNodeForActionType:@"action"];
         }
     } else if (contact.bodyB.categoryBitMask == kObjectCategoryFrame) {
         if (contact.bodyA.categoryBitMask == kObjectCategoryActionPad) {
-            [_padNode triggerRandomNode];
+            [_padNode triggerRandomNodeForActionType:@"action"];
         }
     }
 }

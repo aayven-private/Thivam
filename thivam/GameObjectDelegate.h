@@ -10,6 +10,6 @@
 
 @protocol GameObjectDelegate <NSObject>
 
--(void)nodeTriggeredAtRow:(int)row andColumn:(int)column;
+-(void)nodeTriggeredAtRow:(int)row andColumn:(int)column forActionType:(NSString *)actionType;
 
 @end

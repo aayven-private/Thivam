@@ -11,6 +11,6 @@
 
 @protocol IBActionNodeActor <NSObject>
 
--(void)fireAction:(IBActionDescriptor *)actionDescriptor userInfo:(NSDictionary *)userInfo;
+-(void)fireAction:(IBActionDescriptor *)actionDescriptor userInfo:(NSDictionary *)userInfo forActionType:(NSString *)actionType;
 
 @end

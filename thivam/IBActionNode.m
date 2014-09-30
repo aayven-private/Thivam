@@ -7,20 +7,22 @@
 //
 
 #import "IBActionNode.h"
+#import "IBConnectionDescriptor.h"
 
 @implementation IBActionNode
 
 -(id)init
 {
     if (self = [super init]) {
-        self.autoFire = NO;
-        self.maxRepeatNum = -1;
-        self.repeatCount = 0;
-        self.connections = [NSMutableArray array];
-        //self.actions = [NSMutableArray array];
-        self.triggerDelay = .15;
+        //self.autoFire = NO;
+        //self.maxRepeatNum = -1;
+        //self.repeatCount = 0;
+        self.connections = [NSMutableDictionary dictionary];
+        self.actions = [NSMutableDictionary dictionary];
+        //self.triggerDelay = .15;
         self.actionSource = CGPointMake(-1, -1);
         self.isActive = YES;
+        self.connectionDescriptors = [NSMutableDictionary dictionary];
     }
     return self;
 }
@@ -46,70 +48,75 @@
     
 }*/
 
--(void)cleanNode
+-(void)cleanNodeForActionType:(NSString *)actionType
 {
-    if (!CGPointEqualToPoint(_actionSource, CGPointMake(-1, -1))) {
-        _actionSource = CGPointMake(-1, -1);
-        for (IBActionNode *connectedNode in _connections) {
-            [connectedNode cleanNode];
+    IBConnectionDescriptor *desc = [_connectionDescriptors objectForKey:actionType];
+    if (desc.manualCleanup) {
+        if (!CGPointEqualToPoint(_actionSource, CGPointMake(-1, -1))) {
+            _actionSource = CGPointMake(-1, -1);
+            NSMutableArray *connectionsForType = [_connections objectForKey:actionType];
+            if (connectionsForType) {
+                for (IBActionNode *connectedNode in connectionsForType) {
+                    [connectedNode cleanNodeForActionType:actionType];
+                }
+            }
         }
     }
 }
 
--(void)triggerConnectionsWithSource:(CGPoint)source shouldPropagate:(BOOL)shouldPropagate
+-(void)triggerConnectionsWithSource:(CGPoint)source shouldPropagate:(BOOL)shouldPropagate forActionType:(NSString *)actionType
 {
-    if (_autoFire) {
-        if (!CGPointEqualToPoint(source, _actionSource)) {
+    IBConnectionDescriptor *desc = [_connectionDescriptors objectForKey:actionType];
+    if (desc.isAutoFired) {
+        if (!CGPointEqualToPoint(source, _actionSource) || desc.ignoreSource) {
             _actionSource = source;
-            [self fireOwnActions];
+            [self fireOwnActionsForActionType:actionType];
             if (shouldPropagate) {
-                dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, _triggerDelay * NSEC_PER_SEC);
+                dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, desc.autoFireDelay * NSEC_PER_SEC);
                 dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-                    for (IBActionNode *connectedNode in _connections) {
+                    for (IBActionNode *connectedNode in [_connections objectForKey:actionType]) {
                         connectedNode.isActive = YES;
-                        [connectedNode triggerConnectionsWithSource:_actionSource shouldPropagate:_autoFire];
+                        [connectedNode triggerConnectionsWithSource:_actionSource shouldPropagate:desc.isAutoFired forActionType:actionType];
                     }
                 });
             }
         }
-        if (_cleanupOnManualTrigger) {
+        if (desc.manualCleanup) {
             if (_connections.count == 0) {
-                [self cleanNode];
+                [self cleanNodeForActionType:actionType];
             }
         }
     } else {
         _actionSource = source;
-        [self fireOwnActions];
+        [self fireOwnActionsForActionType:actionType];
         if (shouldPropagate) {
-            dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, _triggerDelay * NSEC_PER_SEC);
+            dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, desc.autoFireDelay * NSEC_PER_SEC);
             dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
                 for (IBActionNode *connectedNode in _connections) {
                     connectedNode.isActive = YES;
-                    [connectedNode triggerConnectionsWithSource:_actionSource shouldPropagate:_autoFire];
+                    [connectedNode triggerConnectionsWithSource:_actionSource shouldPropagate:desc.isAutoFired forActionType:actionType];
                 }
             });
-            /*for (IBActionNode *connectedNode in _connections) {
-                [connectedNode triggerConnectionsWithSource:_actionSource shouldPropagate:NO];
-            }*/
         }
     }
     
 }
 
--(void)fireOwnActions
+-(void)fireOwnActionsForActionType:(NSString *)actionType
 {
-    for (IBActionDescriptor *actionDescriptor in [self actions]) {
-        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:[NSValue valueWithCGPoint:_actionSource] forKey:@"position"];
-        [_nodeObject fireAction:actionDescriptor userInfo:userInfo];
+    for (IBActionDescriptor *actionDescriptor in [self actionsForActionType:actionType]) {
+        NSDictionary *userInfo = [NSDictionary dictionaryWithObjects:@[[NSValue valueWithCGPoint:_actionSource], actionType] forKeys:@[@"position", @"actiontype"]];
+        [_nodeObject fireAction:actionDescriptor userInfo:userInfo forActionType:actionType];
     }
 }
 
--(NSArray *)actions
+-(NSArray *)actionsForActionType:(NSString *)actionType
 {
-    if (!_actions) {
-        return [_delegate getUnifiedActionDescriptors];
+    NSArray *actionsForType = [_actions objectForKey:actionType];
+    if (!actionsForType) {
+        return [_delegate getUnifiedActionDescriptorsForActionType:actionType];
     }
-    return _actions;
+    return actionsForType;
 }
 
 @end

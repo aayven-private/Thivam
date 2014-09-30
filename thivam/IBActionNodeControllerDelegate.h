@@ -11,6 +11,6 @@
 
 @protocol IBActionNodeControllerDelegate <NSObject>
 
--(NSArray *)getUnifiedActionDescriptors;
+-(NSArray *)getUnifiedActionDescriptorsForActionType:(NSString *)actionType;
 
 @end

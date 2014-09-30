@@ -19,11 +19,12 @@
 
 @implementation PadNode
 
--(id)initWithColor:(UIColor *)color size:(CGSize)size andGridSize:(CGSize)gridSize withPhysicsBody:(BOOL)withBody andNodeColorCodes:(NSArray *)colorCodes andInteractionMode:(NSString *)interactionMode
+-(id)initWithColor:(UIColor *)color size:(CGSize)size andGridSize:(CGSize)gridSize withPhysicsBody:(BOOL)withBody andNodeColorCodes:(NSArray *)colorCodes andInteractionMode:(NSString *)interactionMode forActionType:(NSString *)actionType
 {
     if (self = [super initWithColor:color size:size]) {
         self.disableOnFirstTrigger = NO;
         self.isDisabled = NO;
+        self.userActionType = actionType;
         if ([interactionMode isEqualToString:kInteractionMode_swipe]) {
             self.userInteractionEnabled = YES;
         } else {
@@ -51,9 +52,9 @@
             }
             node.anchorPoint = CGPointMake(0.5, 0.5);
             node.delegate = self;
-            //CGPoint blockPosition = CGPointMake(column * node.size.width - self.size.width / 2.0 + node.size.width / 2.0, row * node.size.height - self.size.height / 2.0 + node.size.height / 2.0);
+            CGPoint blockPosition = CGPointMake(column * node.size.width - self.size.width / 2.0 + node.size.width / 2.0, row * node.size.height - self.size.height / 2.0 + node.size.height / 2.0);
             
-            CGPoint blockPosition = CGPointMake((gridSize.height - 1 - column) * node.size.width - self.size.width / 2.0 + node.size.width / 2.0, (gridSize.width - 1 - row) * node.size.height - self.size.height / 2.0 + node.size.height / 2.0);
+            //CGPoint blockPosition = CGPointMake((gridSize.height - 1 - column) * node.size.width - self.size.width / 2.0 + node.size.width / 2.0, (gridSize.width - 1 - row) * node.size.height - self.size.height / 2.0 + node.size.height / 2.0);
             //node.alpha = 0;
             
             node.position = blockPosition;
@@ -61,6 +62,7 @@
             [self addChild:node];
             node.columnIndex = column;
             node.rowIndex = row;
+            node.userActionType = actionType;
             return node;
         }];
         [self.actionPad createGridWithNodesActivated:YES];
@@ -79,42 +81,42 @@
     return self;
 }
 
--(void)loadActionDescriptor:(IBActionDescriptor *)actionDescriptor andConnectionDescriptor:(IBConnectionDescriptor *)connectionDescriptor
+-(void)loadActionDescriptor:(IBActionDescriptor *)actionDescriptor andConnectionDescriptor:(IBConnectionDescriptor *)connectionDescriptor forActionType:(NSString *)actionType
 {
-    self.actionPad.unifiedActionDescriptors = @[actionDescriptor];
+    [self.actionPad.unifiedActionDescriptors setObject:@[actionDescriptor] forKey:actionType];
     if (connectionDescriptor) {
-        [self.actionPad loadConnectionMapWithDescriptor:connectionDescriptor];
+        [self.actionPad loadConnectionMapWithDescriptor:connectionDescriptor forActionType:actionType];
     }
 }
 
--(void)nodeTriggeredAtRow:(int)row andColumn:(int)column
+-(void)nodeTriggeredAtRow:(int)row andColumn:(int)column forActionType:(NSString *)actionType
 {
     if (!_isDisabled) {
         if (_disableOnFirstTrigger) {
             _isDisabled = YES;
         }
-        [_actionPad triggerNodeAtPosition:CGPointMake(column, row)];
+        [_actionPad triggerNodeAtPosition:CGPointMake(column, row) forActionType:actionType];
     }
 }
 
--(void)triggerRandomNode
+-(void)triggerRandomNodeForActionType:(NSString *)actionType
 {
     
     if (!_isDisabled) {
         if (_disableOnFirstTrigger) {
             _isDisabled = YES;
         }
-        [_actionPad triggerNodeAtPosition:CGPointMake([CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.height - 1], [CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.width - 1])];
+        [_actionPad triggerNodeAtPosition:CGPointMake([CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.height - 1], [CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.width - 1]) forActionType:actionType];
     }
 }
 
--(void)triggerNodeAtPosition:(CGPoint)position
+-(void)triggerNodeAtPosition:(CGPoint)position forActionType:(NSString *)actionType
 {
     if (!_isDisabled) {
         if (_disableOnFirstTrigger) {
             _isDisabled = YES;
         }
-        [_actionPad triggerNodeAtPosition:position];
+        [_actionPad triggerNodeAtPosition:position forActionType:actionType];
     }
 }
 
@@ -130,7 +132,7 @@
          if ([touchedObject isKindOfClass:[PadNode class]]) {
              return;
          }
-         [self.actionPad triggerNodeAtPosition:CGPointMake(((GameObject *)touchedObject).columnIndex, ((GameObject *)touchedObject).rowIndex)];
+         [self.actionPad triggerNodeAtPosition:CGPointMake(((GameObject *)touchedObject).columnIndex, ((GameObject *)touchedObject).rowIndex) forActionType:self.userActionType];
          //NSLog(@"%@", NSStringFromCGPoint(CGPointMake(((GameObject *)touchedObject).columnIndex, ((GameObject *)touchedObject).rowIndex)));
          //NSLog(@"Node: %@", [touchedObject class]);
      }
@@ -160,17 +162,17 @@
 {
     _isRecording = NO;
     [_actionPad stopRecordingGrid];
-    [_actionPad setUpWithRecordedConnectionsGridIsAutoFired:YES andManualNodeCleanup:YES];
+    //[_actionPad setUpWithRecordedConnectionsGridIsAutoFired:YES andManualNodeCleanup:YES];
 }
 
--(void)setActionDescriptor:(IBActionDescriptor *)actionDescriptor
+-(void)setActionDescriptor:(IBActionDescriptor *)actionDescriptor forActionType:(NSString *)actionType
 {
-    [_actionPad setUnifiedActionDescriptors:@[actionDescriptor]];
+    [_actionPad.unifiedActionDescriptors setObject:@[actionDescriptor] forKey:actionType];
 }
 
--(void)loadConnectionsFromDescription:(NSDictionary *)description
+-(void)loadConnectionsFromDescription:(NSDictionary *)description forActionType:(NSString *)actionType andIgnoreSource:(BOOL)ignoreSource
 {
-    [_actionPad loadConnectionsFromDescription:description withAutoFire:YES andManualCleanup:YES];
+    [_actionPad loadConnectionsFromDescription:description withAutoFire:YES andManualCleanup:YES forActionType:actionType andIgnoreSource:ignoreSource];
 }
 
 /*-(void)fireAction:(IBActionDescriptor *)actionDescriptor userInfo:(NSDictionary *)userInfo

@@ -17,10 +17,12 @@
 
 @property (nonatomic) NSString *objectType;
 @property (nonatomic) NSMutableArray *actions;
-@property (nonatomic) BOOL isRunningAction;
+@property (atomic) NSMutableDictionary *runningActionForTypes;
 
 @property (nonatomic) int rowIndex;
 @property (nonatomic) int columnIndex;
+
+@property (nonatomic) NSString *userActionType;
 
 //@property (nonatomic) SKLabelNode *infoLabel;
 
