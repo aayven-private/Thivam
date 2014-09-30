@@ -33,10 +33,20 @@
     } else {
         isRunningAction = NO;
     }
+    
     if (!isRunningAction) {
         [_runningActionForTypes setObject:[NSNumber numberWithBool:YES] forKey:actionType];
         actionDescriptor.action(self, userInfo);
     }
+}
+
+-(void)resetNode
+{
+    [self removeAllActions];
+    [_runningActionForTypes removeAllObjects];
+    self.zRotation = 0;
+    self.color = _baseColor;
+    self.xScale = self.yScale = 1.0;
 }
 
 @end

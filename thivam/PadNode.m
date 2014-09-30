@@ -52,9 +52,9 @@
             }
             node.anchorPoint = CGPointMake(0.5, 0.5);
             node.delegate = self;
-            CGPoint blockPosition = CGPointMake(column * node.size.width - self.size.width / 2.0 + node.size.width / 2.0, row * node.size.height - self.size.height / 2.0 + node.size.height / 2.0);
+            //CGPoint blockPosition = CGPointMake(column * node.size.width - self.size.width / 2.0 + node.size.width / 2.0, row * node.size.height - self.size.height / 2.0 + node.size.height / 2.0);
             
-            //CGPoint blockPosition = CGPointMake((gridSize.height - 1 - column) * node.size.width - self.size.width / 2.0 + node.size.width / 2.0, (gridSize.width - 1 - row) * node.size.height - self.size.height / 2.0 + node.size.height / 2.0);
+            CGPoint blockPosition = CGPointMake((gridSize.height - 1 - column) * node.size.width - self.size.width / 2.0 + node.size.width / 2.0, (gridSize.width - 1 - row) * node.size.height - self.size.height / 2.0 + node.size.height / 2.0);
             //node.alpha = 0;
             
             node.position = blockPosition;
@@ -63,8 +63,12 @@
             node.columnIndex = column;
             node.rowIndex = row;
             node.userActionType = actionType;
+            node.baseColor = blockColor;
             return node;
         }];
+        
+        //self.actionPad = [[IBActionPad alloc] initGridWithSize:gridSize andNodeInitBlock:initBlock];
+        
         [self.actionPad createGridWithNodesActivated:YES];
         //self.gamePad1.coolDownPeriod = 3;
         
@@ -89,34 +93,38 @@
     }
 }
 
--(void)nodeTriggeredAtRow:(int)row andColumn:(int)column forActionType:(NSString *)actionType
+-(void)nodeTriggeredAtRow:(int)row andColumn:(int)column forActionType:(NSString *)actionType withUserInfo:(NSMutableDictionary *)userInfo
 {
-    if (!_isDisabled) {
+    /*if (!_isDisabled) {
         if (_disableOnFirstTrigger) {
             _isDisabled = YES;
         }
-        [_actionPad triggerNodeAtPosition:CGPointMake(column, row) forActionType:actionType];
-    }
+        [_actionPad triggerNodeAtPosition:CGPointMake(column, row) forActionType:actionType withuserInfo:userInfo forExclusiveAction:NO];
+    }*/
+    
+    [self triggerNodeAtPosition:CGPointMake(column, row) forActionType:actionType withUserInfo:userInfo forceDisable:NO withNodeReset:NO];
 }
 
--(void)triggerRandomNodeForActionType:(NSString *)actionType
+-(void)triggerRandomNodeForActionType:(NSString *)actionType withUserInfo:(NSMutableDictionary *)userInfo
 {
     
-    if (!_isDisabled) {
+    /*if (!_isDisabled) {
         if (_disableOnFirstTrigger) {
             _isDisabled = YES;
         }
-        [_actionPad triggerNodeAtPosition:CGPointMake([CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.height - 1], [CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.width - 1]) forActionType:actionType];
-    }
+        [_actionPad triggerNodeAtPosition:CGPointMake([CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.height - 1], [CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.width - 1]) forActionType:actionType withuserInfo:userInfo forExclusiveAction:NO];
+    }*/
+    
+    [self triggerNodeAtPosition:CGPointMake([CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.height - 1], [CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.width - 1]) forActionType:actionType withUserInfo:userInfo forceDisable:NO withNodeReset:NO];
 }
 
--(void)triggerNodeAtPosition:(CGPoint)position forActionType:(NSString *)actionType
+-(void)triggerNodeAtPosition:(CGPoint)position forActionType:(NSString *)actionType withUserInfo:(NSMutableDictionary *)userInfo forceDisable:(BOOL)forceDisable withNodeReset:(BOOL)reset
 {
     if (!_isDisabled) {
-        if (_disableOnFirstTrigger) {
+        if (_disableOnFirstTrigger || forceDisable) {
             _isDisabled = YES;
         }
-        [_actionPad triggerNodeAtPosition:position forActionType:actionType];
+        [_actionPad triggerNodeAtPosition:position forActionType:actionType withuserInfo:userInfo withNodeReset:reset];
     }
 }
 
@@ -132,7 +140,7 @@
          if ([touchedObject isKindOfClass:[PadNode class]]) {
              return;
          }
-         [self.actionPad triggerNodeAtPosition:CGPointMake(((GameObject *)touchedObject).columnIndex, ((GameObject *)touchedObject).rowIndex) forActionType:self.userActionType];
+         [self.actionPad triggerNodeAtPosition:CGPointMake(((GameObject *)touchedObject).columnIndex, ((GameObject *)touchedObject).rowIndex) forActionType:self.userActionType withuserInfo:nil withNodeReset:NO];
          //NSLog(@"%@", NSStringFromCGPoint(CGPointMake(((GameObject *)touchedObject).columnIndex, ((GameObject *)touchedObject).rowIndex)));
          //NSLog(@"Node: %@", [touchedObject class]);
      }
@@ -179,5 +187,13 @@
 {
     actionDescriptor.action(self, userInfo);
 }*/
+
+-(void)nodeActionTaken:(NSString *)action withUserInfo:(NSDictionary *)userInfo
+{
+    if ([action isEqualToString:@"match"]) {
+        NSValue *posVal = [userInfo objectForKey:@"position"];
+        [self triggerNodeAtPosition:posVal.CGPointValue forActionType:@"action" withUserInfo:[userInfo mutableCopy] forceDisable:YES withNodeReset:YES];
+    }
+}
 
 @end

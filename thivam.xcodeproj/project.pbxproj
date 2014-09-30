@@ -91,6 +91,7 @@
 		B0E3A6BB19D5B2700085BC2F /* DBAccessLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBAccessLayer.h; sourceTree = "<group>"; };
 		B0E3A6BC19D5B2700085BC2F /* DBAccessLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBAccessLayer.m; sourceTree = "<group>"; };
 		B0E3A6C319D5B2A10085BC2F /* ThivamDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ThivamDataModel.xcdatamodel; sourceTree = "<group>"; };
+		B0E3A6C519DAE4A80085BC2F /* GameSceneHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameSceneHandler.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -222,6 +223,7 @@
 			isa = PBXGroup;
 			children = (
 				B0E3A68B19D03C820085BC2F /* GameObjectDelegate.h */,
+				B0E3A6C519DAE4A80085BC2F /* GameSceneHandler.h */,
 			);
 			name = Protocols;
 			sourceTree = "<group>";

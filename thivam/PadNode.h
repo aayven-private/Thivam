@@ -25,8 +25,8 @@ static NSString *kInteractionMode_none = @"interaction_mode_none";
 -(id)initWithColor:(UIColor *)color size:(CGSize)size andGridSize:(CGSize)gridSize withPhysicsBody:(BOOL)withBody andNodeColorCodes:(NSArray *)colorCodes andInteractionMode:(NSString *)interactionMode forActionType:(NSString *)actionType;
 -(void)loadActionDescriptor:(IBActionDescriptor *)actionDescriptor andConnectionDescriptor:(IBConnectionDescriptor *)connectionDescriptor forActionType:(NSString *)actionType;
 
--(void)triggerRandomNodeForActionType:(NSString *)actionType;
--(void)triggerNodeAtPosition:(CGPoint)position forActionType:(NSString *)actionType;
+-(void)triggerRandomNodeForActionType:(NSString *)actionType withUserInfo:(NSMutableDictionary *)userInfo;
+-(void)triggerNodeAtPosition:(CGPoint)position forActionType:(NSString *)actionType withUserInfo:(NSMutableDictionary *)userInfo forceDisable:(BOOL)forceDisable withNodeReset:(BOOL)reset;
 
 -(void)startRecording;
 -(void)stopRecording;
@@ -34,5 +34,11 @@ static NSString *kInteractionMode_none = @"interaction_mode_none";
 -(void)setActionDescriptor:(IBActionDescriptor *)actionDescriptor forActionType:(NSString *)actionType;
 
 -(void)loadConnectionsFromDescription:(NSDictionary *)description forActionType:(NSString *)actionType andIgnoreSource:(BOOL)ignoreSource;
+
+
+//-(void)nodeTriggeredAtRow:(int)row andColumn:(int)column forActionType:(NSString *)actionType withUserInfo:(NSMutableDictionary *)userInfo
+
+
+
 
 @end

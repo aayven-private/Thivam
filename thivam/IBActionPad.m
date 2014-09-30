@@ -245,7 +245,7 @@
     return [_unifiedActionDescriptors objectForKey:actionType];
 }
 
--(void)triggerNodeAtPosition:(CGPoint)position forActionType:(NSString *)actionType
+-(void)triggerNodeAtPosition:(CGPoint)position forActionType:(NSString *)actionType withuserInfo:(NSMutableDictionary *)userInfo withNodeReset:(BOOL)reset
 {
     if (_isRecording) {
         IBActionNode *node = [_objectGrid getElementAtRow:position.y andColumn:position.x];
@@ -264,7 +264,7 @@
             }
         }
         _lastGridPosition = position;
-        [node triggerConnectionsWithSource:position shouldPropagate:NO forActionType:actionType];
+        [node triggerConnectionsWithSource:position shouldPropagate:NO forActionType:actionType withUserInfo:userInfo withNodeReset:reset];
     } else {
         if (!_isCoolingDown) {
             IBActionNode *node = [_objectGrid getElementAtRow:position.y andColumn:position.x];
@@ -272,7 +272,7 @@
                 //if (node.cleanupOnManualTrigger) {
                     [node cleanNodeForActionType:actionType];
                 //}
-                [node triggerConnectionsWithSource:position shouldPropagate:YES forActionType:actionType];
+                [node triggerConnectionsWithSource:position shouldPropagate:YES forActionType:actionType withUserInfo:userInfo withNodeReset:reset];
                 if (_coolDownPeriod > 0) {
                     _isCoolingDown = YES;
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{

@@ -24,6 +24,11 @@
 
 @property (nonatomic) NSString *userActionType;
 
+@property (nonatomic) UIColor *baseColor;
+
+@property (nonatomic) UIColor *color1;
+@property (nonatomic) UIColor *color2;
+
 //@property (nonatomic) SKLabelNode *infoLabel;
 
 @end

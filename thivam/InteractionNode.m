@@ -19,6 +19,8 @@
 @synthesize rowIndex = _rowIndex;
 @synthesize columnIndex = _columnIndex;
 @synthesize userActionType = _userActionType;
+@synthesize color1 = _color1;
+@synthesize color2 = _color2;
 
 -(id)initWithColor:(UIColor *)color size:(CGSize)size
 {
@@ -38,8 +40,17 @@
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
+    /*if (_color1 && _color2) {
+        if ([_color1 isEqual:_color2]) {
+            NSLog(@"MATCH");
+            [self.delegate nodeActionTaken:@"match" withUserInfo:[NSDictionary dictionaryWithObjects:@[[NSValue valueWithCGPoint:CGPointMake(_columnIndex, _rowIndex)], _color1] forKeys:@[@"position", @"matchcolor"]]];
+        }
+    }*/
+    
+    [self.delegate nodeActionTaken:@"match" withUserInfo:[NSDictionary dictionaryWithObjects:@[[NSValue valueWithCGPoint:CGPointMake(_columnIndex, _rowIndex)], [UIColor blueColor]] forKeys:@[@"position", @"matchcolor"]]];
+    
     //NSLog(@"%@", NSStringFromCGPoint(CGPointMake(_rowIndex, _columnIndex)));
-    [self.delegate nodeTriggeredAtRow:_rowIndex andColumn:_columnIndex forActionType:_userActionType];
+    //[self.delegate nodeTriggeredAtRow:_rowIndex andColumn:_columnIndex forActionType:_userActionType];
 }
 
 @end

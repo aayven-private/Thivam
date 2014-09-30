@@ -12,5 +12,6 @@
 @protocol IBActionNodeActor <NSObject>
 
 -(void)fireAction:(IBActionDescriptor *)actionDescriptor userInfo:(NSDictionary *)userInfo forActionType:(NSString *)actionType;
+-(void)resetNode;
 
 @end

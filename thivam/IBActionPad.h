@@ -43,7 +43,7 @@ static NSString *kConnectionTypeLinear_topBottom = @"grid_connection_linear_topB
 -(void)createGridWithNodesActivated:(BOOL)isActivated;
 -(void)createRecordGrid;
 -(void)loadConnectionMapWithDescriptor:(IBConnectionDescriptor *)connectionDescriptor forActionType:(NSString *)actionType;
--(void)triggerNodeAtPosition:(CGPoint)position forActionType:(NSString *)actionType;
+-(void)triggerNodeAtPosition:(CGPoint)position forActionType:(NSString *)actionType withuserInfo:(NSMutableDictionary *)userInfo withNodeReset:(BOOL)reset;
 -(void)clearActionPad;
 -(void)startRecordingGrid;
 -(void)stopRecordingGrid;

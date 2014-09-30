@@ -12,4 +12,6 @@
 
 -(void)nodeTriggeredAtRow:(int)row andColumn:(int)column forActionType:(NSString *)actionType;
 
+-(void)nodeActionTaken:(NSString *)action withUserInfo:(NSDictionary *)userInfo;
+
 @end

@@ -32,7 +32,7 @@
 //-(void)triggerConnections;
 //-(void)fireActions;
 
--(void)triggerConnectionsWithSource:(CGPoint)source shouldPropagate:(BOOL)shouldPropagate forActionType:(NSString *)actionType;
+-(void)triggerConnectionsWithSource:(CGPoint)source shouldPropagate:(BOOL)shouldPropagate forActionType:(NSString *)actionType withUserInfo:(NSMutableDictionary *)userInfo withNodeReset:(BOOL)reset;
 -(void)cleanNodeForActionType:(NSString *)actionType;
 
 @end

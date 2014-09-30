@@ -8,8 +8,11 @@
 
 #import <SpriteKit/SpriteKit.h>
 #import "InteractionNode.h"
+#import "GameSceneHandler.h"
 
 @interface GameScene : SKScene <GameObjectDelegate, SKPhysicsContactDelegate>
+
+@property (nonatomic, weak) id<GameSceneHandler> sceneDelegate;
 
 -(void)initEnvironment;
 -(void)wipeScreen;
