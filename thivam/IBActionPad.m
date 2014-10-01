@@ -84,7 +84,7 @@
                 
                 NSMutableArray *connectionsForType = [NSMutableArray array];
                 //sourceNode.ignoreSource = connectionDescriptor.ignoreSource;
-                sourceNode.actionSource = CGPointMake(-1, -1);
+                [sourceNode.actionSources removeObjectForKey:actionType];
                 //sourceNode.cleanupOnManualTrigger = connectionDescriptor.manualCleanup;
                 //sourceNode.maxRepeatNum = maxRepeatNum.intValue;
                 [sourceNode.connections removeObjectForKey:actionType];
@@ -156,7 +156,7 @@
                 //sourceNode.ignoreSource = connectionDescriptor.ignoreSource;
                 NSMutableArray *connectionsForType = [NSMutableArray array];
                 //sourceNode.triggerDelay = connectionDescriptor.autoFireDelay;
-                sourceNode.actionSource = CGPointMake(-1, -1);
+                [sourceNode.actionSources removeObjectForKey:actionType];
                 [sourceNode.connections removeObjectForKey:actionType];
                 [sourceNode.connectionDescriptors setObject:connectionDescriptor forKey:actionType];
                 //sourceNode.autoFire = connectionDescriptor.isAutoFired;
@@ -202,7 +202,7 @@
                 //sourceNode.ignoreSource = connectionDescriptor.ignoreSource;
                 NSMutableArray *connectionsForType = [NSMutableArray array];
                 //sourceNode.triggerDelay = connectionDescriptor.autoFireDelay;
-                sourceNode.actionSource = CGPointMake(-1, -1);
+                [sourceNode.actionSources removeObjectForKey:actionType];
                 //sourceNode.cleanupOnManualTrigger = connectionDescriptor.manualCleanup;
                 //sourceNode.maxRepeatNum = maxRepeatNum.intValue;
                 [sourceNode.connections removeObjectForKey:actionType];
@@ -223,7 +223,7 @@
                 //sourceNode.ignoreSource = connectionDescriptor.ignoreSource;
                 NSMutableArray *connectionsForType = [NSMutableArray array];
                 //sourceNode.triggerDelay = connectionDescriptor.autoFireDelay;
-                sourceNode.actionSource = CGPointMake(-1, -1);
+                [sourceNode.actionSources removeObjectForKey:actionType];
                 //sourceNode.cleanupOnManualTrigger = connectionDescriptor.manualCleanup;
                 //sourceNode.maxRepeatNum = maxRepeatNum.intValue;
                 [sourceNode.connections removeObjectForKey:actionType];
@@ -369,7 +369,7 @@
                 NSMutableArray *connectionsForType= [NSMutableArray array];
                 
                 [node.connections removeObjectForKey:actionType];
-                node.actionSource = CGPointMake(-1, -1);
+                [node.actionSources removeObjectForKey:actionType];
                 desc.manualCleanup = cleanup;
                 desc.isAutoFired = isautoFired;
                 [node.connectionDescriptors setObject:desc forKey:actionType];

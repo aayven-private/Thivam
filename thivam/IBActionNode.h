@@ -23,7 +23,10 @@
 //@property (nonatomic) int maxRepeatNum;
 //@property (nonatomic) int repeatCount;
 //@property (nonatomic) CGFloat triggerDelay;
-@property (nonatomic) CGPoint actionSource;
+//@property (nonatomic) CGPoint actionSource;
+
+@property (nonatomic) NSMutableDictionary *actionSources;
+
 //@property (nonatomic) BOOL cleanupOnManualTrigger;
 @property (nonatomic) BOOL isActive;
 //@property (nonatomic) BOOL ignoreSource;
