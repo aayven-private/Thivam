@@ -27,7 +27,9 @@ static NSString *kConnectionTypeNeighbours_square = @"grid_connection_neighbours
 static NSString *kConnectionTypeNeighbours_close = @"grid_connection_neighbours_close";
 static NSString *kConnectionTypeRandom = @"grid_connection_random";
 static NSString *kConnectionTypeLinear_bottomUp = @"grid_connection_linear_bottomup";
-static NSString *kConnectionTypeLinear_topBottom = @"grid_connection_linear_topBottom";
+static NSString *kConnectionTypeLinear_topBottom = @"grid_connection_linear_topbottom";
+static NSString *kConnectionTypeLinear_leftRight = @"grid_connection_linear_leftright";
+static NSString *kConnectionTypeLinear_rightLeft = @"grid_connection_linear_rightleft";
 
 @interface IBActionPad : NSObject<IBActionNodeControllerDelegate>
 

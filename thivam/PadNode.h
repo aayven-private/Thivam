@@ -19,7 +19,7 @@ static NSString *kInteractionMode_none = @"interaction_mode_none";
 @property (nonatomic) CGSize gridSize;
 @property (nonatomic) BOOL isRecording;
 @property (nonatomic) BOOL disableOnFirstTrigger;
-@property (nonatomic) BOOL isDisabled;
+//@property (nonatomic) BOOL isDisabled;
 @property (nonatomic) NSString *userActionType;
 
 -(id)initWithColor:(UIColor *)color size:(CGSize)size andGridSize:(CGSize)gridSize withPhysicsBody:(BOOL)withBody andNodeColorCodes:(NSArray *)colorCodes andInteractionMode:(NSString *)interactionMode forActionType:(NSString *)actionType;
@@ -34,7 +34,7 @@ static NSString *kInteractionMode_none = @"interaction_mode_none";
 -(void)setActionDescriptor:(IBActionDescriptor *)actionDescriptor forActionType:(NSString *)actionType;
 
 -(void)loadConnectionsFromDescription:(NSDictionary *)description forActionType:(NSString *)actionType andIgnoreSource:(BOOL)ignoreSource;
-
+-(void)setEnabled:(BOOL)isEnabled forAction:(NSString *)actionType;
 
 //-(void)nodeTriggeredAtRow:(int)row andColumn:(int)column forActionType:(NSString *)actionType withUserInfo:(NSMutableDictionary *)userInfo
 

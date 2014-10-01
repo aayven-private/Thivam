@@ -14,6 +14,7 @@
 @interface PadNode()
 
 @property (nonatomic) IBActionPad *actionPad;
+@property (nonatomic) NSMutableDictionary *enabledStates;
 
 @end
 
@@ -23,7 +24,7 @@
 {
     if (self = [super initWithColor:color size:size]) {
         self.disableOnFirstTrigger = NO;
-        self.isDisabled = NO;
+        self.enabledStates = [NSMutableDictionary dictionary];
         self.userActionType = actionType;
         if ([interactionMode isEqualToString:kInteractionMode_swipe]) {
             self.userInteractionEnabled = YES;
@@ -54,7 +55,7 @@
             node.delegate = self;
             //CGPoint blockPosition = CGPointMake(column * node.size.width - self.size.width / 2.0 + node.size.width / 2.0, row * node.size.height - self.size.height / 2.0 + node.size.height / 2.0);
             
-            CGPoint blockPosition = CGPointMake((gridSize.height - 1 - column) * node.size.width - self.size.width / 2.0 + node.size.width / 2.0, (gridSize.width - 1 - row) * node.size.height - self.size.height / 2.0 + node.size.height / 2.0);
+            CGPoint blockPosition = CGPointMake(column * node.size.width - self.size.width / 2.0 + node.size.width / 2.0, row * node.size.height - self.size.height / 2.0 + node.size.height / 2.0);
             //node.alpha = 0;
             
             node.position = blockPosition;
@@ -120,9 +121,14 @@
 
 -(void)triggerNodeAtPosition:(CGPoint)position forActionType:(NSString *)actionType withUserInfo:(NSMutableDictionary *)userInfo forceDisable:(BOOL)forceDisable withNodeReset:(BOOL)reset
 {
-    if (!_isDisabled) {
+    NSNumber * isEnabledForAction = [_enabledStates objectForKey:actionType];
+    if (!isEnabledForAction) {
+        isEnabledForAction = [NSNumber numberWithBool:YES];
+        [_enabledStates setObject:isEnabledForAction forKey:actionType];
+    }
+    if (isEnabledForAction.boolValue) {
         if (_disableOnFirstTrigger || forceDisable) {
-            _isDisabled = YES;
+            [_enabledStates setObject:[NSNumber numberWithBool:NO] forKey:actionType];
         }
         [_actionPad triggerNodeAtPosition:position forActionType:actionType withuserInfo:userInfo withNodeReset:reset];
     }
@@ -192,8 +198,13 @@
 {
     if ([action isEqualToString:@"match"]) {
         NSValue *posVal = [userInfo objectForKey:@"position"];
-        [self triggerNodeAtPosition:posVal.CGPointValue forActionType:@"action" withUserInfo:[userInfo mutableCopy] forceDisable:YES withNodeReset:YES];
+        [self triggerNodeAtPosition:posVal.CGPointValue forActionType:@"action" withUserInfo:[userInfo mutableCopy] forceDisable:YES withNodeReset:NO];
     }
+}
+
+-(void)setEnabled:(BOOL)isEnabled forAction:(NSString *)actionType
+{
+    [_enabledStates setObject:[NSNumber numberWithBool:isEnabled] forKey:actionType];
 }
 
 @end
