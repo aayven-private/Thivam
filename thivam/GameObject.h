@@ -29,6 +29,8 @@
 @property (nonatomic) UIColor *color1;
 @property (nonatomic) UIColor *color2;
 
+@property (nonatomic) BOOL isActionSource;
+
 //@property (nonatomic) SKLabelNode *infoLabel;
 
 @end

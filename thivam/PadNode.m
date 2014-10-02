@@ -16,6 +16,11 @@
 @property (nonatomic) IBActionPad *actionPad;
 @property (nonatomic) NSMutableDictionary *enabledStates;
 
+@property (nonatomic) UIColor *swipeColor;
+@property (nonatomic) BOOL isSwiping;
+
+@property (nonatomic) CGSize blockSize;
+
 @end
 
 @implementation PadNode
@@ -23,6 +28,7 @@
 -(id)initWithColor:(UIColor *)color size:(CGSize)size andGridSize:(CGSize)gridSize withPhysicsBody:(BOOL)withBody andNodeColorCodes:(NSArray *)colorCodes andInteractionMode:(NSString *)interactionMode forActionType:(NSString *)actionType
 {
     if (self = [super initWithColor:color size:size]) {
+        self.isSwiping = NO;
         self.disableOnFirstTrigger = NO;
         self.enabledStates = [NSMutableDictionary dictionary];
         self.userActionType = actionType;
@@ -34,7 +40,8 @@
         self.gridSize = gridSize;
         self.anchorPoint = CGPointMake(0.5, 0.5);
         self.isRecording = NO;
-        
+        self.blockSize = CGSizeMake(size.width / gridSize.height, size.height / gridSize.width);
+        self.baseColor = color;
         self.actionPad = [[IBActionPad alloc] initGridWithSize:gridSize andNodeInitBlock:^id<IBActionNodeActor>(int row, int column){
             UIColor *blockColor;
             if (colorCodes && colorCodes.count > 0) {
@@ -44,8 +51,7 @@
                 blockColor = color;
             }
             
-            CGSize blockSize = CGSizeMake(size.width / gridSize.height, size.height / gridSize.width);
-            InteractionNode *node = [[InteractionNode alloc] initWithColor:blockColor size:blockSize];
+            InteractionNode *node = [[InteractionNode alloc] initWithColor:blockColor size:_blockSize];
             if ([interactionMode isEqualToString:kInteractionMode_touch]) {
                 node.userInteractionEnabled = YES;
             } else {
@@ -66,7 +72,7 @@
             node.userActionType = actionType;
             node.baseColor = blockColor;
             return node;
-        } andActionHeapSize:10];
+        } andActionHeapSize:30];
         
         //self.actionPad = [[IBActionPad alloc] initGridWithSize:gridSize andNodeInitBlock:initBlock];
         
@@ -136,33 +142,76 @@
 
 -(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    UITouch *touch = [touches anyObject];
-    CGPoint positionInScene = [touch locationInNode:self];
-    //CGPoint previousPosition = [touch previousLocationInNode:self];
-    
-    SKNode *touchedObject = [self nodeAtPoint:positionInScene];
-     //for (SKNode *node in touchedObjects) {
-     if ([touchedObject isKindOfClass:[GameObject class]]) {
-         if ([touchedObject isKindOfClass:[PadNode class]]) {
-             return;
-         }
-         [self.actionPad triggerNodeAtPosition:CGPointMake(((GameObject *)touchedObject).columnIndex, ((GameObject *)touchedObject).rowIndex) forActionType:self.userActionType withuserInfo:nil withNodeReset:NO];
-         //NSLog(@"%@", NSStringFromCGPoint(CGPointMake(((GameObject *)touchedObject).columnIndex, ((GameObject *)touchedObject).rowIndex)));
-         //NSLog(@"Node: %@", [touchedObject class]);
-     }
+    if (_isSwiping) {
+        UITouch *touch = [touches anyObject];
+        CGPoint positionInScene = [touch locationInNode:self];
+        //CGPoint previousPosition = [touch previousLocationInNode:self];
+        
+        SKNode *touchedObject = [self nodeAtPoint:positionInScene];
+        //for (SKNode *node in touchedObjects) {
+        if ([touchedObject isKindOfClass:[GameObject class]]) {
+            if ([touchedObject isKindOfClass:[PadNode class]]) {
+                return;
+            }
+            [self.actionPad triggerNodeAtPosition:CGPointMake(((GameObject *)touchedObject).columnIndex, ((GameObject *)touchedObject).rowIndex) forActionType:self.userActionType withuserInfo:[NSMutableDictionary dictionaryWithObject:_swipeColor forKey:@"targetColor"] withNodeReset:NO];
+            
+            //NSLog(@"%@", NSStringFromCGPoint(CGPointMake(((GameObject *)touchedObject).columnIndex, ((GameObject *)touchedObject).rowIndex)));
+            //NSLog(@"Node: %@", [touchedObject class]);
+        }
+    }
 }
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    if (_isRecording) {
+    /*if (_isRecording) {
         [_actionPad startRecordingGrid];
+    }*/
+    
+    UITouch *touch = [touches anyObject];
+    CGPoint positionInScene = [touch locationInNode:self];
+    
+    NSArray *objects = [self nodesAtPoint:positionInScene];
+    for (SKNode *touchedNode in objects) {
+        if ([touchedNode isKindOfClass:[InteractionNode class]]) {
+            if (((InteractionNode *)touchedNode).isActionSource) {
+                _swipeColor = ((InteractionNode *)touchedNode).baseColor;
+                _isSwiping = YES;
+                //[self runAction:[SKAction colorizeWithColor:_swipeColor colorBlendFactor:.3 duration:.5]];
+            }
+        }
     }
 }
 
 -(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    if (_isRecording) {
+    /*if (_isRecording) {
         [_actionPad stopRecordingGrid];
+    }*/
+    
+    //[self runAction:[SKAction colorizeWithColor:self.baseColor colorBlendFactor:1.0 duration:.2]];
+    //self.color = self.baseColor;
+    
+    if (_isSwiping) {
+        _isSwiping = NO;
+        
+        UITouch *touch = [touches anyObject];
+        CGPoint positionInScene = [touch locationInNode:self];
+        NSString *actionId = [[NSUUID UUID] UUIDString];
+        NSArray *objects = [self nodesAtPoint:positionInScene];
+        for (SKNode *touchedNode in objects) {
+        //id touchedNode = [objects objectAtIndex:0];
+            if ([touchedNode isKindOfClass:[InteractionNode class]]) {
+                InteractionNode *gameNode = (InteractionNode *)touchedNode;
+                //gameNode.color2 = _swipeColor;
+                //if ([gameNode.color1 isEqual:_swipeColor]) {
+                    //self.color = gameNode.color1;
+                [_actionPad triggerNodeAtPosition:CGPointMake(gameNode.columnIndex, gameNode.rowIndex) forActionType:@"check" withuserInfo:[NSMutableDictionary dictionaryWithObjects:@[_swipeColor, actionId] forKeys:@[@"checkColor", @"checkId"]] withNodeReset:NO withActionId:nil];
+
+                //}
+            }
+        }
+        
+        _swipeColor = nil;
     }
 }
 
@@ -205,6 +254,21 @@
 -(void)setEnabled:(BOOL)isEnabled forAction:(NSString *)actionType
 {
     [_enabledStates setObject:[NSNumber numberWithBool:isEnabled] forKey:actionType];
+}
+
+-(GameObject *)getNodeAtPosition:(CGPoint)position
+{
+    CGPoint positionInView = CGPointMake(position.x * _blockSize.width + _blockSize.width / 2.0 - self.size.width / 2.0, position.y * _blockSize.height + _blockSize.height / 2.0 - self.size.height / 2.0);
+    
+    NSArray *objectsInPos = [self nodesAtPoint:positionInView];
+    
+    for(id gameObject in objectsInPos) {
+        if ([gameObject isKindOfClass:[GameObject class]]) {
+            return gameObject;
+        }
+    }
+    
+    return nil;
 }
 
 @end

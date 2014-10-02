@@ -21,12 +21,14 @@
 @synthesize userActionType = _userActionType;
 @synthesize color1 = _color1;
 @synthesize color2 = _color2;
+@synthesize isActionSource = _isActionSource;
 
 -(id)initWithColor:(UIColor *)color size:(CGSize)size
 {
     if (self = [super initWithColor:color size:size]) {
         //self.objectType = kObjectTypeInteractionNode;
         self.userInteractionEnabled = NO;
+        self.isActionSource = NO;
         /*self.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:size];
         self.physicsBody.dynamic = NO;
         self.physicsBody.affectedByGravity = NO;

@@ -38,7 +38,7 @@ static NSString *kInteractionMode_none = @"interaction_mode_none";
 
 //-(void)nodeTriggeredAtRow:(int)row andColumn:(int)column forActionType:(NSString *)actionType withUserInfo:(NSMutableDictionary *)userInfo
 
-
+-(GameObject *)getNodeAtPosition:(CGPoint)position;
 
 
 @end

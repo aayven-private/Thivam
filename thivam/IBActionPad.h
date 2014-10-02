@@ -47,6 +47,7 @@ static NSString *kConnectionTypeLinear_rightLeft = @"grid_connection_linear_righ
 -(void)createRecordGrid;
 -(void)loadConnectionMapWithDescriptor:(IBConnectionDescriptor *)connectionDescriptor forActionType:(NSString *)actionType;
 -(void)triggerNodeAtPosition:(CGPoint)position forActionType:(NSString *)actionType withuserInfo:(NSMutableDictionary *)userInfo withNodeReset:(BOOL)reset;
+-(void)triggerNodeAtPosition:(CGPoint)position forActionType:(NSString *)actionType withuserInfo:(NSMutableDictionary *)userInfo withNodeReset:(BOOL)reset withActionId:(NSString *)actionId;
 -(void)clearActionPad;
 -(void)startRecordingGrid;
 -(void)stopRecordingGrid;

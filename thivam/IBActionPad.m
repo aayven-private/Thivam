@@ -48,11 +48,9 @@
             IBActionNode *actionNode = [[IBActionNode alloc] init];
             actionNode.nodeObject = node;
             actionNode.position = CGPointMake(j, i);
-            //actionNode.connections = [NSMutableDictionary dictionary];
             actionNode.delegate = self;
             actionNode.isActive = isActivated;
             actionNode.actionHeapSize = _actionHeapSize;
-            //actionNode.cleanupOnManualTrigger = YES;
             [_objectGrid setElement:actionNode atRow:j andColumn:i];
         }
     }
@@ -254,7 +252,7 @@
     return [_unifiedActionDescriptors objectForKey:actionType];
 }
 
--(void)triggerNodeAtPosition:(CGPoint)position forActionType:(NSString *)actionType withuserInfo:(NSMutableDictionary *)userInfo withNodeReset:(BOOL)reset
+-(void)triggerNodeAtPosition:(CGPoint)position forActionType:(NSString *)actionType withuserInfo:(NSMutableDictionary *)userInfo withNodeReset:(BOOL)reset withActionId:(NSString *)actionId
 {
     if (_isRecording) {
         IBActionNode *node = [_objectGrid getElementAtRow:position.y andColumn:position.x];
@@ -273,16 +271,20 @@
             }
         }
         _lastGridPosition = position;
-        [node triggerConnectionsWithSource:position shouldPropagate:NO forActionType:actionType withUserInfo:userInfo withNodeReset:reset withActionId:[[NSUUID UUID] UUIDString]];
+        if (!actionId) {
+            actionId = [[NSUUID UUID] UUIDString];
+        }
+        [node triggerConnectionsWithSource:position shouldPropagate:NO forActionType:actionType withUserInfo:userInfo withNodeReset:reset withActionId:actionId];
     } else {
         if (!_isCoolingDown) {
             IBActionNode *node = [_objectGrid getElementAtRow:position.y andColumn:position.x];
             if (node.isActive) {
-                //if (node.cleanupOnManualTrigger) {
-                    //[node cleanNodeForActionType:actionType];
-                //}
-                
-                [node triggerConnectionsWithSource:position shouldPropagate:YES forActionType:actionType withUserInfo:userInfo withNodeReset:reset withActionId:[[NSUUID UUID] UUIDString]];
+                if (!actionId) {
+                    actionId = [[NSUUID UUID] UUIDString];
+                } else {
+                    NSLog(@"");
+                }
+                [node triggerConnectionsWithSource:position shouldPropagate:YES forActionType:actionType withUserInfo:userInfo withNodeReset:reset withActionId:actionId];
                 if (_coolDownPeriod > 0) {
                     _isCoolingDown = YES;
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
@@ -295,6 +297,11 @@
             }
         }
     }
+}
+
+-(void)triggerNodeAtPosition:(CGPoint)position forActionType:(NSString *)actionType withuserInfo:(NSMutableDictionary *)userInfo withNodeReset:(BOOL)reset
+{
+    [self triggerNodeAtPosition:position forActionType:actionType withuserInfo:userInfo withNodeReset:reset withActionId:nil];
 }
 
 -(void)startRecordingGrid

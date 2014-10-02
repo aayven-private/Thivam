@@ -51,6 +51,8 @@
 
 @property (nonatomic) CGSize gridSize;
 
+@property (nonatomic) NSMutableArray *checkIds;
+
 @end
 
 @implementation GameScene
@@ -64,7 +66,7 @@
     
     self.actionFinishedCount = 0;
     self.nodeCount = 0;
-    
+    self.checkIds = [NSMutableArray array];
     //self.sourceImage = [UIImage imageNamed:@"IMG_0136"];
     //[self.imageHelper loadDataFromImage:self.sourceImage];
     [self startMotionManager];
@@ -98,8 +100,10 @@
     
     //[self createRecordingGrid];
     //[self createGridFromSavedDescription];
-    [self createGrid_2];
+    //[self createGrid_2];
     //[self createActionPad];
+    
+    [self createGameGrid];
 }
 
 -(void)createActionPad
@@ -268,7 +272,7 @@
     bgActionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
         GameObject *targetNode = (GameObject *)target;
 
-        CGPoint blockPosition = CGPointMake((_gridSize.height - 1 - targetNode.columnIndex) * targetNode.size.width - self.size.width / 2.0 + targetNode.size.width / 2.0, (_gridSize.width - 1 - targetNode.rowIndex) * targetNode.size.height - self.size.height / 2.0 + targetNode.size.height / 2.0);
+        CGPoint blockPosition = CGPointMake(targetNode.columnIndex * targetNode.size.width - self.size.width / 2.0 + targetNode.size.width / 2.0, (_gridSize.width - 1 - targetNode.rowIndex) * targetNode.size.height - self.size.height / 2.0 + targetNode.size.height / 2.0);
 
         //NSArray *colorCodes = [NSArray arrayWithObjects:@"F20C23", @"DE091E", @"CC081C", @"B50415", nil];
         
@@ -303,19 +307,24 @@
         
         CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
         
+        CGPoint targetPosition_screen = CGPointMake(targetNode.columnIndex * targetNode.size.width - self.size.width / 2.0 + targetNode.size.width / 2.0, targetNode.rowIndex * targetNode.size.height - self.size.height / 2.0 + targetNode.size.height / 2.0);
+        CGPoint sourcePosition_screen = CGPointMake(sourcePosition.x * targetNode.size.width - self.size.width / 2.0 + targetNode.size.width / 2.0, sourcePosition.y * targetNode.size.height - self.size.height / 2.0 + targetNode.size.height / 2.0);
+        
+        CGPoint direction = rwNormalize(rwSub(sourcePosition_screen, targetPosition_screen));
+        
+        
         double distX = fabs((double)targetNode.columnIndex - (double)sourcePosition.x);
         double distY = fabs((double)targetNode.rowIndex - (double)sourcePosition.y);
         
         double damping = (distX + distY) / ((double)_bgPad.gridSize.height - 1 + (double)_bgPad.gridSize.width - 1);
         
-        [targetNode runAction:[SKAction sequence:@[[SKAction scaleTo:.1 + damping * 0.9 duration:.3], [SKAction scaleTo:1.5 - damping * 0.5 duration:.3], [SKAction scaleTo:1 duration:.3], [SKAction runBlock:^{
-            [targetNode.runningActionForTypes setObject:[NSNumber numberWithBool:NO] forKey:[userInfo objectForKey:@"actiontype"]];
-            _actionFinishedCount++;
-            if (_actionFinishedCount == _nodeCount) {
-                _actionFinishedCount = 0;
-                [_bgPad setEnabled:YES forAction:[userInfo objectForKey:@"actiontype"]];
-            }
-        }]]]];
+        CGPoint length = CGPointMake((1.0 - damping) * 10 * direction.x, (1-damping) * 10 * direction.y);
+        CGPoint destination = rwAdd(targetPosition_screen, length);
+        
+        SKAction *scaleSequence = [SKAction sequence:@[[SKAction scaleTo:.1 + damping * 0.9 duration:.3], [SKAction scaleTo:1.5 - damping * 0.5 duration:.3], [SKAction scaleTo:1 duration:.3]]];
+        SKAction *moveSequence = [SKAction sequence:@[[SKAction moveTo:destination duration:.3], [SKAction moveTo:targetPosition_screen duration:.3]]];
+        
+        [targetNode runAction:[SKAction group:@[scaleSequence]]];
     };
     
     /*IBActionDescriptor *bgActionDesc = [[IBActionDescriptor alloc] init];
@@ -339,7 +348,7 @@
     IBConnectionDescriptor *bgConn = [[IBConnectionDescriptor alloc] init];
     bgConn.connectionType = kConnectionTypeNeighbours_close;
     bgConn.isAutoFired = YES;
-    bgConn.userInfo = [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithInt:1], [NSNumber numberWithInt:2]] forKeys:@[kConnectionParameter_counter, kConnectionParameter_dispersion]];
+    bgConn.userInfo = [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithInt:50], [NSNumber numberWithInt:10]] forKeys:@[kConnectionParameter_counter, kConnectionParameter_dispersion]];
 
     bgConn.autoFireDelay = 0.05;
     
@@ -447,6 +456,147 @@
     //[_bgPad triggerRandomNode];    
 }
 
+-(void)createGameGrid
+{
+    _bgTriggerInterval = [CommonTools getRandomFloatFromFloat:2 toFloat:3];
+    _currentBgTriggerInterval = 0;
+    
+    self.userInteractionEnabled = NO;
+    
+    
+    IBActionDescriptor *boomActionDesc = [[IBActionDescriptor alloc] init];
+    boomActionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
+        GameObject *targetNode = (GameObject *)target;
+        CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
+        double distX = fabs((double)targetNode.columnIndex - (double)sourcePosition.x);
+        double distY = fabs((double)targetNode.rowIndex - (double)sourcePosition.y);
+        double damping = (distX + distY) / ((double)_bgPad.gridSize.height - 1 + (double)_bgPad.gridSize.width - 1);
+        SKAction *scaleSequence = [SKAction sequence:@[[SKAction scaleTo:.1 + damping * 0.9 duration:.3], [SKAction scaleTo:1.5 - damping * 0.5 duration:.3], [SKAction scaleTo:1 duration:.3]]];
+        [targetNode runAction:[SKAction group:@[scaleSequence]]];
+    };
+    
+    IBConnectionDescriptor *boomConn = [[IBConnectionDescriptor alloc] init];
+    boomConn.connectionType = kConnectionTypeNeighbours_close;
+    boomConn.isAutoFired = YES;
+    boomConn.autoFireDelay = 0.05;
+    
+    IBActionDescriptor *swipeActionDesc = [[IBActionDescriptor alloc] init];
+    swipeActionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
+        GameObject *targetNode = (GameObject *)target;
+        
+        UIColor *targetColor = [userInfo objectForKey:@"targetColor"];
+        
+        CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
+        
+        double distX = fabs((double)targetNode.columnIndex - (double)sourcePosition.x);
+        double distY = fabs((double)targetNode.rowIndex - (double)sourcePosition.y);
+        double damping = (distX + distY) / ((double)_bgPad.gridSize.height - 1 + (double)_bgPad.gridSize.width - 1);
+        
+        SKAction *scaleSequence = [SKAction sequence:@[[SKAction scaleTo:.1 + damping * 0.9 duration:.3], [SKAction scaleTo:1.5 - damping * 0.5 duration:.3], [SKAction scaleTo:1 duration:.3]]];
+        //SKAction *colorSequence = [SKAction sequence:@[[SKAction colorizeWithColor:targetColor colorBlendFactor:.3 duration:.3], [SKAction colorizeWithColor:targetNode.baseColor colorBlendFactor:1.0 duration:.3]]];
+        [targetNode runAction:[SKAction group:@[scaleSequence]]];
+    };
+    
+    IBConnectionDescriptor *swipeConn = [[IBConnectionDescriptor alloc] init];
+    swipeConn.connectionType = kConnectionTypeNeighbours_close;
+    swipeConn.isAutoFired = NO;
+    swipeConn.autoFireDelay = 0.05;
+    
+    IBActionDescriptor *brickActionDesc = [[IBActionDescriptor alloc] init];
+    brickActionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
+        GameObject *targetNode = (GameObject *)target;
+        
+        UIColor *blockColor = [userInfo objectForKey:@"targetColor"];
+        targetNode.color1 = blockColor;
+        [targetNode runAction:[SKAction sequence:@[[SKAction colorizeWithColor:blockColor colorBlendFactor:1.0 duration:.5], [SKAction colorizeWithColor:targetNode.baseColor colorBlendFactor:1.0 duration:2.5]]] completion:^{
+            targetNode.color1 = nil;
+        }];
+    };
+    
+    IBConnectionDescriptor *brickConn = [[IBConnectionDescriptor alloc] init];
+    brickConn.connectionType = kConnectionTypeNeighbours_square;
+    brickConn.isAutoFired = NO;
+    brickConn.userInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:1] forKey:kConnectionParameter_counter];
+    brickConn.autoFireDelay = 0;
+    
+    IBActionDescriptor *checkActionDesc = [[IBActionDescriptor alloc] init];
+    checkActionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
+        GameObject *targetNode = (GameObject *)target;
+        UIColor *checkColor = [userInfo objectForKey:@"checkColor"];
+        NSString *checkId = [userInfo objectForKey:@"checkId"];
+        if (targetNode.color1 && [targetNode.color1 isEqual:checkColor] && ![_checkIds containsObject:checkId]) {
+            [_checkIds addObject:checkId];
+            [_bgPad triggerNodeAtPosition:CGPointMake(targetNode.columnIndex, targetNode.rowIndex) forActionType:@"boom" withUserInfo:nil forceDisable:NO withNodeReset:NO];
+        }
+        if (_checkIds.count > 50) {
+            [_checkIds removeObjectAtIndex:0];
+        }
+    };
+    
+    IBConnectionDescriptor *checkActionConn = [[IBConnectionDescriptor alloc] init];
+    checkActionConn.connectionType = kConnectionTypeNeighbours_close;
+    checkActionConn.isAutoFired = NO;
+    checkActionConn.userInfo = [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithInt:2], [NSNumber numberWithInt:10]] forKeys:@[kConnectionParameter_counter, kConnectionParameter_dispersion]];
+    checkActionConn.autoFireDelay = 0;
+    
+    _gridSize = CGSizeMake(30, 20);
+    
+    NSArray *bgColorCodes = [NSArray arrayWithObjects:@"F20C23", @"DE091E", @"CC081C", @"B50415", nil];
+    _nodeCount = _gridSize.width * _gridSize.height;
+    _bgPad = [[PadNode alloc] initWithColor:[UIColor redColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:_gridSize withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_swipe forActionType:@"swipe"];
+    _bgPad.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
+    [_bgPad loadActionDescriptor:boomActionDesc andConnectionDescriptor:boomConn forActionType:@"boom"];
+    [_bgPad loadActionDescriptor:swipeActionDesc andConnectionDescriptor:swipeConn forActionType:@"swipe"];
+    [_bgPad loadActionDescriptor:brickActionDesc andConnectionDescriptor:brickConn forActionType:@"brick"];
+    [_bgPad loadActionDescriptor:checkActionDesc andConnectionDescriptor:checkActionConn forActionType:@"check"];
+    [self addChild:_bgPad];
+    _bgPad.disableOnFirstTrigger = NO;
+    
+    for (int i=0; i<3; i++) {
+        for (int j=0; j<3; j++) {
+            GameObject *actionSourceObject = [_bgPad getNodeAtPosition:CGPointMake(j, i)];
+            if (actionSourceObject) {
+                actionSourceObject.isActionSource = YES;
+                actionSourceObject.color = [UIColor blueColor];
+                actionSourceObject.baseColor = [UIColor blueColor];
+            }
+        }
+    }
+    
+    for (int i=0; i<3; i++) {
+        for (int j=0; j<3; j++) {
+            GameObject *actionSourceObject = [_bgPad getNodeAtPosition:CGPointMake(_bgPad.gridSize.height - 1 - j, i)];
+            if (actionSourceObject) {
+                actionSourceObject.isActionSource = YES;
+                actionSourceObject.color = [UIColor yellowColor];
+                actionSourceObject.baseColor = [UIColor yellowColor];
+            }
+        }
+    }
+    
+    for (int i=0; i<3; i++) {
+        for (int j=0; j<3; j++) {
+            GameObject *actionSourceObject = [_bgPad getNodeAtPosition:CGPointMake(j, _bgPad.gridSize.width - 1 - i)];
+            if (actionSourceObject) {
+                actionSourceObject.isActionSource = YES;
+                actionSourceObject.color = [UIColor cyanColor];
+                actionSourceObject.baseColor = [UIColor cyanColor];
+            }
+        }
+    }
+    
+    for (int i=0; i<3; i++) {
+        for (int j=0; j<3; j++) {
+            GameObject *actionSourceObject = [_bgPad getNodeAtPosition:CGPointMake(_bgPad.gridSize.height - 1 - j, _bgPad.gridSize.width - 1 - i)];
+            if (actionSourceObject) {
+                actionSourceObject.isActionSource = YES;
+                actionSourceObject.color = [UIColor greenColor];
+                actionSourceObject.baseColor = [UIColor greenColor];
+            }
+        }
+    }
+}
+
 -(void)revertGrid_2
 {
     IBActionDescriptor *revertAction = [[IBActionDescriptor alloc] init];
@@ -454,7 +604,7 @@
         GameObject *targetNode = (GameObject *)target;
         
         
-        CGPoint blockPosition = CGPointMake(targetNode.columnIndex * targetNode.size.width - self.size.width / 2.0 + targetNode.size.width / 2.0, (_gridSize.width - 1 - targetNode.rowIndex) * targetNode.size.height - self.size.height / 2.0 + targetNode.size.height / 2.0);
+        CGPoint blockPosition = CGPointMake(targetNode.columnIndex * targetNode.size.width - self.size.width / 2.0 + targetNode.size.width / 2.0, targetNode.rowIndex * targetNode.size.height - self.size.height / 2.0 + targetNode.size.height / 2.0);
         
         NSArray *colorCodes = [NSArray arrayWithObjects:@"F20C23", @"DE091E", @"CC081C", @"B50415", nil];
         
@@ -499,7 +649,7 @@
         GameObject *targetNode = (GameObject *)target;
         
         
-        CGPoint blockPosition = CGPointMake((_gridSize.height - 1 - targetNode.columnIndex) * targetNode.size.width - self.size.width / 2.0 + targetNode.size.width / 2.0,targetNode.rowIndex * targetNode.size.height - self.size.height / 2.0 + targetNode.size.height / 2.0);
+        CGPoint blockPosition = CGPointMake(/*(_gridSize.height - 1 - targetNode.columnIndex)*/targetNode.columnIndex * targetNode.size.width - self.size.width / 2.0 + targetNode.size.width / 2.0, (_gridSize.width - 1 - targetNode.rowIndex) * targetNode.size.height - self.size.height / 2.0 + targetNode.size.height / 2.0);
         
         NSArray *colorCodes = [NSArray arrayWithObjects:@"1017E8", @"060DD4", @"040AB8", @"02079C", nil];
         
@@ -531,10 +681,10 @@
 }
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    UITouch *touch = [touches anyObject];
+    /*UITouch *touch = [touches anyObject];
     CGPoint positionInScene = [touch locationInNode:self];
     
-    [_bgPad triggerRandomNodeForActionType:@"action" withUserInfo:[NSMutableDictionary dictionaryWithObject:[NSValue valueWithCGPoint:positionInScene] forKey:@"targetPosition"]];
+    [_bgPad triggerRandomNodeForActionType:@"action" withUserInfo:[NSMutableDictionary dictionaryWithObject:[NSValue valueWithCGPoint:positionInScene] forKey:@"targetPosition"]];*/
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -563,13 +713,13 @@
 
 -(void)updateWithTimeSinceLastUpdate:(CFTimeInterval)timeSinceLast
 {
-    _padNode.position = CGPointMake(_padNode.position.x + _xAccel * 15, _padNode.position.y + _yAccel * 15);
+    //_padNode.position = CGPointMake(_padNode.position.x + _xAccel * 15, _padNode.position.y + _yAccel * 15);
     
     _currentBgTriggerInterval += timeSinceLast;
     if (_currentBgTriggerInterval > _bgTriggerInterval) {
         _currentBgTriggerInterval = 0;
         //_bgTriggerInterval = [CommonTools getRandomFloatFromFloat:2 toFloat:3];
-        _bgTriggerInterval = .5;
+        _bgTriggerInterval = 4;
         
         /*UIColor *blockColor_up;
         int colorIndex_up = [CommonTools getRandomNumberFromInt:0 toInt:2];
@@ -599,12 +749,12 @@
             } break;
         }*/
         
-        UIColor *blockColor_down = [UIColor blueColor];
+        /*UIColor *blockColor_down = [UIColor blueColor];
         
         [_bgPad triggerNodeAtPosition:CGPointMake(_bgPad.gridSize.height / 2, _bgPad.gridSize.width / 2) forActionType:@"fire_up" withUserInfo:[NSMutableDictionary dictionaryWithObject:blockColor_down forKey:@"targetcolor"] forceDisable:NO withNodeReset:NO];
         [_bgPad triggerNodeAtPosition:CGPointMake(_bgPad.gridSize.height / 2, _bgPad.gridSize.width / 2) forActionType:@"fire_left" withUserInfo:[NSMutableDictionary dictionaryWithObject:blockColor_down forKey:@"targetcolor"] forceDisable:NO withNodeReset:NO];
         [_bgPad triggerNodeAtPosition:CGPointMake(_bgPad.gridSize.height / 2, _bgPad.gridSize.width / 2) forActionType:@"fire_down" withUserInfo:[NSMutableDictionary dictionaryWithObject:blockColor_down forKey:@"targetcolor"] forceDisable:NO withNodeReset:NO];
-        [_bgPad triggerNodeAtPosition:CGPointMake(_bgPad.gridSize.height / 2, _bgPad.gridSize.width / 2) forActionType:@"fire_right" withUserInfo:[NSMutableDictionary dictionaryWithObject:blockColor_down forKey:@"targetcolor"] forceDisable:NO withNodeReset:NO];
+        [_bgPad triggerNodeAtPosition:CGPointMake(_bgPad.gridSize.height / 2, _bgPad.gridSize.width / 2) forActionType:@"fire_right" withUserInfo:[NSMutableDictionary dictionaryWithObject:blockColor_down forKey:@"targetcolor"] forceDisable:NO withNodeReset:NO];*/
 
         
         /*
@@ -645,6 +795,30 @@
         //[_bgPad triggerRandomNodeForActionType:@"action"];
         //_bgPad.isDisabled = YES;
         //[_actionPad triggerNodeAtPosition:CGPointMake([CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.height - 1], [CommonTools getRandomNumberFromInt:0 toInt: _actionPad.gridSize.width - 1])];
+        
+        int columnIndex = [CommonTools getRandomNumberFromInt:5 toInt:_bgPad.gridSize.height - 6];
+        int rowIndex = [CommonTools getRandomNumberFromInt:5 toInt:_bgPad.gridSize.width - 6];
+        
+        UIColor *blockColor;
+        int colorIndex = [CommonTools getRandomNumberFromInt:0 toInt:3];
+        switch (colorIndex) {
+            case 0: {
+                blockColor = [UIColor blueColor];
+            } break;
+            case 1: {
+                blockColor = [UIColor yellowColor];
+            } break;
+            case 2: {
+                blockColor = [UIColor cyanColor];
+            } break;
+            case 3: {
+                blockColor = [UIColor greenColor];
+            } break;
+            default:
+                break;
+        }
+        //blockColor = [UIColor greenColor];
+        [_bgPad triggerNodeAtPosition:CGPointMake(columnIndex, rowIndex) forActionType:@"brick" withUserInfo:[NSMutableDictionary dictionaryWithObject:blockColor forKey:@"targetColor"] forceDisable:NO withNodeReset:NO];
     }
 }
 
