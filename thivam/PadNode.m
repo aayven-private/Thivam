@@ -198,7 +198,7 @@
 {
     if ([action isEqualToString:@"match"]) {
         NSValue *posVal = [userInfo objectForKey:@"position"];
-        [self triggerNodeAtPosition:posVal.CGPointValue forActionType:@"action" withUserInfo:[userInfo mutableCopy] forceDisable:YES withNodeReset:NO];
+        [self triggerNodeAtPosition:posVal.CGPointValue forActionType:@"action" withUserInfo:[userInfo mutableCopy] forceDisable:NO withNodeReset:NO];
     }
 }
 

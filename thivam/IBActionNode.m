@@ -24,6 +24,8 @@
         self.isActive = YES;
         self.connectionDescriptors = [NSMutableDictionary dictionary];
         self.actionSources = [NSMutableDictionary dictionary];
+        
+        self.actionIds = [NSMutableArray array];
     }
     return self;
 }
@@ -51,7 +53,7 @@
 
 -(void)cleanNodeForActionType:(NSString *)actionType
 {
-    if (actionType) {
+    /*if (actionType) {
         IBConnectionDescriptor *desc = [_connectionDescriptors objectForKey:actionType];
         if (desc.manualCleanup) {
             NSValue *actionSource_val = [_actionSources objectForKey:actionType];
@@ -65,12 +67,13 @@
                 }
             }
         }
-    }
+    }*/
 }
 
--(void)triggerConnectionsWithSource:(CGPoint)source shouldPropagate:(BOOL)shouldPropagate forActionType:(NSString *)actionType withUserInfo:(NSMutableDictionary *)userInfo withNodeReset:(BOOL)reset
+-(void)triggerConnectionsWithSource:(CGPoint)source shouldPropagate:(BOOL)shouldPropagate forActionType:(NSString *)actionType withUserInfo:(NSMutableDictionary *)userInfo withNodeReset:(BOOL)reset withActionId:(NSString *)actionId
 {
     IBConnectionDescriptor *desc = [_connectionDescriptors objectForKey:actionType];
+    
     if (desc.isAutoFired) {
         CGPoint actionSource;
         NSValue *actionSource_val = [_actionSources objectForKey:actionType];
@@ -79,7 +82,14 @@
         } else {
             actionSource = CGPointMake(-1, -1);
         }
-        if (!CGPointEqualToPoint(source, actionSource) || desc.ignoreSource) {
+        if (/*(!CGPointEqualToPoint(source, actionSource) || desc.ignoreSource) && */![_actionIds containsObject:actionId]) {
+            
+            if (_actionIds.count > 20) {
+                [_actionIds removeObjectAtIndex:0];
+            }
+            
+            [_actionIds addObject:actionId];
+            
             [_actionSources setObject:[NSValue valueWithCGPoint:source] forKey:actionType];;
             [self fireOwnActionsForActionType:actionType witUserInfo:userInfo withNodeReset:reset];
             if (shouldPropagate) {
@@ -87,14 +97,9 @@
                 dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
                     for (IBActionNode *connectedNode in [_connections objectForKey:actionType]) {
                         connectedNode.isActive = YES;
-                        [connectedNode triggerConnectionsWithSource:source shouldPropagate:desc.isAutoFired forActionType:actionType withUserInfo:userInfo withNodeReset:reset];
+                        [connectedNode triggerConnectionsWithSource:source shouldPropagate:desc.isAutoFired forActionType:actionType withUserInfo:userInfo withNodeReset:reset withActionId:actionId];
                     }
                 });
-            }
-        }
-        if (desc.manualCleanup) {
-            if (_connections.count == 0) {
-                [self cleanNodeForActionType:actionType];
             }
         }
     } else {
@@ -103,9 +108,9 @@
         if (shouldPropagate) {
             dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, desc.autoFireDelay * NSEC_PER_SEC);
             dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-                for (IBActionNode *connectedNode in _connections) {
+                for (IBActionNode *connectedNode in [_connections objectForKey:actionType]) {
                     connectedNode.isActive = YES;
-                    [connectedNode triggerConnectionsWithSource:source shouldPropagate:desc.isAutoFired forActionType:actionType withUserInfo:userInfo withNodeReset:reset];
+                    [connectedNode triggerConnectionsWithSource:source shouldPropagate:desc.isAutoFired forActionType:actionType withUserInfo:userInfo withNodeReset:reset withActionId:actionId];
                 }
             });
         }

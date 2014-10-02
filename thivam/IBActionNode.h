@@ -25,6 +25,8 @@
 //@property (nonatomic) CGFloat triggerDelay;
 //@property (nonatomic) CGPoint actionSource;
 
+@property (nonatomic) NSMutableArray *actionIds;
+
 @property (nonatomic) NSMutableDictionary *actionSources;
 
 //@property (nonatomic) BOOL cleanupOnManualTrigger;
@@ -35,7 +37,7 @@
 //-(void)triggerConnections;
 //-(void)fireActions;
 
--(void)triggerConnectionsWithSource:(CGPoint)source shouldPropagate:(BOOL)shouldPropagate forActionType:(NSString *)actionType withUserInfo:(NSMutableDictionary *)userInfo withNodeReset:(BOOL)reset;
+-(void)triggerConnectionsWithSource:(CGPoint)source shouldPropagate:(BOOL)shouldPropagate forActionType:(NSString *)actionType withUserInfo:(NSMutableDictionary *)userInfo withNodeReset:(BOOL)reset withActionId:(NSString *)actionId;
 -(void)cleanNodeForActionType:(NSString *)actionType;
 
 @end

@@ -34,10 +34,10 @@
         isRunningAction = NO;
     }
     
-    if (!isRunningAction) {
+    //if (!isRunningAction) {
         [_runningActionForTypes setObject:[NSNumber numberWithBool:YES] forKey:actionType];
         actionDescriptor.action(self, userInfo);
-    }
+    //}
 }
 
 -(void)resetNode

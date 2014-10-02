@@ -271,15 +271,16 @@
             }
         }
         _lastGridPosition = position;
-        [node triggerConnectionsWithSource:position shouldPropagate:NO forActionType:actionType withUserInfo:userInfo withNodeReset:reset];
+        [node triggerConnectionsWithSource:position shouldPropagate:NO forActionType:actionType withUserInfo:userInfo withNodeReset:reset withActionId:[[NSUUID UUID] UUIDString]];
     } else {
         if (!_isCoolingDown) {
             IBActionNode *node = [_objectGrid getElementAtRow:position.y andColumn:position.x];
             if (node.isActive) {
                 //if (node.cleanupOnManualTrigger) {
-                    [node cleanNodeForActionType:actionType];
+                    //[node cleanNodeForActionType:actionType];
                 //}
-                [node triggerConnectionsWithSource:position shouldPropagate:YES forActionType:actionType withUserInfo:userInfo withNodeReset:reset];
+                
+                [node triggerConnectionsWithSource:position shouldPropagate:YES forActionType:actionType withUserInfo:userInfo withNodeReset:reset withActionId:[[NSUUID UUID] UUIDString]];
                 if (_coolDownPeriod > 0) {
                     _isCoolingDown = YES;
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
@@ -371,17 +372,16 @@
                 IBActionNode *node = [_objectGrid getElementAtRow:j andColumn:i];
                 
                 IBConnectionDescriptor *desc = [[IBConnectionDescriptor alloc] init];
-                
-                desc.ignoreSource = ignoreSource;
+
                 NSMutableArray *connectionsForType= [NSMutableArray array];
                 
                 [node.connections removeObjectForKey:actionType];
                 [node.actionSources removeObjectForKey:actionType];
-                desc.manualCleanup = cleanup;
+
                 desc.isAutoFired = isautoFired;
                 [node.connectionDescriptors setObject:desc forKey:actionType];
                 if (!connectionsForElement || connectionsForElement.count == 0) {
-                    //node.isActive = NO;
+                    node.isActive = NO;
                 } else {
                     node.isActive = YES;
                     for (NSString *conn in connectionsForElement) {
