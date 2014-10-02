@@ -66,7 +66,7 @@
             node.userActionType = actionType;
             node.baseColor = blockColor;
             return node;
-        }];
+        } andActionHeapSize:10];
         
         //self.actionPad = [[IBActionPad alloc] initGridWithSize:gridSize andNodeInitBlock:initBlock];
         
@@ -184,9 +184,9 @@
     [_actionPad.unifiedActionDescriptors setObject:@[actionDescriptor] forKey:actionType];
 }
 
--(void)loadConnectionsFromDescription:(NSDictionary *)description forActionType:(NSString *)actionType andIgnoreSource:(BOOL)ignoreSource
+-(void)loadConnectionsFromDescription:(NSDictionary *)description forActionType:(NSString *)actionType
 {
-    [_actionPad loadConnectionsFromDescription:description withAutoFire:YES andManualCleanup:YES forActionType:actionType andIgnoreSource:ignoreSource];
+    [_actionPad loadConnectionsFromDescription:description withAutoFire:YES andManualCleanup:YES forActionType:actionType];
 }
 
 /*-(void)fireAction:(IBActionDescriptor *)actionDescriptor userInfo:(NSDictionary *)userInfo

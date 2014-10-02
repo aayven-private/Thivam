@@ -22,7 +22,7 @@
 
 
 
--(id)initGridWithSize:(CGSize)size andNodeInitBlock:(nodeInit)initBlock
+-(id)initGridWithSize:(CGSize)size andNodeInitBlock:(nodeInit)initBlock andActionHeapSize:(int)actionHeapSize
 {
     if (self = [super init]) {
         self.initRule = initBlock;
@@ -34,6 +34,7 @@
         self.isRecording = NO;
         self.lastGridPosition = CGPointMake(-1, -1);
         self.unifiedActionDescriptors = [NSMutableDictionary dictionary];
+        self.actionHeapSize = actionHeapSize;
     }
     return self;
 }
@@ -50,6 +51,7 @@
             //actionNode.connections = [NSMutableDictionary dictionary];
             actionNode.delegate = self;
             actionNode.isActive = isActivated;
+            actionNode.actionHeapSize = _actionHeapSize;
             //actionNode.cleanupOnManualTrigger = YES;
             [_objectGrid setElement:actionNode atRow:j andColumn:i];
         }
@@ -358,7 +360,7 @@
     }
 }*/
 
--(void)loadConnectionsFromDescription:(NSDictionary *)description withAutoFire:(BOOL)isautoFired andManualCleanup:(BOOL)cleanup forActionType:(NSString *)actionType andIgnoreSource:(BOOL)ignoreSource
+-(void)loadConnectionsFromDescription:(NSDictionary *)description withAutoFire:(BOOL)isautoFired andManualCleanup:(BOOL)cleanup forActionType:(NSString *)actionType
 {
     NSNumber *rows = [description objectForKey:@"rows"];
     NSNumber *columns = [description objectForKey:@"columns"];

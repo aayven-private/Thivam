@@ -19,6 +19,7 @@
 @property (nonatomic) id<IBActionNodeActor> nodeObject;
 @property (nonatomic) NSMutableDictionary *connections;
 @property (nonatomic) NSMutableDictionary *actions;
+@property (nonatomic) int actionHeapSize;
 //@property (nonatomic) BOOL autoFire;
 //@property (nonatomic) int maxRepeatNum;
 //@property (nonatomic) int repeatCount;

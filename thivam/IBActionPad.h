@@ -40,8 +40,9 @@ static NSString *kConnectionTypeLinear_rightLeft = @"grid_connection_linear_righ
 @property (nonatomic) CGFloat coolDownPeriod;
 @property (nonatomic) CGSize gridSize;
 @property (nonatomic) BOOL isRecording;
+@property (nonatomic) int actionHeapSize;
 
--(id)initGridWithSize:(CGSize)size andNodeInitBlock:(nodeInit)initBlock;
+-(id)initGridWithSize:(CGSize)size andNodeInitBlock:(nodeInit)initBlock andActionHeapSize:(int)actionHeapSize;
 -(void)createGridWithNodesActivated:(BOOL)isActivated;
 -(void)createRecordGrid;
 -(void)loadConnectionMapWithDescriptor:(IBConnectionDescriptor *)connectionDescriptor forActionType:(NSString *)actionType;
@@ -49,7 +50,7 @@ static NSString *kConnectionTypeLinear_rightLeft = @"grid_connection_linear_righ
 -(void)clearActionPad;
 -(void)startRecordingGrid;
 -(void)stopRecordingGrid;
--(void)loadConnectionsFromDescription:(NSDictionary *)description withAutoFire:(BOOL)isautoFired andManualCleanup:(BOOL)cleanup forActionType:(NSString *)actionType andIgnoreSource:(BOOL)ignoreSource;
+-(void)loadConnectionsFromDescription:(NSDictionary *)description withAutoFire:(BOOL)isautoFired andManualCleanup:(BOOL)cleanup forActionType:(NSString *)actionType;
 -(void)setActions:(NSArray *)actions forNodeAtPosition:(CGPoint)position forActionType:(NSString *)actionType;
 -(void)setnodeActivated:(BOOL)isActive atPosition:(CGPoint)position;
 -(NSArray *)getUnifiedActionDescriptorsForActionType:(NSString *)actionType;

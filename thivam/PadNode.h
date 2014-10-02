@@ -33,7 +33,7 @@ static NSString *kInteractionMode_none = @"interaction_mode_none";
 
 -(void)setActionDescriptor:(IBActionDescriptor *)actionDescriptor forActionType:(NSString *)actionType;
 
--(void)loadConnectionsFromDescription:(NSDictionary *)description forActionType:(NSString *)actionType andIgnoreSource:(BOOL)ignoreSource;
+-(void)loadConnectionsFromDescription:(NSDictionary *)description forActionType:(NSString *)actionType;
 -(void)setEnabled:(BOOL)isEnabled forAction:(NSString *)actionType;
 
 //-(void)nodeTriggeredAtRow:(int)row andColumn:(int)column forActionType:(NSString *)actionType withUserInfo:(NSMutableDictionary *)userInfo

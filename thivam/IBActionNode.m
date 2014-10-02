@@ -82,9 +82,9 @@
         } else {
             actionSource = CGPointMake(-1, -1);
         }
-        if (/*(!CGPointEqualToPoint(source, actionSource) || desc.ignoreSource) && */![_actionIds containsObject:actionId]) {
+        if (![_actionIds containsObject:actionId]) {
             
-            if (_actionIds.count > 20) {
+            if (_actionIds.count > _actionHeapSize) {
                 [_actionIds removeObjectAtIndex:0];
             }
             
