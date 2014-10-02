@@ -568,8 +568,8 @@
             GameObject *actionSourceObject = [_bgPad getNodeAtPosition:CGPointMake(_bgPad.gridSize.height - 1 - j, i)];
             if (actionSourceObject) {
                 actionSourceObject.isActionSource = YES;
-                actionSourceObject.color = [UIColor yellowColor];
-                actionSourceObject.baseColor = [UIColor yellowColor];
+                actionSourceObject.color = [UIColor orangeColor];
+                actionSourceObject.baseColor = [UIColor orangeColor];
             }
         }
     }
@@ -806,7 +806,7 @@
                 blockColor = [UIColor blueColor];
             } break;
             case 1: {
-                blockColor = [UIColor yellowColor];
+                blockColor = [UIColor orangeColor];
             } break;
             case 2: {
                 blockColor = [UIColor cyanColor];
