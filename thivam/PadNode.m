@@ -171,6 +171,7 @@
     CGPoint positionInScene = [touch locationInNode:self];
     
     NSArray *objects = [self nodesAtPoint:positionInScene];
+    //NSLog(@"Objects: %d", objects.count);
     for (SKNode *touchedNode in objects) {
         if ([touchedNode isKindOfClass:[InteractionNode class]]) {
             if (((InteractionNode *)touchedNode).isActionSource) {
@@ -191,13 +192,22 @@
     //[self runAction:[SKAction colorizeWithColor:self.baseColor colorBlendFactor:1.0 duration:.2]];
     //self.color = self.baseColor;
     
+    
+    
     if (_isSwiping) {
         _isSwiping = NO;
         
         UITouch *touch = [touches anyObject];
+        
         CGPoint positionInScene = [touch locationInNode:self];
+        
         NSString *actionId = [[NSUUID UUID] UUIDString];
-        NSArray *objects = [self nodesAtPoint:positionInScene];
+        
+        [_actionPad triggerNodeAtPosition:[self gridPositionForScreenPosition:positionInScene] forActionType:@"check" withuserInfo:[NSMutableDictionary dictionaryWithObjects:@[_swipeColor, actionId] forKeys:@[@"checkColor", @"checkId"]] withNodeReset:NO withActionId:nil];
+        
+        /*NSArray *objects = [self nodesAtPoint:positionInScene];
+        //NSLog(@"Objects: %d", objects.count);
+        //NSLog(@"Position: %@", NSStringFromCGPoint(positionInScene));
         for (SKNode *touchedNode in objects) {
         //id touchedNode = [objects objectAtIndex:0];
             if ([touchedNode isKindOfClass:[InteractionNode class]]) {
@@ -208,8 +218,10 @@
                 [_actionPad triggerNodeAtPosition:CGPointMake(gameNode.columnIndex, gameNode.rowIndex) forActionType:@"check" withuserInfo:[NSMutableDictionary dictionaryWithObjects:@[_swipeColor, actionId] forKeys:@[@"checkColor", @"checkId"]] withNodeReset:NO withActionId:nil];
 
                 //}
+            } else {
+                NSLog(@"%@", [touchedNode class]);
             }
-        }
+        }*/
         
         _swipeColor = nil;
     }
@@ -249,6 +261,26 @@
         NSValue *posVal = [userInfo objectForKey:@"position"];
         [self triggerNodeAtPosition:posVal.CGPointValue forActionType:@"action" withUserInfo:[userInfo mutableCopy] forceDisable:NO withNodeReset:NO];
     }
+}
+
+-(CGPoint)gridPositionForScreenPosition:(CGPoint) position
+{
+    CGPoint location = CGPointMake(position.x + self.size.width / 2, position.y + self.size.height / 2);
+    
+    int row = (location.y / _blockSize.height);
+    int column = (location.x / _blockSize.width);
+    
+    if (row > _gridSize.width - 1) {
+        row = _gridSize.width - 1;
+    }
+    
+    if (column > _gridSize.height - 1) {
+        column = _gridSize.height - 1;
+    }
+    
+    //NSLog(@"%d, %d", row, column);
+    
+    return CGPointMake(column, row);
 }
 
 -(void)setEnabled:(BOOL)isEnabled forAction:(NSString *)actionType

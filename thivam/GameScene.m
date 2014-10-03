@@ -719,7 +719,7 @@
     if (_currentBgTriggerInterval > _bgTriggerInterval) {
         _currentBgTriggerInterval = 0;
         //_bgTriggerInterval = [CommonTools getRandomFloatFromFloat:2 toFloat:3];
-        _bgTriggerInterval = 4;
+        _bgTriggerInterval = 3.5;
         
         /*UIColor *blockColor_up;
         int colorIndex_up = [CommonTools getRandomNumberFromInt:0 toInt:2];
