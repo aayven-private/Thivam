@@ -103,7 +103,7 @@
             }
         }
     } else {
-        [_actionSources setObject:[NSValue valueWithCGPoint:source] forKey:actionType];;
+        [_actionSources setObject:[NSValue valueWithCGPoint:source] forKey:actionType];
         [self fireOwnActionsForActionType:actionType witUserInfo:userInfo withNodeReset:reset];
         if (shouldPropagate) {
             dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, desc.autoFireDelay * NSEC_PER_SEC);

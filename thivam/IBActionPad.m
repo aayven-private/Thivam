@@ -27,7 +27,7 @@
     if (self = [super init]) {
         self.initRule = initBlock;
         self.objectGrid = [[IBMatrix alloc] initWithRows:size.width andColumns:size.height];
-        self.recordMatrix = [[IBMatrix alloc] initWithRows:size.width andColumns:size.height];
+        //self.recordMatrix = [[IBMatrix alloc] initWithRows:size.width andColumns:size.height];
         self.isCoolingDown = NO;
         self.coolDownPeriod = 0;
         self.gridSize = size;

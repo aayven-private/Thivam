@@ -30,6 +30,7 @@
 @property (nonatomic) UIColor *color2;
 
 @property (nonatomic) BOOL isActionSource;
+@property (nonatomic) BOOL isBlocker;
 
 //@property (nonatomic) SKLabelNode *infoLabel;
 

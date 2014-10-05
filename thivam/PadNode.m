@@ -148,9 +148,15 @@
         //CGPoint previousPosition = [touch previousLocationInNode:self];
         
         SKNode *touchedObject = [self nodeAtPoint:positionInScene];
+        
         //for (SKNode *node in touchedObjects) {
         if ([touchedObject isKindOfClass:[GameObject class]]) {
             if ([touchedObject isKindOfClass:[PadNode class]]) {
+                return;
+            }
+            if (((GameObject *)touchedObject).isBlocker) {
+                _isSwiping = NO;
+                _swipeColor = nil;
                 return;
             }
             [self.actionPad triggerNodeAtPosition:CGPointMake(((GameObject *)touchedObject).columnIndex, ((GameObject *)touchedObject).rowIndex) forActionType:self.userActionType withuserInfo:[NSMutableDictionary dictionaryWithObject:_swipeColor forKey:@"targetColor"] withNodeReset:NO];

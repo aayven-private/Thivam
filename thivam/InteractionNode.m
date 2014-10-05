@@ -22,6 +22,7 @@
 @synthesize color1 = _color1;
 @synthesize color2 = _color2;
 @synthesize isActionSource = _isActionSource;
+@synthesize isBlocker = _isBlocker;
 
 -(id)initWithColor:(UIColor *)color size:(CGSize)size
 {
@@ -29,6 +30,7 @@
         //self.objectType = kObjectTypeInteractionNode;
         self.userInteractionEnabled = NO;
         self.isActionSource = NO;
+        self.isBlocker = NO;
         /*self.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:size];
         self.physicsBody.dynamic = NO;
         self.physicsBody.affectedByGravity = NO;
