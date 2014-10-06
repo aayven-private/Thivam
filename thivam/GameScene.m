@@ -477,7 +477,7 @@
     IBActionDescriptor *boomActionDesc = [[IBActionDescriptor alloc] init];
     boomActionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
         GameObject *targetNode = (GameObject *)target;
-        if (!targetNode.isActionSource) {
+        if (!targetNode.isActionSource && !targetNode.isBlocker) {
             CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
             double distX = fabs((double)targetNode.columnIndex - (double)sourcePosition.x);
             double distY = fabs((double)targetNode.rowIndex - (double)sourcePosition.y);
@@ -517,7 +517,7 @@
         
         UIColor *blockColor = [userInfo objectForKey:@"targetColor"];
         targetNode.color1 = blockColor;
-        [targetNode runAction:[SKAction sequence:@[[SKAction colorizeWithColor:blockColor colorBlendFactor:1.0 duration:.2], [SKAction colorizeWithColor:targetNode.baseColor colorBlendFactor:1.0 duration:1.5]]] completion:^{
+        [targetNode runAction:[SKAction sequence:@[[SKAction colorizeWithColor:blockColor colorBlendFactor:1.0 duration:.2], [SKAction colorizeWithColor:targetNode.baseColor colorBlendFactor:1.0 duration:2.3]]] completion:^{
             targetNode.color1 = nil;
         }];
     };
@@ -659,6 +659,8 @@
         blocker.color = [UIColor blackColor];
         blocker.alpha = .7;
         blocker.isBlocker = YES;
+        
+        blocker.zPosition = 20;
     }
     
     for (int i=5; i<_bgPad.gridSize.width - 5; i++) {
@@ -666,6 +668,8 @@
         blocker.color = [UIColor blackColor];
         blocker.alpha = .7;
         blocker.isBlocker = YES;
+        
+        blocker.zPosition = 20;
     }
     
     for (int i=5; i<_bgPad.gridSize.height - 5; i++) {
@@ -673,6 +677,8 @@
         blocker.color = [UIColor blackColor];
         blocker.alpha = .7;
         blocker.isBlocker = YES;
+        
+        blocker.zPosition = 20;
     }
     
     for (int i=15; i<_bgPad.gridSize.width - 5; i++) {
@@ -680,6 +686,8 @@
         blocker.color = [UIColor blackColor];
         blocker.alpha = .7;
         blocker.isBlocker = YES;
+        
+        blocker.zPosition = 20;
     }
     
     int columnIndex = [CommonTools getRandomNumberFromInt:5 toInt:_bgPad.gridSize.height - 6];
@@ -816,7 +824,7 @@
         
         if (!CGPointEqualToPoint(CGPointMake(-1, -1), _nextBrickSpot)) {
             _currentBgTriggerInterval = 0;
-            _bgTriggerInterval = 2.5;
+            _bgTriggerInterval = 3.5;
             
             
             UIColor *blockColor;
