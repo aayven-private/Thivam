@@ -495,15 +495,23 @@
     IBActionDescriptor *swipeActionDesc = [[IBActionDescriptor alloc] init];
     swipeActionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
         GameObject *targetNode = (GameObject *)target;
-        
-        CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
-        
-        double distX = fabs((double)targetNode.columnIndex - (double)sourcePosition.x);
-        double distY = fabs((double)targetNode.rowIndex - (double)sourcePosition.y);
-        double damping = (distX + distY) / ((double)_bgPad.gridSize.height - 1 + (double)_bgPad.gridSize.width - 1);
-        
-        SKAction *scaleSequence = [SKAction sequence:@[[SKAction scaleTo:.1 + damping * 0.9 duration:.3], [SKAction scaleTo:1.5 - damping * 0.5 duration:.3], [SKAction scaleTo:1 duration:.3]]];
-        [targetNode runAction:scaleSequence];
+        if (!targetNode.isBlocker) {
+            CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
+            
+            double distX = fabs((double)targetNode.columnIndex - (double)sourcePosition.x);
+            double distY = fabs((double)targetNode.rowIndex - (double)sourcePosition.y);
+            double damping = (distX + distY) / ((double)_bgPad.gridSize.height - 1 + (double)_bgPad.gridSize.width - 1);
+            
+            /*UIColor *targetColor = [userInfo objectForKey:@"targetColor"];
+            
+            SKAction *phaseIn = [SKAction group:@[[SKAction colorizeWithColor:targetColor colorBlendFactor:1.0 duration:.3], [SKAction fadeAlphaTo:.5 duration:.3], [SKAction scaleTo:.1 + damping * 0.9 duration:.3]]];
+            SKAction *phaseOut = [SKAction group:@[[SKAction colorizeWithColor:targetNode.baseColor colorBlendFactor:1.0 duration:.3], [SKAction fadeAlphaTo:1.0 duration:.3], [SKAction scaleTo:1.0 duration:.3]]];*/
+            
+            SKAction *scaleSequence = [SKAction sequence:@[[SKAction scaleTo:.1 + damping * 0.9 duration:.3], [SKAction scaleTo:1.5 - damping * 0.5 duration:.3], [SKAction scaleTo:1 duration:.3]]];
+            [targetNode runAction:scaleSequence];
+            
+            //[targetNode runAction:[SKAction sequence:@[phaseIn, phaseOut]]];
+        }
     };
     
     IBConnectionDescriptor *swipeConn = [[IBConnectionDescriptor alloc] init];
@@ -663,7 +671,7 @@
         blocker.zPosition = 20;
     }
     
-    for (int i=5; i<_bgPad.gridSize.width - 5; i++) {
+    for (int i=5; i<_bgPad.gridSize.width - 15; i++) {
         GameObject *blocker = [_bgPad getNodeAtPosition:CGPointMake((int)_bgPad.gridSize.height / 2 - 5, i)];
         blocker.color = [UIColor blackColor];
         blocker.alpha = .7;
