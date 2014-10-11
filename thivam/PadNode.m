@@ -40,7 +40,7 @@
         self.gridSize = gridSize;
         self.anchorPoint = CGPointMake(0.5, 0.5);
         self.isRecording = NO;
-        self.blockSize = CGSizeMake(size.width / gridSize.height, size.height / gridSize.width);
+        self.blockSize = CGSizeMake(size.width / gridSize.width, size.height / gridSize.height);
         self.baseColor = color;
         self.actionPad = [[IBActionPad alloc] initGridWithSize:gridSize andNodeInitBlock:^id<IBActionNodeActor>(int row, int column){
             UIColor *blockColor;
@@ -122,7 +122,7 @@
         [_actionPad triggerNodeAtPosition:CGPointMake([CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.height - 1], [CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.width - 1]) forActionType:actionType withuserInfo:userInfo forExclusiveAction:NO];
     }*/
     
-    [self triggerNodeAtPosition:CGPointMake([CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.height - 1], [CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.width - 1]) forActionType:actionType withUserInfo:userInfo forceDisable:NO withNodeReset:NO];
+    [self triggerNodeAtPosition:CGPointMake([CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.width - 1], [CommonTools getRandomNumberFromInt:0 toInt:_actionPad.gridSize.height - 1]) forActionType:actionType withUserInfo:userInfo forceDisable:NO withNodeReset:NO];
 }
 
 -(void)triggerNodeAtPosition:(CGPoint)position forActionType:(NSString *)actionType withUserInfo:(NSMutableDictionary *)userInfo forceDisable:(BOOL)forceDisable withNodeReset:(BOOL)reset
@@ -276,12 +276,12 @@
     int row = (location.y / _blockSize.height);
     int column = (location.x / _blockSize.width);
     
-    if (row > _gridSize.width - 1) {
-        row = _gridSize.width - 1;
+    if (row > _gridSize.height - 1) {
+        row = _gridSize.height - 1;
     }
     
-    if (column > _gridSize.height - 1) {
-        column = _gridSize.height - 1;
+    if (column > _gridSize.width - 1) {
+        column = _gridSize.width - 1;
     }
     
     //NSLog(@"%d, %d", row, column);
