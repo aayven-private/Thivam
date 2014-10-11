@@ -495,23 +495,12 @@
     IBActionDescriptor *swipeActionDesc = [[IBActionDescriptor alloc] init];
     swipeActionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
         GameObject *targetNode = (GameObject *)target;
-<<<<<<< HEAD
-        
-        CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
-        
-        double distX = fabs((double)targetNode.columnIndex - (double)sourcePosition.x);
-        double distY = fabs((double)targetNode.rowIndex - (double)sourcePosition.y);
-        double damping = (distX + distY) / ((double)_bgPad.gridSize.width - 1 + (double)_bgPad.gridSize.height - 1);
-        
-        SKAction *scaleSequence = [SKAction sequence:@[[SKAction scaleTo:.1 + damping * 0.9 duration:.3], [SKAction scaleTo:1.5 - damping * 0.5 duration:.3], [SKAction scaleTo:1 duration:.3]]];
-        [targetNode runAction:scaleSequence];
-=======
         if (!targetNode.isBlocker) {
             CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
             
             double distX = fabs((double)targetNode.columnIndex - (double)sourcePosition.x);
             double distY = fabs((double)targetNode.rowIndex - (double)sourcePosition.y);
-            double damping = (distX + distY) / ((double)_bgPad.gridSize.height - 1 + (double)_bgPad.gridSize.width - 1);
+            double damping = (distX + distY) / ((double)_bgPad.gridSize.width - 1 + (double)_bgPad.gridSize.height - 1);
             
             /*UIColor *targetColor = [userInfo objectForKey:@"targetColor"];
             
@@ -523,7 +512,6 @@
             
             //[targetNode runAction:[SKAction sequence:@[phaseIn, phaseOut]]];
         }
->>>>>>> f7483ef1bf9438c99e3c69bd3ed3d66b58683ae3
     };
     
     IBConnectionDescriptor *swipeConn = [[IBConnectionDescriptor alloc] init];
@@ -683,13 +671,8 @@
         blocker.zPosition = 20;
     }
     
-<<<<<<< HEAD
     for (int i=5; i<_bgPad.gridSize.height - 15; i++) {
         GameObject *blocker = [_bgPad getNodeAtPosition:CGPointMake((int)_bgPad.gridSize.width / 2 - 5, i)];
-=======
-    for (int i=5; i<_bgPad.gridSize.width - 15; i++) {
-        GameObject *blocker = [_bgPad getNodeAtPosition:CGPointMake((int)_bgPad.gridSize.height / 2 - 5, i)];
->>>>>>> f7483ef1bf9438c99e3c69bd3ed3d66b58683ae3
         blocker.color = [UIColor blackColor];
         blocker.alpha = .7;
         blocker.isBlocker = YES;
