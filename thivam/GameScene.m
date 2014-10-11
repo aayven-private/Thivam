@@ -58,6 +58,8 @@
 
 @property (nonatomic) CGPoint nextBrickSpot;
 
+@property (nonatomic) NSString *currentGameType;
+
 @end
 
 @implementation GameScene
@@ -544,6 +546,9 @@
         if (targetNode.color1 && [targetNode.color1 isEqual:checkColor] && ![_checkIds containsObject:checkId]) {
             [_checkIds addObject:checkId];
             [_bgPad triggerNodeAtPosition:CGPointMake(targetNode.columnIndex, targetNode.rowIndex) forActionType:@"boom" withUserInfo:nil forceDisable:NO withNodeReset:NO];
+        } else if (targetNode.color1 && ![targetNode.color1 isEqual:checkColor] && ![_checkIds containsObject:checkId]) {
+            [_checkIds addObject:checkId];
+            NSLog(@"False check");
         }
         if (_checkIds.count > 50) {
             [_checkIds removeObjectAtIndex:0];

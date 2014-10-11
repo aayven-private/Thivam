@@ -47,3 +47,6 @@ static NSString *kObjectTypeFrame = @"frame";
 static uint32_t kObjectCategoryFrame = 0x1 << 0;
 static uint32_t kObjectCategoryActionPad = 0x1 << 1;
 
+static NSString *kGameTypeColorMatch = @"gametype_colormatch";
+static NSString *kGameTypesShooter = @"gametype_shooter";
+
