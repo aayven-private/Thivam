@@ -477,6 +477,29 @@
     
     self.userInteractionEnabled = YES;
     
+    UISwipeGestureRecognizer *swipeRecognizer_left = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeAction_left:)];
+    swipeRecognizer_left.direction = UISwipeGestureRecognizerDirectionLeft;
+    swipeRecognizer_left.numberOfTouchesRequired = 1;
+    [self.view addGestureRecognizer:swipeRecognizer_left];
+    
+    UISwipeGestureRecognizer *swipeRecognizer_right = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeAction_right:)];
+    swipeRecognizer_right.direction = UISwipeGestureRecognizerDirectionRight;
+    swipeRecognizer_right.numberOfTouchesRequired = 1;
+    [self.view addGestureRecognizer:swipeRecognizer_right];
+    
+    UISwipeGestureRecognizer *swipeRecognizer_up = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeAction_up:)];
+    swipeRecognizer_up.direction = UISwipeGestureRecognizerDirectionUp;
+    swipeRecognizer_up.numberOfTouchesRequired = 1;
+    [self.view addGestureRecognizer:swipeRecognizer_up];
+    
+    UISwipeGestureRecognizer *swipeRecognizer_down = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeAction_down:)];
+    swipeRecognizer_down.direction = UISwipeGestureRecognizerDirectionDown;
+    swipeRecognizer_down.numberOfTouchesRequired = 1;
+    [self.view addGestureRecognizer:swipeRecognizer_down];
+    
+    UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapAction:)];
+    tapRecognizer.numberOfTouchesRequired = 1;
+    [self.view addGestureRecognizer:tapRecognizer];
     
     IBActionDescriptor *boomActionDesc = [[IBActionDescriptor alloc] init];
     boomActionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
@@ -833,10 +856,35 @@
 }
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    UITouch *touch = [touches anyObject];
+    /*UITouch *touch = [touches anyObject];
     CGPoint positionInScene = [touch locationInNode:self];
     
-    [_bgPad triggerToken:_playerToken forActionType:@"player_up"];
+    [_bgPad triggerToken:_playerToken forActionType:@"player_up"];*/
+}
+
+-(IBAction)swipeAction_left:(UISwipeGestureRecognizer *)recognizer
+{
+    [_bgPad triggerToken:_playerToken forActionType:@"player_left"];
+}
+
+-(IBAction)swipeAction_right:(UISwipeGestureRecognizer *)recognizer
+{
+     [_bgPad triggerToken:_playerToken forActionType:@"player_right"];
+}
+
+-(IBAction)swipeAction_up:(UISwipeGestureRecognizer *)recognizer
+{
+     [_bgPad triggerToken:_playerToken forActionType:@"player_up"];
+}
+
+-(IBAction)swipeAction_down:(UISwipeGestureRecognizer *)recognizer
+{
+     [_bgPad triggerToken:_playerToken forActionType:@"player_down"];
+}
+
+-(IBAction)tapAction:(UITapGestureRecognizer *)sender
+{
+    [_bgPad triggerNodeAtPosition:_playerToken.currentPosition forActionType:@"boom" withUserInfo:nil forceDisable:NO withNodeReset:NO];
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
