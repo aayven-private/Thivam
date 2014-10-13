@@ -94,7 +94,9 @@
 
 -(void)loadActionDescriptor:(IBActionDescriptor *)actionDescriptor andConnectionDescriptor:(IBConnectionDescriptor *)connectionDescriptor forActionType:(NSString *)actionType
 {
-    [self.actionPad.unifiedActionDescriptors setObject:@[actionDescriptor] forKey:actionType];
+    if (actionDescriptor) {
+        [self.actionPad.unifiedActionDescriptors setObject:@[actionDescriptor] forKey:actionType];
+    }
     if (connectionDescriptor) {
         [self.actionPad loadConnectionMapWithDescriptor:connectionDescriptor forActionType:actionType];
     }
@@ -292,6 +294,16 @@
 -(void)setEnabled:(BOOL)isEnabled forAction:(NSString *)actionType
 {
     [_enabledStates setObject:[NSNumber numberWithBool:isEnabled] forKey:actionType];
+}
+
+-(void)placeToken:(IBToken *)token atPosition:(CGPoint)position
+{
+    [_actionPad placeToken:token atPosition:position];
+}
+
+-(void)triggerToken:(IBToken *)token forActionType:(NSString *)actionType
+{
+    [_actionPad triggerToken:token forActionType:actionType];
 }
 
 -(GameObject *)getNodeAtPosition:(CGPoint)position

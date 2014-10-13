@@ -47,7 +47,7 @@
             
             IBActionNode *actionNode = [[IBActionNode alloc] init];
             actionNode.nodeObject = node;
-            actionNode.position = CGPointMake(j, i);
+            actionNode.position = CGPointMake(i, j);
             actionNode.delegate = self;
             actionNode.isActive = isActivated;
             actionNode.actionHeapSize = _actionHeapSize;
@@ -410,6 +410,20 @@
             }
         }
     }
+}
+
+-(void)triggerToken:(IBToken *)token forActionType:(NSString *)actionType
+{
+    IBActionNode *tokenNode = [_objectGrid getElementAtRow:token.currentPosition.y andColumn:token.currentPosition.x];
+    
+    [tokenNode passToken:token forActionType:actionType];
+}
+
+-(void)placeToken:(IBToken *)token atPosition:(CGPoint)position
+{
+    IBActionNode *targetNode = [_objectGrid getElementAtRow:position.y andColumn:position.x];
+    
+    [targetNode getToken:token];
 }
 
 -(void)setActions:(NSArray *)actions forNodeAtPosition:(CGPoint)position forActionType:(NSString *)actionType

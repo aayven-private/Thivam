@@ -24,7 +24,7 @@
         self.isActive = YES;
         self.connectionDescriptors = [NSMutableDictionary dictionary];
         self.actionSources = [NSMutableDictionary dictionary];
-        
+        self.tokens = [NSMutableArray array];
         self.actionIds = [NSMutableArray array];
     }
     return self;
@@ -115,7 +115,6 @@
             });
         }
     }
-    
 }
 
 -(void)fireOwnActionsForActionType:(NSString *)actionType witUserInfo:(NSMutableDictionary *)userInfo withNodeReset:(BOOL)reset
@@ -151,6 +150,35 @@
         return [_delegate getUnifiedActionDescriptorsForActionType:actionType];
     }
     return actionsForType;
+}
+
+-(BOOL)hasToken
+{
+    return (_tokens && _tokens.count > 0);
+}
+
+-(void)getToken:(IBToken *)token
+{
+    [_tokens addObject:token];
+    token.currentPosition = _position;
+    [_nodeObject fireTokenAction_enter:token.enterAction userInfo:token.userInfo];
+}
+
+-(void)passToken:(IBToken *)token forActionType:(NSString *)actionType
+{
+    NSArray *connectedNodes = [_connections objectForKey:actionType];
+    if (connectedNodes && connectedNodes.count > 0) {
+        [_tokens removeObject:token];
+        [_nodeObject fireTokenAction_exit:token.exitAction userInfo:token.userInfo];
+        for (int i=0; i<connectedNodes.count; i++) {
+            IBActionNode *connectedNode = [connectedNodes objectAtIndex:i];
+            if (i==0) {
+                [connectedNode getToken:token];
+            } else {
+                [connectedNode getToken:[token mutableCopy]];
+            }
+        }
+    }
 }
 
 @end

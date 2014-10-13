@@ -40,6 +40,16 @@
     //}
 }
 
+-(void)fireTokenAction_enter:(IBActionDescriptor *)tokenEnterAction userInfo:(NSDictionary *)userInfo
+{
+    tokenEnterAction.action(self, userInfo);
+}
+
+-(void)fireTokenAction_exit:(IBActionDescriptor *)tokenExitAction userInfo:(NSDictionary *)userInfo
+{
+    tokenExitAction.action(self, userInfo);
+}
+
 -(void)resetNode
 {
     [self removeAllActions];

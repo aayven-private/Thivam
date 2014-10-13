@@ -11,6 +11,7 @@
 #import <UIKit/UIKit.h>
 #import "IBActionNodeActor.h"
 #import "IBActionNodeControllerDelegate.h"
+#import "IBToken.h"
 
 @interface IBActionNode : NSObject
 
@@ -20,6 +21,7 @@
 @property (nonatomic) NSMutableDictionary *connections;
 @property (nonatomic) NSMutableDictionary *actions;
 @property (nonatomic) int actionHeapSize;
+@property (nonatomic) NSMutableArray *tokens;
 //@property (nonatomic) BOOL autoFire;
 //@property (nonatomic) int maxRepeatNum;
 //@property (nonatomic) int repeatCount;
@@ -40,5 +42,8 @@
 
 -(void)triggerConnectionsWithSource:(CGPoint)source shouldPropagate:(BOOL)shouldPropagate forActionType:(NSString *)actionType withUserInfo:(NSMutableDictionary *)userInfo withNodeReset:(BOOL)reset withActionId:(NSString *)actionId;
 -(void)cleanNodeForActionType:(NSString *)actionType;
+-(BOOL)hasToken;
+-(void)getToken:(IBToken *)token;
+-(void)passToken:(IBToken *)token forActionType:(NSString *)actionType;
 
 @end

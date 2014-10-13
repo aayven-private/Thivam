@@ -12,6 +12,11 @@
 @protocol IBActionNodeActor <NSObject>
 
 -(void)fireAction:(IBActionDescriptor *)actionDescriptor userInfo:(NSDictionary *)userInfo forActionType:(NSString *)actionType;
+
+@optional
+
 -(void)resetNode;
+-(void)fireTokenAction_enter:(IBActionDescriptor *)tokenEnterAction userInfo:(NSDictionary *)userInfo;
+-(void)fireTokenAction_exit:(IBActionDescriptor *)tokenExitAction userInfo:(NSDictionary *)userInfo;
 
 @end

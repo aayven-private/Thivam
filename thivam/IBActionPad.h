@@ -14,6 +14,7 @@
 #import "IBActionNode.h"
 #import "IBActionDescriptor.h"
 #import "IBConnectionDescriptor.h"
+#import "IBToken.h"
 
 typedef id<IBActionNodeActor>(^nodeInit)(int row, int column);
 
@@ -55,6 +56,8 @@ static NSString *kConnectionTypeLinear_rightLeft = @"grid_connection_linear_righ
 -(void)setActions:(NSArray *)actions forNodeAtPosition:(CGPoint)position forActionType:(NSString *)actionType;
 -(void)setnodeActivated:(BOOL)isActive atPosition:(CGPoint)position;
 -(NSArray *)getUnifiedActionDescriptorsForActionType:(NSString *)actionType;
+-(void)triggerToken:(IBToken *)token forActionType:(NSString *)actionType;
+-(void)placeToken:(IBToken *)token atPosition:(CGPoint)position;
 
 //-(void)setUpWithRecordedConnectionsGridIsAutoFired:(BOOL)isAutoFired andManualNodeCleanup:(BOOL)hasManualCleanup;
 
