@@ -21,4 +21,7 @@
 @property (nonatomic) IBActionDescriptor *enterAction;
 @property (nonatomic) IBActionDescriptor *exitAction;
 
+@property (nonatomic) BOOL isAlive;
+@property (nonatomic) BOOL shouldCopyToken;
+
 @end

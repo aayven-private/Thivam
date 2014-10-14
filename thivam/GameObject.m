@@ -15,6 +15,8 @@
     if (self = [super initWithColor:color size:size]) {
         self.actions = [NSMutableArray array];
         self.runningActionForTypes = [NSMutableDictionary dictionary];
+        self.isPlayer = NO;
+        self.isEnemy = NO;
         /*self.infoLabel = [SKLabelNode labelNodeWithFontNamed:@"Chalkduster"];
         self.infoLabel.color = [UIColor whiteColor];
         self.infoLabel.fontSize = 8;
@@ -40,14 +42,16 @@
     //}
 }
 
--(void)fireTokenAction_enter:(IBActionDescriptor *)tokenEnterAction userInfo:(NSDictionary *)userInfo
+-(void)fireTokenAction_enterForToken:(IBToken *)token
 {
-    tokenEnterAction.action(self, userInfo);
+    self.token = token;
+    token.enterAction.action(self, [NSDictionary dictionaryWithObject:token forKey:@"token"]);
 }
 
--(void)fireTokenAction_exit:(IBActionDescriptor *)tokenExitAction userInfo:(NSDictionary *)userInfo
+-(void)fireTokenAction_exitForToken:(IBToken *)token
 {
-    tokenExitAction.action(self, userInfo);
+    self.token = nil;
+    token.exitAction.action(self, [NSDictionary dictionaryWithObject:token forKey:@"token"]);
 }
 
 -(void)resetNode

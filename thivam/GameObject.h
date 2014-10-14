@@ -32,6 +32,11 @@
 @property (nonatomic) BOOL isActionSource;
 @property (nonatomic) BOOL isBlocker;
 
+@property (nonatomic) BOOL isPlayer;
+@property (nonatomic) BOOL isEnemy;
+
+@property (nonatomic) IBToken *token;
+
 //@property (nonatomic) SKLabelNode *infoLabel;
 
 @end

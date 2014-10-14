@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "IBActionDescriptor.h"
+#import "IBToken.h"
 
 @protocol IBActionNodeActor <NSObject>
 
@@ -16,7 +16,7 @@
 @optional
 
 -(void)resetNode;
--(void)fireTokenAction_enter:(IBActionDescriptor *)tokenEnterAction userInfo:(NSDictionary *)userInfo;
--(void)fireTokenAction_exit:(IBActionDescriptor *)tokenExitAction userInfo:(NSDictionary *)userInfo;
+-(void)fireTokenAction_enterForToken:(IBToken *)token;
+-(void)fireTokenAction_exitForToken:(IBToken *)token;
 
 @end

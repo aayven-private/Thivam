@@ -159,9 +159,11 @@
 
 -(void)getToken:(IBToken *)token
 {
-    [_tokens addObject:token];
-    token.currentPosition = _position;
-    [_nodeObject fireTokenAction_enter:token.enterAction userInfo:token.userInfo];
+    if (token.isAlive) {
+        [_tokens addObject:token];
+        token.currentPosition = _position;
+        [_nodeObject fireTokenAction_enterForToken:token];
+    }
 }
 
 -(void)passToken:(IBToken *)token forActionType:(NSString *)actionType
@@ -169,12 +171,12 @@
     NSArray *connectedNodes = [_connections objectForKey:actionType];
     if (connectedNodes && connectedNodes.count > 0) {
         [_tokens removeObject:token];
-        [_nodeObject fireTokenAction_exit:token.exitAction userInfo:token.userInfo];
+        [_nodeObject fireTokenAction_exitForToken:token];
         for (int i=0; i<connectedNodes.count; i++) {
             IBActionNode *connectedNode = [connectedNodes objectAtIndex:i];
             if (i==0) {
                 [connectedNode getToken:token];
-            } else {
+            } else if (token.shouldCopyToken) {
                 [connectedNode getToken:[token mutableCopy]];
             }
         }
