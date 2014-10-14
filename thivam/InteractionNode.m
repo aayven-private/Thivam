@@ -51,9 +51,9 @@
         }
     }*/
     
-    [self.delegate nodeActionTaken:@"match" withUserInfo:[NSDictionary dictionaryWithObjects:@[[NSValue valueWithCGPoint:CGPointMake(_columnIndex, _rowIndex)], [UIColor redColor]] forKeys:@[@"position", @"matchcolor"]]];
+    //[self.delegate nodeActionTaken:@"match" withUserInfo:[NSDictionary dictionaryWithObjects:@[[NSValue valueWithCGPoint:CGPointMake(_columnIndex, _rowIndex)], [UIColor redColor]] forKeys:@[@"position", @"matchcolor"]]];
     
-    
+    //[self.delegate nodeTriggeredAtRow:_rowIndex andColumn:_columnIndex forActionType:_userActionType withUserInfo:nil];
     
     //NSLog(@"%@", NSStringFromCGPoint(CGPointMake(_rowIndex, _columnIndex)));
     //[self.delegate nodeTriggeredAtRow:_rowIndex andColumn:_columnIndex forActionType:_userActionType withUserInfo:[NSMutableDictionary dictionary]];

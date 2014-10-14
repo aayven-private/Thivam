@@ -641,7 +641,7 @@
     
     NSArray *bgColorCodes = [NSArray arrayWithObjects:@"F20C23", @"DE091E", @"CC081C", @"B50415", nil];
     _nodeCount = _gridSize.width * _gridSize.height;
-    _bgPad = [[PadNode alloc] initWithColor:[UIColor redColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:_gridSize withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_none forActionType:@"swipe"];
+    _bgPad = [[PadNode alloc] initWithColor:[UIColor redColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:_gridSize withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_none forActionType:@"boom"];
     _bgPad.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
     [_bgPad loadActionDescriptor:boomActionDesc andConnectionDescriptor:boomConn forActionType:@"boom"];
     [_bgPad loadActionDescriptor:swipeActionDesc andConnectionDescriptor:swipeConn forActionType:@"swipe"];
