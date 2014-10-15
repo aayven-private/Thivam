@@ -26,7 +26,7 @@
 
 -(id)initWithColor:(UIColor *)color size:(CGSize)size
 {
-    if (self = [super initWithColor:color size:size]) {
+    if (self = [super initWithColor:[UIColor blackColor] size:size]) {
         //self.objectType = kObjectTypeInteractionNode;
         self.userInteractionEnabled = NO;
         self.isActionSource = NO;
@@ -38,6 +38,21 @@
         self.physicsBody.collisionBitMask = 0;
         self.physicsBody.contactTestBitMask = 0;*/
         //self.isRunningAction = NO;
+
+        SKSpriteNode *innerNode = [[SKSpriteNode alloc] initWithColor:color size:CGSizeMake(size.width - 5, size.height - 5)];
+        innerNode.position = CGPointMake(0, 0);
+        [self addChild:innerNode];
+        
+        self.infoLabel = [SKLabelNode labelNodeWithFontNamed:@"AppleSDGothicNeo-Medium"];
+        self.infoLabel.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
+        self.infoLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
+        self.infoLabel.fontSize = 15;
+        self.infoLabel.position = CGPointMake(0, 0);
+        self.infoLabel.fontColor = [UIColor blackColor];
+        self.infoLabel.text = @"0";
+        [self addChild:self.infoLabel];
+        
+        self.nodeValue = 0;
     }
     return self;
 }
@@ -53,7 +68,7 @@
     
     //[self.delegate nodeActionTaken:@"match" withUserInfo:[NSDictionary dictionaryWithObjects:@[[NSValue valueWithCGPoint:CGPointMake(_columnIndex, _rowIndex)], [UIColor redColor]] forKeys:@[@"position", @"matchcolor"]]];
     
-    //[self.delegate nodeTriggeredAtRow:_rowIndex andColumn:_columnIndex forActionType:_userActionType withUserInfo:nil];
+    [self.delegate nodeTriggeredAtRow:_rowIndex andColumn:_columnIndex forActionType:_userActionType withUserInfo:nil];
     
     //NSLog(@"%@", NSStringFromCGPoint(CGPointMake(_rowIndex, _columnIndex)));
     //[self.delegate nodeTriggeredAtRow:_rowIndex andColumn:_columnIndex forActionType:_userActionType withUserInfo:[NSMutableDictionary dictionary]];

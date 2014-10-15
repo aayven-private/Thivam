@@ -10,6 +10,9 @@
 
 @interface InteractionNode : GameObject
 
+@property (nonatomic) SKLabelNode *infoLabel;
+@property (nonatomic) int nodeValue;
+
 -(id)initWithColor:(UIColor *)color size:(CGSize)size;
 
 @end

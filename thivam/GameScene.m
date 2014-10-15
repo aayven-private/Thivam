@@ -70,6 +70,8 @@
 @property (nonatomic) BOOL isInHorizontallOrder;
 @property (nonatomic) BOOL isFlipping;
 
+@property (nonatomic) CGPoint referencePoint;
+
 @end
 
 @implementation GameScene
@@ -91,6 +93,8 @@
     self.enemies = [NSMutableSet set];
     self.brickPlaceCheckCount = 0;
     self.currentCheckSpotGood = YES;
+    
+    self.referencePoint = CGPointMake(1, 2);
     
     [self initEnvironment];
 }
@@ -491,7 +495,7 @@
     self.isFlipping = NO;
     self.userInteractionEnabled = YES;
     
-    UISwipeGestureRecognizer *swipeRecognizer_left = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeAction_left:)];
+    /*UISwipeGestureRecognizer *swipeRecognizer_left = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeAction_left:)];
     swipeRecognizer_left.direction = UISwipeGestureRecognizerDirectionLeft;
     swipeRecognizer_left.numberOfTouchesRequired = 1;
     [self.view addGestureRecognizer:swipeRecognizer_left];
@@ -513,18 +517,37 @@
     
     UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapAction:)];
     tapRecognizer.numberOfTouchesRequired = 1;
-    [self.view addGestureRecognizer:tapRecognizer];
+    [self.view addGestureRecognizer:tapRecognizer];*/
     
     IBActionDescriptor *boomActionDesc = [[IBActionDescriptor alloc] init];
     boomActionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
         GameObject *targetNode = (GameObject *)target;
         if (!targetNode.isActionSource && !targetNode.isBlocker) {
             CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
-            double distX = fabs((double)targetNode.columnIndex - (double)sourcePosition.x);
-            double distY = fabs((double)targetNode.rowIndex - (double)sourcePosition.y);
-            double damping = (distX + distY) / ((double)_bgPad.gridSize.width - 1 + (double)_bgPad.gridSize.height - 1);
+            double distX_abs = fabs((double)targetNode.columnIndex - (double)sourcePosition.x);
+            double distY_abs = fabs((double)targetNode.rowIndex - (double)sourcePosition.y);
+            double damping = (distX_abs + distY_abs) / ((double)_bgPad.gridSize.width - 1 + (double)_bgPad.gridSize.height - 1);
+            
+            int distX = (int)targetNode.columnIndex - (int)sourcePosition.x;
+            int distY = (int)targetNode.rowIndex - (int)sourcePosition.y;
+            
+            /*SKAction *scaleSequence = [SKAction sequence:@[[SKAction scaleTo:0.7 + damping * 0.3 duration:.3], [SKAction scaleTo:1.2 - damping * 0.2 duration:.3]]];
+            [targetNode runAction:[SKAction repeatActionForever:scaleSequence]];*/
+            
+            //targetNode.alpha = 1.0 - damping * 1.5;
+            
+            int distX_ref = targetNode.columnIndex - _referencePoint.x;
+            int distY_ref = targetNode.rowIndex - _referencePoint.y;
+            
+            /*[targetNode runAction:[SKAction fadeAlphaTo:1.0 - damping * 2.5 duration:.2]];
+            [targetNode runAction:[SKAction scaleTo:2.0 - damping duration:.2]];*/
+            targetNode.zPosition = 100 - damping * 10;
+            //((InteractionNode *)targetNode).nodeValue += (distX + distY);
+            ((InteractionNode *)targetNode).nodeValue += (distX_ref + distY_ref) + (distX + distY);
             if (!targetNode.isEnemy && !targetNode.isPlayer) {
-                SKAction *scaleSequence = [SKAction sequence:@[[SKAction scaleTo:.1 + damping * 0.9 duration:.3], [SKAction scaleTo:1.5 - damping * 0.5 duration:.3], [SKAction scaleTo:1 duration:.3]]];
+                SKAction *scaleSequence = [SKAction sequence:@[[SKAction scaleTo:.1 + damping * 0.9 duration:.3], [SKAction scaleTo:1.5 - damping * 0.5 duration:.3], [SKAction group:@[[SKAction scaleTo:1 duration:.3], [SKAction runBlock:^{
+                    ((InteractionNode *)targetNode).infoLabel.text = [NSString stringWithFormat:@"%d", ((InteractionNode *)targetNode).nodeValue];
+                }]]]]];
                 [targetNode runAction:scaleSequence];
             } else if (targetNode.isEnemy) {
                 IBToken *token = targetNode.token;
@@ -637,11 +660,11 @@
     checkActionConn_brickSpot.userInfo = [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithInt:1], [NSNumber numberWithInt:10]] forKeys:@[kConnectionParameter_counter, kConnectionParameter_dispersion]];
     checkActionConn_brickSpot.autoFireDelay = 0;
     
-    _gridSize = CGSizeMake(21, 30);
+    _gridSize = CGSizeMake(4, 4);
     
     NSArray *bgColorCodes = [NSArray arrayWithObjects:@"F20C23", @"DE091E", @"CC081C", @"B50415", nil];
     _nodeCount = _gridSize.width * _gridSize.height;
-    _bgPad = [[PadNode alloc] initWithColor:[UIColor redColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:_gridSize withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_none forActionType:@"boom"];
+    _bgPad = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(300, 300) andGridSize:_gridSize withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_touch forActionType:@"boom"];
     _bgPad.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
     [_bgPad loadActionDescriptor:boomActionDesc andConnectionDescriptor:boomConn forActionType:@"boom"];
     [_bgPad loadActionDescriptor:swipeActionDesc andConnectionDescriptor:swipeConn forActionType:@"swipe"];
@@ -652,7 +675,7 @@
     _bgPad.disableOnFirstTrigger = NO;
     
     
-    GameObject *pulseSource1 = [_bgPad getNodeAtPosition:CGPointMake(0, 0)];
+    /*GameObject *pulseSource1 = [_bgPad getNodeAtPosition:CGPointMake(0, 0)];
     pulseSource1.color = [UIColor blueColor];
     pulseSource1.baseColor = [UIColor blueColor];
     
@@ -666,26 +689,44 @@
     
     GameObject *pulseSource4 = [_bgPad getNodeAtPosition:CGPointMake((int)_bgPad.gridSize.width - 1, (int)_bgPad.gridSize.height - 1)];
     pulseSource4.color = [UIColor cyanColor];
-    pulseSource4.baseColor = [UIColor cyanColor];
+    pulseSource4.baseColor = [UIColor cyanColor];*/
     
     [self loadHorizontalFlipAction];
     [self loadFlipVerticalAction];
     
-    /*IBConnectionDescriptor *upConn = [[IBConnectionDescriptor alloc] init];
+    IBActionDescriptor *moveAction = [[IBActionDescriptor alloc] init];
+    moveAction.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
+        GameObject *targetNode = (GameObject *)target;
+        
+        [targetNode runAction:[SKAction sequence:@[[SKAction colorizeWithColor:[UIColor blueColor] colorBlendFactor:1.0 duration:.2], [SKAction colorizeWithColor:targetNode.baseColor colorBlendFactor:1.0 duration:.2]]]];
+    };
+    
+    IBConnectionDescriptor *upConn = [[IBConnectionDescriptor alloc] init];
     upConn.connectionType = kConnectionTypeLinear_bottomUp;
+    upConn.isAutoFired = YES;
+    upConn.autoFireDelay = .2;
     IBConnectionDescriptor *downConn = [[IBConnectionDescriptor alloc] init];
     downConn.connectionType = kConnectionTypeLinear_topBottom;
+    downConn.isAutoFired = YES;
+    downConn.autoFireDelay = .2;
     IBConnectionDescriptor *leftConn = [[IBConnectionDescriptor alloc] init];
     leftConn.connectionType = kConnectionTypeLinear_rightLeft;
+    leftConn.isAutoFired = YES;
+    leftConn.autoFireDelay = .2;
     IBConnectionDescriptor *rightConn = [[IBConnectionDescriptor alloc] init];
     rightConn.connectionType = kConnectionTypeLinear_leftRight;
+    rightConn.isAutoFired = YES;
+    rightConn.autoFireDelay = .2;
     
-    [_bgPad loadActionDescriptor:nil andConnectionDescriptor:upConn forActionType:@"player_up"];
-    [_bgPad loadActionDescriptor:nil andConnectionDescriptor:downConn forActionType:@"player_down"];
-    [_bgPad loadActionDescriptor:nil andConnectionDescriptor:leftConn forActionType:@"player_left"];
-    [_bgPad loadActionDescriptor:nil andConnectionDescriptor:rightConn forActionType:@"player_right"];
+    [_bgPad loadActionDescriptor:moveAction andConnectionDescriptor:upConn forActionType:@"move_up"];
+    [_bgPad loadActionDescriptor:moveAction andConnectionDescriptor:downConn forActionType:@"move_down"];
+    [_bgPad loadActionDescriptor:moveAction andConnectionDescriptor:leftConn forActionType:@"move_left"];
+    [_bgPad loadActionDescriptor:moveAction andConnectionDescriptor:rightConn forActionType:@"move_right"];
     
-    _playerToken = [[IBToken alloc] init];
+    GameObject *referenceNode = [_bgPad getNodeAtPosition:_referencePoint];
+    referenceNode.color = [UIColor blueColor];
+    
+    /*_playerToken = [[IBToken alloc] init];
     _playerToken.tokenId = @"playa";
     IBActionDescriptor *enterAction = [[IBActionDescriptor alloc] init];
     enterAction.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
@@ -831,7 +872,7 @@
             }
         }
         
-        [targetNode runAction:[SKAction sequence:@[[SKAction group:@[/*[SKAction rotateByAngle:-2*M_PI duration:1.5], */[SKAction moveTo:blockPosition duration:2.5], [SKAction sequence:@[[SKAction fadeAlphaTo:0 duration:1.5], [SKAction fadeAlphaTo:1 duration:1.5]]]]], [SKAction runBlock:^{
+        [targetNode runAction:[SKAction sequence:@[[SKAction group:@[[SKAction rotateByAngle:-2*M_PI duration:1], [SKAction moveTo:blockPosition duration:1], [SKAction sequence:@[[SKAction fadeAlphaTo:0 duration:.5], [SKAction fadeAlphaTo:1 duration:.5]]]]], [SKAction runBlock:^{
             [targetNode.runningActionForTypes setObject:[NSNumber numberWithBool:NO] forKey:[userInfo objectForKey:@"actiontype"]];
             _actionFinishedCount++;
             if (_actionFinishedCount == _nodeCount) {
@@ -874,7 +915,7 @@
             }
         }
         
-        [targetNode runAction:[SKAction sequence:@[[SKAction group:@[/*[SKAction rotateByAngle:-2*M_PI duration:1.5], */[SKAction moveTo:blockPosition duration:2.5], [SKAction sequence:@[[SKAction fadeAlphaTo:0 duration:1.5], [SKAction fadeAlphaTo:1 duration:1.5]]]]], [SKAction runBlock:^{
+        [targetNode runAction:[SKAction sequence:@[[SKAction group:@[[SKAction rotateByAngle:-2*M_PI duration:1], [SKAction moveTo:blockPosition duration:1], [SKAction sequence:@[[SKAction fadeAlphaTo:0 duration:.5], [SKAction fadeAlphaTo:1 duration:.5]]]]], [SKAction runBlock:^{
             [targetNode.runningActionForTypes setObject:[NSNumber numberWithBool:NO] forKey:[userInfo objectForKey:@"actiontype"]];
             _actionFinishedCount++;
             if (_actionFinishedCount == _nodeCount) {
@@ -1096,6 +1137,38 @@
         
         //_bgTriggerInterval = [CommonTools getRandomFloatFromFloat:2 toFloat:3];
         _currentBgTriggerInterval = 0;
+        
+        /*int randomSide = [CommonTools getRandomNumberFromInt:0 toInt:3];
+        CGPoint blockPosition;
+        switch (randomSide) {
+            case 0: {
+                //Top
+                int columnIndex = [CommonTools getRandomNumberFromInt:0 toInt:_bgPad.gridSize.width - 1];
+                blockPosition = CGPointMake(columnIndex, _bgPad.gridSize.height - 1);
+                [_bgPad triggerNodeAtPosition:blockPosition forActionType:@"move_down" withUserInfo:nil forceDisable:NO withNodeReset:NO];
+            } break;
+            case 1: {
+                int columnIndex = [CommonTools getRandomNumberFromInt:0 toInt:_bgPad.gridSize.width - 1];
+                blockPosition = CGPointMake(columnIndex, 0);
+                [_bgPad triggerNodeAtPosition:blockPosition forActionType:@"move_up" withUserInfo:nil forceDisable:NO withNodeReset:NO];
+                //Bottom
+            } break;
+            case 2: {
+                int rowIndex = [CommonTools getRandomNumberFromInt:0 toInt:_bgPad.gridSize.height - 1];
+                blockPosition = CGPointMake(0, rowIndex);
+                [_bgPad triggerNodeAtPosition:blockPosition forActionType:@"move_right" withUserInfo:nil forceDisable:NO withNodeReset:NO];
+                //Left
+            } break;
+            case 3: {
+                //Right
+                int rowIndex = [CommonTools getRandomNumberFromInt:0 toInt:_bgPad.gridSize.height - 1];
+                blockPosition = CGPointMake(_bgPad.gridSize.width - 1, rowIndex);
+                [_bgPad triggerNodeAtPosition:blockPosition forActionType:@"move_left" withUserInfo:nil forceDisable:NO withNodeReset:NO];
+            } break;
+            default:
+                break;
+        }*/
+        
         
         /*[_bgPad triggerNodeAtPosition:CGPointMake(0, 0) forActionType:@"boom" withUserInfo:nil forceDisable:NO withNodeReset:NO];
         [_bgPad triggerNodeAtPosition:CGPointMake(0, (int)_bgPad.gridSize.height - 1) forActionType:@"boom" withUserInfo:nil forceDisable:NO withNodeReset:NO];
