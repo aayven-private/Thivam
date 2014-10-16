@@ -46,7 +46,7 @@
         self.infoLabel = [SKLabelNode labelNodeWithFontNamed:@"AppleSDGothicNeo-Medium"];
         self.infoLabel.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
         self.infoLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
-        self.infoLabel.fontSize = 15;
+        self.infoLabel.fontSize = 18;
         self.infoLabel.position = CGPointMake(0, 0);
         self.infoLabel.fontColor = [UIColor blackColor];
         self.infoLabel.text = @"0";

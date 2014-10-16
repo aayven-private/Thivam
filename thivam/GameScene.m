@@ -14,6 +14,7 @@
 #import "IBActionPad.h"
 #import "ImageHelper.h"
 #import "PadNode.h"
+#import "SimulationNode.h"
 
 @interface GameScene()
 
@@ -71,6 +72,12 @@
 @property (nonatomic) BOOL isFlipping;
 
 @property (nonatomic) CGPoint referencePoint;
+@property (nonatomic) CGPoint simulationReferencePoint;
+
+@property (nonatomic) IBActionPad *simulationPad;
+@property (nonatomic) int simulationCount;
+
+@property (nonatomic) NSDictionary *currentLevelInfo;
 
 @end
 
@@ -94,7 +101,7 @@
     self.brickPlaceCheckCount = 0;
     self.currentCheckSpotGood = YES;
     
-    self.referencePoint = CGPointMake(1, 2);
+    self.referencePoint = CGPointMake(2, 2);
     
     [self initEnvironment];
 }
@@ -129,7 +136,9 @@
     //[self createGrid_2];
     //[self createActionPad];
     
-    [self createGameGrid];
+    //[self createGameGrid];
+    
+    [self simulateGameGridWithGridSize:CGSizeMake(5, 5) andNumberOfClicks:2 andNumberOfTargets:2 withReferenceNode:NO];
 }
 
 -(void)createActionPad
@@ -522,7 +531,7 @@
     IBActionDescriptor *boomActionDesc = [[IBActionDescriptor alloc] init];
     boomActionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
         GameObject *targetNode = (GameObject *)target;
-        if (!targetNode.isActionSource && !targetNode.isBlocker) {
+        //if (!targetNode.isActionSource && !targetNode.isBlocker) {
             CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
             double distX_abs = fabs((double)targetNode.columnIndex - (double)sourcePosition.x);
             double distY_abs = fabs((double)targetNode.rowIndex - (double)sourcePosition.y);
@@ -544,7 +553,7 @@
             targetNode.zPosition = 100 - damping * 10;
             //((InteractionNode *)targetNode).nodeValue += (distX + distY);
             ((InteractionNode *)targetNode).nodeValue += (distX_ref + distY_ref) + (distX + distY);
-            if (!targetNode.isEnemy && !targetNode.isPlayer) {
+            /*if (!targetNode.isEnemy && !targetNode.isPlayer) {
                 SKAction *scaleSequence = [SKAction sequence:@[[SKAction scaleTo:.1 + damping * 0.9 duration:.3], [SKAction scaleTo:1.5 - damping * 0.5 duration:.3], [SKAction group:@[[SKAction scaleTo:1 duration:.3], [SKAction runBlock:^{
                     ((InteractionNode *)targetNode).infoLabel.text = [NSString stringWithFormat:@"%d", ((InteractionNode *)targetNode).nodeValue];
                 }]]]]];
@@ -552,8 +561,13 @@
             } else if (targetNode.isEnemy) {
                 IBToken *token = targetNode.token;
                 token.isAlive = NO;
-            }
-        }
+            }*/
+            
+            SKAction *scaleSequence = [SKAction sequence:@[[SKAction scaleTo:.1 + damping * 0.9 duration:.3], [SKAction scaleTo:1.5 - damping * 0.5 duration:.3], [SKAction group:@[[SKAction scaleTo:1 duration:.3], [SKAction runBlock:^{
+                ((InteractionNode *)targetNode).infoLabel.text = [NSString stringWithFormat:@"%d", ((InteractionNode *)targetNode).nodeValue];
+            }]]]]];
+            [targetNode runAction:scaleSequence];
+        //}
     };
     
     IBConnectionDescriptor *boomConn = [[IBConnectionDescriptor alloc] init];
@@ -691,7 +705,7 @@
     pulseSource4.color = [UIColor cyanColor];
     pulseSource4.baseColor = [UIColor cyanColor];*/
     
-    [self loadHorizontalFlipAction];
+    /*[self loadHorizontalFlipAction];
     [self loadFlipVerticalAction];
     
     IBActionDescriptor *moveAction = [[IBActionDescriptor alloc] init];
@@ -724,7 +738,9 @@
     [_bgPad loadActionDescriptor:moveAction andConnectionDescriptor:rightConn forActionType:@"move_right"];
     
     GameObject *referenceNode = [_bgPad getNodeAtPosition:_referencePoint];
-    referenceNode.color = [UIColor blueColor];
+    referenceNode.color = [UIColor blueColor];*/
+    
+    //[self simulateGameGridWithGridSize:CGSizeMake(4, 4) andNumberOfClicks:2 andNumberOfTargets:2];
     
     /*_playerToken = [[IBToken alloc] init];
     _playerToken.tokenId = @"playa";
@@ -849,6 +865,229 @@
     int rowIndex = [CommonTools getRandomNumberFromInt:5 toInt:_bgPad.gridSize.height - 6];
     
     [_bgPad triggerNodeAtPosition:CGPointMake(columnIndex, rowIndex) forActionType:@"check_brickspot" withUserInfo:nil forceDisable:NO withNodeReset:NO];*/
+}
+
+-(void)simulateGameGridWithGridSize:(CGSize)gridSize andNumberOfClicks:(int)clickNum andNumberOfTargets:(int)targetNum withReferenceNode:(BOOL)withReference
+{
+    __block NSMutableDictionary *nodes = [NSMutableDictionary dictionary];
+    __block int actualSimulationCount = 0;
+    _simulationCount = clickNum * gridSize.height * gridSize.width;
+    __block NSMutableSet *targetPoints = [NSMutableSet set];
+    __block NSMutableArray *clicks = [NSMutableArray array];
+    IBActionDescriptor *boomActionDesc = [[IBActionDescriptor alloc] init];
+    boomActionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
+        SimulationNode *targetNode = (SimulationNode *)target;
+        CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
+        
+        int distX = (int)targetNode.columnIndex - (int)sourcePosition.x;
+        int distY = (int)targetNode.rowIndex - (int)sourcePosition.y;
+        
+        int distX_ref = targetNode.columnIndex - _simulationReferencePoint.x;
+        int distY_ref = targetNode.rowIndex - _simulationReferencePoint.y;
+
+        targetNode.nodeValue += withReference ? (distX_ref + distY_ref) + (distX + distY) : (distX + distY);
+        
+        actualSimulationCount++;
+        if (_simulationCount == actualSimulationCount) {
+            NSMutableDictionary *targetValues = [NSMutableDictionary dictionary];
+            
+            for (NSValue *targetPoint in targetPoints) {
+                CGPoint tp = targetPoint.CGPointValue;
+                SimulationNode *node = [nodes objectForKey:[NSString stringWithFormat:@"%d%d", (int)tp.x, (int)tp.y]];
+                [targetValues setObject:[NSNumber numberWithInt:node.nodeValue] forKey:[NSString stringWithFormat:@"%d%d", node.columnIndex, node.rowIndex]];
+            }
+            
+            NSMutableDictionary *levelInfo = [NSMutableDictionary dictionary];
+            if (withReference) {
+                [levelInfo setObject:[NSValue valueWithCGPoint:_simulationReferencePoint] forKey:@"reference_point"];
+            }
+            [levelInfo setObject:targetValues forKey:@"targets"];
+            [levelInfo setObject:clicks forKey:@"clicks"];
+            [levelInfo setObject:[NSValue valueWithCGSize:gridSize] forKey:@"grid_size"];
+            [self saveLevel:levelInfo];
+            [self loadLevel:levelInfo];
+            //[self simulateGameGridWithGridSize:gridSize andNumberOfClicks:clickNum andNumberOfTargets:targetNum];
+        }
+    };
+    
+    IBConnectionDescriptor *boomConn = [[IBConnectionDescriptor alloc] init];
+    boomConn.connectionType = kConnectionTypeNeighbours_close;
+    boomConn.isAutoFired = YES;
+    boomConn.autoFireDelay = 0;
+    
+    _simulationPad = [[IBActionPad alloc] initGridWithSize:gridSize andNodeInitBlock:^id<IBActionNodeActor>(int row, int column){
+        SimulationNode *node = [[SimulationNode alloc] init];
+        node.columnIndex = column;
+        node.rowIndex = row;
+        [nodes setObject:node forKey:[NSString stringWithFormat:@"%d%d", column, row]];
+        return node;
+    } andActionHeapSize:30];
+    [_simulationPad createGridWithNodesActivated:YES];
+    [_simulationPad.unifiedActionDescriptors setObject:@[boomActionDesc] forKey:@"boom"];
+    [_simulationPad loadConnectionMapWithDescriptor:boomConn forActionType:@"boom"];
+    
+    
+    
+    int columnIndex = [CommonTools getRandomNumberFromInt:0 toInt:gridSize.width - 1];
+    int rowIndex = [CommonTools getRandomNumberFromInt:0 toInt:gridSize.height - 1];
+    _simulationReferencePoint = CGPointMake(columnIndex, rowIndex);
+    //_simulationReferencePoint = CGPointMake(2, 2);
+    
+    NSMutableArray *allPoints = [NSMutableArray array];
+    for (int i=0; i<gridSize.width; i++) {
+        for (int j=0; j<gridSize.height; j++) {
+            [allPoints addObject:[NSValue valueWithCGPoint:CGPointMake(i, j)]];
+        }
+    }
+    
+    for (int i=0; i<targetNum; i++) {
+        int randomIndex = [CommonTools getRandomNumberFromInt:0 toInt:allPoints.count - 1];
+        
+        NSValue *point = [allPoints objectAtIndex:randomIndex];
+        
+        [targetPoints addObject:point];
+        
+        [allPoints removeObject:point];
+    }
+    
+    for (int i=0; i<clickNum; i++) {
+        int columnIndex = [CommonTools getRandomNumberFromInt:0 toInt:gridSize.width - 1];
+        int rowIndex = [CommonTools getRandomNumberFromInt:0 toInt:gridSize.height - 1];
+        CGPoint clickPoint = CGPointMake(columnIndex, rowIndex);
+        [_simulationPad triggerNodeAtPosition:clickPoint forActionType:@"boom" withuserInfo:nil withNodeReset:NO];
+        [clicks addObject:[NSValue valueWithCGPoint:clickPoint]];
+    }
+}
+
+-(void)loadLevel:(NSDictionary *)levelInfo
+{
+    [self removeAllChildren];
+    
+    SKSpriteNode *resetNode = [[SKSpriteNode alloc] initWithColor:[UIColor redColor] size:CGSizeMake(150, 60)];
+    resetNode.position = CGPointMake(self.size.width / 2, 50);
+    resetNode.name = @"reset";
+    [self addChild:resetNode];
+    SKLabelNode *resetLabel = [SKLabelNode labelNodeWithFontNamed:@"AppleSDGothicNeo-Medium"];
+    resetLabel.fontColor = [UIColor blackColor];
+    resetLabel.fontSize = 20;
+    resetLabel.text = @"Reset";
+    resetLabel.position = CGPointMake(0, 0);
+    resetLabel.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
+    resetLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
+    [resetNode addChild:resetLabel];
+    
+    _currentLevelInfo = levelInfo;
+    
+    __block NSMutableSet *matchingNodes = [NSMutableSet set];
+    NSValue *refPoint_val = [levelInfo objectForKey:@"reference_point"];
+    if (refPoint_val) {
+        _referencePoint = refPoint_val.CGPointValue;
+    } else {
+        _referencePoint = CGPointMake(-1, -1);
+    }
+    
+    NSValue *gridSize_val = [levelInfo objectForKey:@"grid_size"];
+    _gridSize = gridSize_val.CGSizeValue;
+    
+    __block NSDictionary *targetValues = [levelInfo objectForKey:@"targets"];
+    
+    IBActionDescriptor *boomActionDesc = [[IBActionDescriptor alloc] init];
+    boomActionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
+        GameObject *targetNode = (GameObject *)target;
+        //if (!targetNode.isActionSource && !targetNode.isBlocker) {
+        CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
+        double distX_abs = fabs((double)targetNode.columnIndex - (double)sourcePosition.x);
+        double distY_abs = fabs((double)targetNode.rowIndex - (double)sourcePosition.y);
+        double damping = (distX_abs + distY_abs) / ((double)_bgPad.gridSize.width - 1 + (double)_bgPad.gridSize.height - 1);
+        
+        int distX = (int)targetNode.columnIndex - (int)sourcePosition.x;
+        int distY = (int)targetNode.rowIndex - (int)sourcePosition.y;
+        
+        int distX_ref = targetNode.columnIndex - _referencePoint.x;
+        int distY_ref = targetNode.rowIndex - _referencePoint.y;
+
+        int valueDiff = CGPointEqualToPoint(_referencePoint, CGPointMake(-1, -1)) ? (distX + distY) : ((distX_ref + distY_ref) + (distX + distY));
+        
+        targetNode.zPosition = 100 - damping * 10;
+        ((InteractionNode *)targetNode).nodeValue += valueDiff;
+
+        SKLabelNode *helperLabel = [SKLabelNode labelNodeWithFontNamed:@"AppleSDGothicNeo-Medium"];
+        helperLabel.fontSize = 18;
+        helperLabel.fontColor = [UIColor whiteColor];
+        NSString *helperText = valueDiff <= 0 ? [NSString stringWithFormat:@"%d", valueDiff] : [NSString stringWithFormat:@"+%d", valueDiff];
+        helperLabel.text = helperText;
+        helperLabel.position = CGPointMake(self.size.width / 2 + targetNode.position.x, self.size.height / 2 + targetNode.position.y);
+        helperLabel.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
+        helperLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
+        helperLabel.zPosition = 999;
+        [self addChild:helperLabel];
+        [helperLabel runAction:[SKAction sequence:@[[SKAction group:@[[SKAction moveByX:0 y:30 duration:1.6], [SKAction fadeAlphaTo:0 duration:1.6]]], [SKAction removeFromParent]]]];
+        
+        SKAction *scaleSequence = [SKAction sequence:@[[SKAction scaleTo:.1 + damping * 0.9 duration:.3], [SKAction scaleTo:1.5 - damping * 0.5 duration:.3], [SKAction group:@[[SKAction scaleTo:1 duration:.3], [SKAction runBlock:^{
+            ((InteractionNode *)targetNode).infoLabel.text = [NSString stringWithFormat:@"%d", ((InteractionNode *)targetNode).nodeValue];
+        }]]]]];
+        [targetNode runAction:scaleSequence];
+        
+        if (targetNode.isActionSource) {
+            if (((InteractionNode *)targetNode).nodeValue == 0) {
+                if (![matchingNodes containsObject:targetNode]) {
+                    [matchingNodes addObject:targetNode];
+                }
+            } else {
+                if ([matchingNodes containsObject:targetNode]) {
+                    [matchingNodes removeObject:targetNode];
+                }
+            }
+        }
+        if (matchingNodes.count == targetValues.allKeys.count) {
+            [self runAction:[SKAction sequence:@[[SKAction waitForDuration:2], [SKAction runBlock:^{
+                [self simulateGameGridWithGridSize:_gridSize andNumberOfClicks:2 andNumberOfTargets:targetValues.allKeys.count withReferenceNode:!CGPointEqualToPoint(_referencePoint, CGPointMake(-1, -1))];
+            }]]]];
+        }
+    };
+    
+    IBConnectionDescriptor *boomConn = [[IBConnectionDescriptor alloc] init];
+    boomConn.connectionType = kConnectionTypeNeighbours_close;
+    boomConn.isAutoFired = YES;
+    boomConn.autoFireDelay = 0.05;
+    //_gridSize = CGSizeMake(4, 4);
+    
+    NSArray *bgColorCodes = [NSArray arrayWithObjects:@"F20C23", @"DE091E", @"CC081C", @"B50415", nil];
+    _nodeCount = _gridSize.width * _gridSize.height;
+    _bgPad = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(300, 300) andGridSize:_gridSize withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_touch forActionType:@"boom"];
+    _bgPad.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
+    [_bgPad loadActionDescriptor:boomActionDesc andConnectionDescriptor:boomConn forActionType:@"boom"];
+    [self addChild:_bgPad];
+    _bgPad.disableOnFirstTrigger = NO;
+    
+    if (!CGPointEqualToPoint(_referencePoint, CGPointMake(-1, -1))) {
+        GameObject *refNode = [_bgPad getNodeAtPosition:_referencePoint];
+        refNode.color = [UIColor blueColor];
+    }
+    
+    for (int column = 0; column < _bgPad.gridSize.width; column++) {
+        for (int row = 0; row < _bgPad.gridSize.height; row++) {
+            GameObject *node = [_bgPad getNodeAtPosition:CGPointMake(column, row)];
+            
+            if ([[targetValues allKeys] containsObject:[NSString stringWithFormat:@"%d%d", node.columnIndex, node.rowIndex]]) {
+                NSNumber *targetValue = [targetValues objectForKey:[NSString stringWithFormat:@"%d%d", node.columnIndex, node.rowIndex]];
+
+                ((InteractionNode *)node).infoLabel.hidden = NO;
+                ((InteractionNode *)node).infoLabel.text = [NSString stringWithFormat:@"%d", -targetValue.intValue];
+                ((InteractionNode *)node).nodeValue = -targetValue.intValue;
+                node.isActionSource = YES;
+                
+            } else {
+                ((InteractionNode *)node).infoLabel.hidden = YES;
+                node.isActionSource = NO;
+            }
+        }
+    }
+}
+
+-(void)saveLevel:(NSDictionary *)levelDescription
+{
+    NSLog(@"%@", levelDescription);
 }
 
 -(void)loadFlipVerticalAction
@@ -1026,10 +1265,15 @@
 }
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    /*UITouch *touch = [touches anyObject];
+    UITouch *touch = [touches anyObject];
     CGPoint positionInScene = [touch locationInNode:self];
     
-    [_bgPad triggerToken:_playerToken forActionType:@"player_up"];*/
+    NSArray *nodes = [self nodesAtPoint:positionInScene];
+    for (SKNode *node in nodes) {
+        if ([node.name isEqualToString:@"reset"]) {
+            [self loadLevel:_currentLevelInfo];
+        }
+    }
 }
 
 -(IBAction)swipeAction_left:(UISwipeGestureRecognizer *)recognizer

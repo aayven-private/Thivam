@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		B03B2F9B19EBD0D100668836 /* IBToken.m in Sources */ = {isa = PBXBuildFile; fileRef = B03B2F9A19EBD0D100668836 /* IBToken.m */; };
+		B03B2F9E19EFA86500668836 /* SimulationNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B03B2F9D19EFA86500668836 /* SimulationNode.m */; };
 		B0E3A65019D01A790085BC2F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A64F19D01A790085BC2F /* main.m */; };
 		B0E3A65319D01A790085BC2F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A65219D01A790085BC2F /* AppDelegate.m */; };
 		B0E3A65619D01A790085BC2F /* GameScene.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A65519D01A790085BC2F /* GameScene.m */; };
@@ -47,6 +48,8 @@
 /* Begin PBXFileReference section */
 		B03B2F9919EBD0D100668836 /* IBToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IBToken.h; sourceTree = "<group>"; };
 		B03B2F9A19EBD0D100668836 /* IBToken.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IBToken.m; sourceTree = "<group>"; };
+		B03B2F9C19EFA86500668836 /* SimulationNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimulationNode.h; sourceTree = "<group>"; };
+		B03B2F9D19EFA86500668836 /* SimulationNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimulationNode.m; sourceTree = "<group>"; };
 		B0E3A64A19D01A790085BC2F /* thivam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = thivam.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B0E3A64E19D01A790085BC2F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B0E3A64F19D01A790085BC2F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -240,6 +243,8 @@
 				B0E3A68919D0304D0085BC2F /* InteractionObject.m */,
 				B0E3A6A819D1C08D0085BC2F /* ImageHelper.h */,
 				B0E3A6A919D1C08D0085BC2F /* ImageHelper.m */,
+				B03B2F9C19EFA86500668836 /* SimulationNode.h */,
+				B03B2F9D19EFA86500668836 /* SimulationNode.m */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -392,6 +397,7 @@
 				B0E3A6A719D1987D0085BC2F /* IBConnectionDescriptor.m in Sources */,
 				B0E3A68E19D0629E0085BC2F /* IBMatrix.m in Sources */,
 				B0E3A65619D01A790085BC2F /* GameScene.m in Sources */,
+				B03B2F9E19EFA86500668836 /* SimulationNode.m in Sources */,
 				B0E3A6AA19D1C08D0085BC2F /* ImageHelper.m in Sources */,
 				B0E3A6AE19D409710085BC2F /* PadNode.m in Sources */,
 				B0E3A6C419D5B2A10085BC2F /* ThivamDataModel.xcdatamodeld in Sources */,
