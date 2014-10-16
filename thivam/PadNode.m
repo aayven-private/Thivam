@@ -25,7 +25,7 @@
 
 @implementation PadNode
 
--(id)initWithColor:(UIColor *)color size:(CGSize)size andGridSize:(CGSize)gridSize withPhysicsBody:(BOOL)withBody andNodeColorCodes:(NSArray *)colorCodes andInteractionMode:(NSString *)interactionMode forActionType:(NSString *)actionType
+-(id)initWithColor:(UIColor *)color size:(CGSize)size andGridSize:(CGSize)gridSize withPhysicsBody:(BOOL)withBody andNodeColorCodes:(NSArray *)colorCodes andInteractionMode:(NSString *)interactionMode forActionType:(NSString *)actionType isInteractive:(BOOL)isInteractive
 {
     if (self = [super initWithColor:color size:size]) {
         self.isSwiping = NO;
@@ -65,6 +65,11 @@
             //node.alpha = 0;
             
             node.position = blockPosition;
+            
+            if (!isInteractive) {
+                node.infoLabel.hidden = YES;
+            }
+            
             //node.zPosition = 1;
             [self addChild:node];
             node.columnIndex = column;
