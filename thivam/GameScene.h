@@ -10,11 +10,10 @@
 #import "InteractionNode.h"
 #import "GameSceneHandler.h"
 
-@interface GameScene : SKScene <GameObjectDelegate, SKPhysicsContactDelegate>
+@interface GameScene : SKScene <SKPhysicsContactDelegate>
 
 @property (nonatomic, weak) id<GameSceneHandler> sceneDelegate;
 
 -(void)initEnvironment;
--(void)wipeScreen;
 
 @end

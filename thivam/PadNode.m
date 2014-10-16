@@ -286,8 +286,6 @@
         column = _gridSize.width - 1;
     }
     
-    //NSLog(@"%d, %d", row, column);
-    
     return CGPointMake(column, row);
 }
 
