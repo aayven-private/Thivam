@@ -120,7 +120,7 @@
     _bgPad.disableOnFirstTrigger = NO;
     _bgPad.name = @"permanent";
     
-    [self simulateGameGridWithGridSize:CGSizeMake(5, 5) andNumberOfClicks:2 andNumberOfTargets:2 withReferenceNode:NO];
+    [self simulateGameGridWithGridSize:CGSizeMake(4, 4) andNumberOfClicks:2 andNumberOfTargets:2 withReferenceNode:YES];
     
 }
 

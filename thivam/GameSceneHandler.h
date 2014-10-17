@@ -11,6 +11,6 @@
 
 @protocol GameSceneHandler <NSObject>
 
--(UIColor *)getColorAtPosition:(CGPoint)position;
+-(void)playClicked;
 
 @end
