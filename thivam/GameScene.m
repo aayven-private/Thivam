@@ -334,18 +334,6 @@
         
         targetNode.zPosition = 100 - damping * 10;
         ((InteractionNode *)targetNode).nodeValue += valueDiff;
-
-        SKLabelNode *helperLabel = [SKLabelNode labelNodeWithFontNamed:@"Copperplate-Bold"];
-        helperLabel.fontSize = 18;
-        helperLabel.fontColor = [UIColor whiteColor];
-        NSString *helperText = valueDiff <= 0 ? [NSString stringWithFormat:@"%d", valueDiff] : [NSString stringWithFormat:@"+%d", valueDiff];
-        helperLabel.text = helperText;
-        helperLabel.position = CGPointMake(self.size.width / 2 + targetNode.position.x, self.size.height / 2 + targetNode.position.y);
-        helperLabel.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
-        helperLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
-        helperLabel.zPosition = 999;
-        [self addChild:helperLabel];
-        [helperLabel runAction:[SKAction sequence:@[[SKAction group:@[[SKAction moveByX:0 y:30 duration:1.6], [SKAction fadeAlphaTo:0 duration:1.6]]], [SKAction removeFromParent]]]];
         
         SKAction *scaleSequence = [SKAction sequence:@[[SKAction scaleTo:.1 + damping * 0.9 duration:.3], [SKAction scaleTo:1.5 - damping * 0.5 duration:.3], [SKAction group:@[[SKAction scaleTo:1 duration:.3], [SKAction runBlock:^{
             ((InteractionNode *)targetNode).infoLabel.text = [NSString stringWithFormat:@"%d", ((InteractionNode *)targetNode).nodeValue];
@@ -353,6 +341,18 @@
         [targetNode runAction:scaleSequence];
         
         if (targetNode.isActionSource) {
+            SKLabelNode *helperLabel = [SKLabelNode labelNodeWithFontNamed:@"Copperplate-Bold"];
+            helperLabel.fontSize = 18;
+            helperLabel.fontColor = [UIColor whiteColor];
+            NSString *helperText = valueDiff <= 0 ? [NSString stringWithFormat:@"%d", valueDiff] : [NSString stringWithFormat:@"+%d", valueDiff];
+            helperLabel.text = helperText;
+            helperLabel.position = CGPointMake(self.size.width / 2 + targetNode.position.x, self.size.height / 2 + targetNode.position.y);
+            helperLabel.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
+            helperLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
+            helperLabel.zPosition = 999;
+            [self addChild:helperLabel];
+            [helperLabel runAction:[SKAction sequence:@[[SKAction group:@[[SKAction moveByX:0 y:30 duration:1.6], [SKAction fadeAlphaTo:0 duration:1.6]]], [SKAction removeFromParent]]]];
+            
             if (((InteractionNode *)targetNode).nodeValue == 0) {
                 if (![matchingNodes containsObject:targetNode]) {
                     [matchingNodes addObject:targetNode];
