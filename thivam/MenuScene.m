@@ -26,12 +26,14 @@
 
 -(void)initEnvironment
 {
+    [self removeAllChildren];
+    
     NSArray *bgColorCodes = [NSArray arrayWithObjects:@"F20C23", @"DE091E", @"CC081C", @"B50415", nil];
-    _playButton = [[PadNode alloc] initWithColor:[UIColor redColor] size:CGSizeMake(150, 60) andGridSize:CGSizeMake(7, 3) withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO];
+    _playButton = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(150, 60) andGridSize:CGSizeMake(7, 3) withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO withborderColor:nil];
     _playButton.name = @"playbutton";
     _playButton.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
     
-    SKLabelNode *playLabel = [SKLabelNode labelNodeWithFontNamed:@"AppleSDGothicNeo-Medium"];
+    SKLabelNode *playLabel = [SKLabelNode labelNodeWithFontNamed:@"Copperplate-Bold"];
     playLabel.position = CGPointMake(0, 0);
     playLabel.text = @"PLAY";
     playLabel.fontSize = 25;
@@ -78,7 +80,7 @@
     
     bgColorCodes = [NSArray arrayWithObjects:@"8D8EF2", @"787AD6", @"1E21F7", @"1D1FA1", nil];
     //_nodeCount = bgGridSize.width * bgGridSize.height;
-    _bgPad = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:bgGridSize withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO];
+    _bgPad = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:bgGridSize withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_touch forActionType:@"boom" isInteractive:NO withborderColor:[UIColor blackColor]];
     _bgPad.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
     [_bgPad loadActionDescriptor:boomActionDesc_bg andConnectionDescriptor:boomConn forActionType:@"boom"];
     _bgPad.alpha = .6;
@@ -98,9 +100,9 @@
     for (SKNode *node in nodes) {
         if ([node.name isEqualToString:@"playbutton"]) {
             [_playButton triggerRandomNodeForActionType:@"boom" withUserInfo:nil];
-            [_bgPad triggerRandomNodeForActionType:@"boom" withUserInfo:nil];
+            //[_bgPad triggerRandomNodeForActionType:@"boom" withUserInfo:nil];
             //[_playButton runAction:[SKAction sequence:@[[SKAction fadeAlphaTo:0.0 duration:.3], [SKAction runBlock:^{
-                [_sceneDelegate playClicked];
+            [_sceneDelegate playClicked];
             //}]]]];
         }
     }

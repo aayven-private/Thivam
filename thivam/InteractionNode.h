@@ -13,6 +13,6 @@
 @property (nonatomic) SKLabelNode *infoLabel;
 @property (nonatomic) int nodeValue;
 
--(id)initWithColor:(UIColor *)color size:(CGSize)size;
+-(id)initWithColor:(UIColor *)color size:(CGSize)size andBorderColor:(UIColor *)borderColor;
 
 @end

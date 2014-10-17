@@ -25,7 +25,7 @@
 
 @implementation PadNode
 
--(id)initWithColor:(UIColor *)color size:(CGSize)size andGridSize:(CGSize)gridSize withPhysicsBody:(BOOL)withBody andNodeColorCodes:(NSArray *)colorCodes andInteractionMode:(NSString *)interactionMode forActionType:(NSString *)actionType isInteractive:(BOOL)isInteractive
+-(id)initWithColor:(UIColor *)color size:(CGSize)size andGridSize:(CGSize)gridSize withPhysicsBody:(BOOL)withBody andNodeColorCodes:(NSArray *)colorCodes andInteractionMode:(NSString *)interactionMode forActionType:(NSString *)actionType isInteractive:(BOOL)isInteractive withborderColor:(UIColor *)borderColor
 {
     if (self = [super initWithColor:color size:size]) {
         self.isSwiping = NO;
@@ -51,7 +51,7 @@
                 blockColor = color;
             }
             
-            InteractionNode *node = [[InteractionNode alloc] initWithColor:blockColor size:_blockSize];
+            InteractionNode *node = [[InteractionNode alloc] initWithColor:blockColor size:_blockSize andBorderColor:borderColor];
             if ([interactionMode isEqualToString:kInteractionMode_touch]) {
                 node.userInteractionEnabled = YES;
             } else {

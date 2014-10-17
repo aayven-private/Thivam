@@ -23,6 +23,14 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    _gameScene = [GameScene sceneWithSize:self.view.bounds.size];
+    _gameScene.sceneDelegate = self;
+    _gameScene.scaleMode = SKSceneScaleModeAspectFill;
+    
+    _menuScene = [MenuScene sceneWithSize:self.view.bounds.size];
+    _menuScene.sceneDelegate = self;
+    _menuScene.scaleMode = SKSceneScaleModeAspectFill;
 }
 
 - (BOOL)shouldAutorotate
@@ -55,18 +63,19 @@
     
     // Configure the view.
     SKView * skView = (SKView *)self.view;
+    
+    skView.showsFPS = YES;
+    skView.showsNodeCount = YES;
+    //skView.showsPhysics = YES;
+    /* Sprite Kit applies additional optimizations to improve rendering performance */
+    skView.ignoresSiblingOrder = NO;
+    
     if (!skView.scene) {
-        SKView * skView = (SKView *)self.view;
-        skView.showsFPS = YES;
-        skView.showsNodeCount = YES;
-        //skView.showsPhysics = YES;
-        /* Sprite Kit applies additional optimizations to improve rendering performance */
-        skView.ignoresSiblingOrder = NO;
         
         // Create and configure the scene.
-        _menuScene = [MenuScene sceneWithSize:skView.bounds.size];
+        /*_menuScene = [MenuScene sceneWithSize:skView.bounds.size];
         _menuScene.sceneDelegate = self;
-        _menuScene.scaleMode = SKSceneScaleModeAspectFill;
+        _menuScene.scaleMode = SKSceneScaleModeAspectFill;*/
         
         // Present the scene.
         [skView presentScene:_menuScene];
@@ -78,28 +87,33 @@
 {
     SKView * skView = (SKView *)self.view;
     
-    //if (!skView.scene) {
-    skView.showsFPS = YES;
-    skView.showsNodeCount = YES;
-    //skView.showsPhysics = YES;
-    /* Sprite Kit applies additional optimizations to improve rendering performance */
-    skView.ignoresSiblingOrder = NO;
-    
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        _gameScene = [GameScene sceneWithSize:skView.bounds.size];
-        _gameScene.sceneDelegate = self;
-        _gameScene.scaleMode = SKSceneScaleModeAspectFill;
+    //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
         
-        SKTransition *reveal = [SKTransition crossFadeWithDuration:3];
+        SKTransition *reveal = [SKTransition crossFadeWithDuration:1.3];
         reveal.pausesOutgoingScene = NO;
         reveal.pausesIncomingScene = YES;
         
-        dispatch_async(dispatch_get_main_queue(), ^{
+        //dispatch_async(dispatch_get_main_queue(), ^{
             [skView presentScene:_gameScene transition:reveal];
-        });
-    });
-    // Create and configure the scene.
+        //});
+    //});
     
+}
+
+-(void)menuClicked
+{
+    SKView * skView = (SKView *)self.view;
+    
+    //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        
+        SKTransition *reveal = [SKTransition crossFadeWithDuration:.3];
+        reveal.pausesOutgoingScene = NO;
+        reveal.pausesIncomingScene = YES;
+        
+        //dispatch_async(dispatch_get_main_queue(), ^{
+            [skView presentScene:_menuScene transition:reveal];
+        //});
+    //});
 }
 
 @end

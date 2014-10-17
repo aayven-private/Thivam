@@ -12,5 +12,6 @@
 @protocol GameSceneHandler <NSObject>
 
 -(void)playClicked;
+-(void)menuClicked;
 
 @end

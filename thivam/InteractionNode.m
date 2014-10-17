@@ -24,21 +24,28 @@
 @synthesize isActionSource = _isActionSource;
 @synthesize isBlocker = _isBlocker;
 
--(id)initWithColor:(UIColor *)color size:(CGSize)size
+-(id)initWithColor:(UIColor *)color size:(CGSize)size andBorderColor:(UIColor *)borderColor
 {
-    if (self = [super initWithColor:[UIColor blackColor] size:size]) {
+    if (borderColor) {
+        self = [super initWithColor:borderColor size:size];
+    } else {
+        self = [super initWithColor:color size:size];
+    }
+    if (self) {
         self.userInteractionEnabled = NO;
         self.isActionSource = NO;
         self.isBlocker = NO;
-
-        SKSpriteNode *innerNode = [[SKSpriteNode alloc] initWithColor:color size:CGSizeMake(size.width - 5, size.height - 5)];
-        innerNode.position = CGPointMake(0, 0);
-        [self addChild:innerNode];
         
-        self.infoLabel = [SKLabelNode labelNodeWithFontNamed:@"AppleSDGothicNeo-Medium"];
+        if (borderColor) {
+            SKSpriteNode *innerNode = [[SKSpriteNode alloc] initWithColor:color size:CGSizeMake(size.width - 5, size.height - 5)];
+            innerNode.position = CGPointMake(0, 0);
+            [self addChild:innerNode];
+        }
+        
+        self.infoLabel = [SKLabelNode labelNodeWithFontNamed:@"Copperplate-Bold"];
         self.infoLabel.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
         self.infoLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
-        self.infoLabel.fontSize = 18;
+        self.infoLabel.fontSize = 22;
         self.infoLabel.position = CGPointMake(0, 0);
         self.infoLabel.fontColor = [UIColor blackColor];
         self.infoLabel.text = @"0";
