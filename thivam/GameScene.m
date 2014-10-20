@@ -122,7 +122,7 @@
     _bgPad.name = @"permanent";
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        [self simulateGameGridWithGridSize:CGSizeMake(4, 4) andNumberOfClicks:2 andNumberOfTargets:2 withReferenceNode:YES];
+        [self simulateGameGridWithGridSize:CGSizeMake(5, 5) andNumberOfClicks:2 andNumberOfTargets:2 withReferenceNode:YES];
     });
 }
 
@@ -320,9 +320,11 @@
         GameObject *targetNode = (GameObject *)target;
         //if (!targetNode.isActionSource && !targetNode.isBlocker) {
         CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
-        double distX_abs = fabs((double)targetNode.columnIndex - (double)sourcePosition.x);
-        double distY_abs = fabs((double)targetNode.rowIndex - (double)sourcePosition.y);
-        double damping = (distX_abs + distY_abs) / ((double)_gamePad.gridSize.width - 1 + (double)_gamePad.gridSize.height - 1);
+        //double distX_abs = fabs((double)targetNode.columnIndex - (double)sourcePosition.x);
+        //double distY_abs = fabs((double)targetNode.rowIndex - (double)sourcePosition.y);
+        double maxDiff = ((double)_gamePad.gridSize.width - 1 + (double)_gamePad.gridSize.height - 1);
+        //double damping = (distX_abs + distY_abs) / maxDiff;
+        
         
         int distX = (int)targetNode.columnIndex - (int)sourcePosition.x;
         int distY = (int)targetNode.rowIndex - (int)sourcePosition.y;
@@ -332,10 +334,14 @@
 
         int valueDiff = CGPointEqualToPoint(_referencePoint, CGPointMake(-1, -1)) ? (distX + distY) : ((distX_ref + distY_ref) + (distX + distY));
         
-        targetNode.zPosition = 100 - damping * 10;
+        double scaleRatio = ((double)valueDiff / (maxDiff));
+        
+        scaleRatio = (fabs(scaleRatio) < .5 ? scaleRatio : (scaleRatio / fabs(scaleRatio)) * .5);
+        
+        targetNode.zPosition = 100 + scaleRatio * 10;
         ((InteractionNode *)targetNode).nodeValue += valueDiff;
         
-        SKAction *scaleSequence = [SKAction sequence:@[[SKAction scaleTo:.1 + damping * 0.9 duration:.3], [SKAction scaleTo:1.5 - damping * 0.5 duration:.3], [SKAction group:@[[SKAction scaleTo:1 duration:.3], [SKAction runBlock:^{
+        SKAction *scaleSequence = [SKAction sequence:@[[SKAction scaleTo:1 + scaleRatio duration:.3]/*, [SKAction scaleTo:1.5 - damping * 0.5 duration:.3]*/, [SKAction group:@[[SKAction scaleTo:1 duration:.3], [SKAction runBlock:^{
             ((InteractionNode *)targetNode).infoLabel.text = [NSString stringWithFormat:@"%d", ((InteractionNode *)targetNode).nodeValue];
         }]]]]];
         [targetNode runAction:scaleSequence];

@@ -15,5 +15,6 @@
 @property (nonatomic, weak) id<GameSceneHandler> sceneDelegate;
 
 -(void)initEnvironment;
+-(void)loadLevel:(NSDictionary *)levelInfo;
 
 @end

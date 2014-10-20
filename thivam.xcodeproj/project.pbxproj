@@ -10,6 +10,7 @@
 		B03B2F9B19EBD0D100668836 /* IBToken.m in Sources */ = {isa = PBXBuildFile; fileRef = B03B2F9A19EBD0D100668836 /* IBToken.m */; };
 		B03B2F9E19EFA86500668836 /* SimulationNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B03B2F9D19EFA86500668836 /* SimulationNode.m */; };
 		B03B2FA119F118CA00668836 /* MenuScene.m in Sources */ = {isa = PBXBuildFile; fileRef = B03B2FA019F118CA00668836 /* MenuScene.m */; };
+		B03B2FA519F50DDD00668836 /* LevelManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B03B2FA419F50DDD00668836 /* LevelManager.m */; };
 		B0E3A65019D01A790085BC2F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A64F19D01A790085BC2F /* main.m */; };
 		B0E3A65319D01A790085BC2F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A65219D01A790085BC2F /* AppDelegate.m */; };
 		B0E3A65619D01A790085BC2F /* GameScene.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A65519D01A790085BC2F /* GameScene.m */; };
@@ -49,6 +50,8 @@
 		B03B2F9D19EFA86500668836 /* SimulationNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimulationNode.m; sourceTree = "<group>"; };
 		B03B2F9F19F118CA00668836 /* MenuScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuScene.h; sourceTree = "<group>"; };
 		B03B2FA019F118CA00668836 /* MenuScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuScene.m; sourceTree = "<group>"; };
+		B03B2FA319F50DDD00668836 /* LevelManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelManager.h; sourceTree = "<group>"; };
+		B03B2FA419F50DDD00668836 /* LevelManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LevelManager.m; sourceTree = "<group>"; };
 		B0E3A64A19D01A790085BC2F /* thivam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = thivam.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B0E3A64E19D01A790085BC2F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B0E3A64F19D01A790085BC2F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -111,6 +114,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B03B2FA219F50DC400668836 /* LevelManagement */ = {
+			isa = PBXGroup;
+			children = (
+				B03B2FA319F50DDD00668836 /* LevelManager.h */,
+				B03B2FA419F50DDD00668836 /* LevelManager.m */,
+			);
+			name = LevelManagement;
+			sourceTree = "<group>";
+		};
 		B0E3A64119D01A780085BC2F = {
 			isa = PBXGroup;
 			children = (
@@ -132,6 +144,7 @@
 		B0E3A64C19D01A790085BC2F /* thivam */ = {
 			isa = PBXGroup;
 			children = (
+				B03B2FA219F50DC400668836 /* LevelManagement */,
 				B0E3A6B219D5B24A0085BC2F /* DBAccessLayer */,
 				B0E3A69A19D178C40085BC2F /* ActionManagement */,
 				B0E3A68719D030300085BC2F /* Helpers */,
@@ -374,6 +387,7 @@
 				B0E3A6A019D188220085BC2F /* IBActionNode.m in Sources */,
 				B0E3A69D19D17B2C0085BC2F /* IBActionPad.m in Sources */,
 				B0E3A68419D01EF20085BC2F /* InteractionNode.m in Sources */,
+				B03B2FA519F50DDD00668836 /* LevelManager.m in Sources */,
 				B0E3A67D19D01DEB0085BC2F /* GameObject.m in Sources */,
 				B03B2F9B19EBD0D100668836 /* IBToken.m in Sources */,
 				B0E3A65B19D01A790085BC2F /* GameViewController.m in Sources */,
