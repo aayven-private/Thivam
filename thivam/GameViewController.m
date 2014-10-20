@@ -45,6 +45,7 @@
     _levelManager = [[LevelManager alloc] init];
     [_levelManager generateLevelWithGridsize:levelDescriptor.gridSize andNumberOfClicks:levelDescriptor.clickNum andNumberOfTargets:levelDescriptor.targetNum withReferenceNode:levelDescriptor.withReference succesBlock:^(NSDictionary *levelInfo) {
         _nextLevel = levelInfo;
+        _currentLevelIndex++;
     }];
     
     _gameScene = [GameScene sceneWithSize:self.view.bounds.size];
@@ -118,7 +119,7 @@
     [_gameScene loadLevel:_nextLevel];
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        _currentLevelIndex++;
+        
         LevelDescriptor *levelDescriptor = [[LevelDescriptor alloc] initWithLevelIndex:_currentLevelIndex];
         [_levelManager generateLevelWithGridsize:levelDescriptor.gridSize andNumberOfClicks:levelDescriptor.clickNum andNumberOfTargets:levelDescriptor.targetNum withReferenceNode:levelDescriptor.withReference succesBlock:^(NSDictionary *levelInfo) {
             _nextLevel = levelInfo;

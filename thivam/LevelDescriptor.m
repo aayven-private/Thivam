@@ -53,6 +53,11 @@
             self.withReference = YES;
             self.clickNum = 2;
             self.targetNum = 3;
+        } else {
+            self.gridSize = CGSizeMake(7, 7);
+            self.withReference = YES;
+            self.clickNum = 3;
+            self.targetNum = 3;
         }
     }
     return self;
