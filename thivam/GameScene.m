@@ -121,12 +121,12 @@
     _bgPad.disableOnFirstTrigger = NO;
     _bgPad.name = @"permanent";
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+   /* dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
         [self simulateGameGridWithGridSize:CGSizeMake(5, 5) andNumberOfClicks:2 andNumberOfTargets:2 withReferenceNode:YES];
-    });
+    });*/
 }
 
--(void)simulateGameGridWithGridSize:(CGSize)gridSize andNumberOfClicks:(int)clickNum andNumberOfTargets:(int)targetNum withReferenceNode:(BOOL)withReference
+/*-(void)simulateGameGridWithGridSize:(CGSize)gridSize andNumberOfClicks:(int)clickNum andNumberOfTargets:(int)targetNum withReferenceNode:(BOOL)withReference
 {
     __block NSMutableDictionary *nodes = [NSMutableDictionary dictionary];
     __block int actualSimulationCount = 0;
@@ -218,7 +218,7 @@
         [_simulationPad triggerNodeAtPosition:clickPoint forActionType:@"boom" withuserInfo:nil withNodeReset:NO];
         [clicks addObject:[NSValue valueWithCGPoint:clickPoint]];
     }
-}
+}*/
 
 -(void)loadLevel:(NSDictionary *)levelInfo
 {
@@ -232,7 +232,7 @@
     _levelCompleted = NO;
     
     NSArray *bgColorCodes = [NSArray arrayWithObjects:@"F20C23", @"DE091E", @"CC081C", @"B50415", nil];
-    _resetNode = [[PadNode alloc] initWithColor:[UIColor redColor] size:CGSizeMake(150, 60) andGridSize:CGSizeMake(7, 3) withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO withborderColor:nil];
+    _resetNode = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(150, 60) andGridSize:CGSizeMake(7, 3) withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO withborderColor:nil];
     _resetNode.name = @"reset";
     _resetNode.position = CGPointMake(self.size.width / 2, 50);
     
@@ -245,6 +245,8 @@
     resetLabel.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
     resetLabel.name = @"reset";
     [_resetNode addChild:resetLabel];
+    
+    
     
     IBActionDescriptor *boomActionDesc_button = [[IBActionDescriptor alloc] init];
     boomActionDesc_button.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
@@ -260,7 +262,7 @@
         [targetNode runAction:scaleSequence];
     };
     
-    _menuButton = [[PadNode alloc] initWithColor:[UIColor redColor] size:CGSizeMake(150, 60) andGridSize:CGSizeMake(7, 3) withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO withborderColor:nil];
+    _menuButton = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(150, 60) andGridSize:CGSizeMake(7, 3) withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO withborderColor:nil];
     _menuButton.name = @"menu";
     _menuButton.position = CGPointMake(self.size.width / 2, self.size.height - 50);
     
@@ -312,11 +314,13 @@
     
     NSValue *gridSize_val = [levelInfo objectForKey:@"grid_size"];
     _gridSize = gridSize_val.CGSizeValue;
-    
+    __block int nodeCount = _gridSize.height * _gridSize.width;
+    __block int currentNodeCount = 0;
     __block NSDictionary *targetValues = [levelInfo objectForKey:@"targets"];
     
     IBActionDescriptor *boomActionDesc = [[IBActionDescriptor alloc] init];
     boomActionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
+        currentNodeCount++;
         GameObject *targetNode = (GameObject *)target;
         //if (!targetNode.isActionSource && !targetNode.isBlocker) {
         CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
@@ -369,16 +373,20 @@
                 }
             }
         }
-        if (matchingNodes.count == targetValues.allKeys.count && !_levelCompleted) {
-            _levelCompleted = YES;
-            CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
-            [_resetNode runAction:[SKAction fadeAlphaTo:0.0 duration:1.3]];
-            [_menuButton runAction:[SKAction fadeAlphaTo:0.0 duration:1.3]];
-            [self runAction:[SKAction sequence:@[[SKAction waitForDuration:.8], [SKAction runBlock:^{
-                [_gamePad triggerNodeAtPosition:sourcePosition forActionType:@"next_level" withUserInfo:nil forceDisable:NO withNodeReset:NO];
-            }], [SKAction waitForDuration:1], [SKAction runBlock:^{
-                [self simulateGameGridWithGridSize:_gridSize andNumberOfClicks:2 andNumberOfTargets:targetValues.allKeys.count withReferenceNode:!CGPointEqualToPoint(_referencePoint, CGPointMake(-1, -1))];
-            }]]]];
+        if (currentNodeCount == nodeCount) {
+            if (matchingNodes.count == targetValues.allKeys.count) {
+                CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
+                [_resetNode runAction:[SKAction fadeAlphaTo:0.0 duration:1.3]];
+                [_menuButton runAction:[SKAction fadeAlphaTo:0.0 duration:1.3]];
+                [self runAction:[SKAction sequence:@[[SKAction waitForDuration:.8], [SKAction runBlock:^{
+                    [_gamePad triggerNodeAtPosition:sourcePosition forActionType:@"next_level" withUserInfo:nil forceDisable:NO withNodeReset:NO];
+                }], [SKAction waitForDuration:1], [SKAction runBlock:^{
+                    //[self simulateGameGridWithGridSize:_gridSize andNumberOfClicks:2 andNumberOfTargets:targetValues.allKeys.count withReferenceNode:!CGPointEqualToPoint(_referencePoint, CGPointMake(-1, -1))];
+                    [_sceneDelegate levelCompleted];
+                }]]]];
+            } else {
+                currentNodeCount = 0;
+            }
         }
     };
     //_gridSize = CGSizeMake(4, 4);

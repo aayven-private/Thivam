@@ -95,15 +95,16 @@
 {
     UITouch *touch = [touches anyObject];
     CGPoint positionInScene = [touch locationInNode:self];
-    
+    BOOL touched = NO;
     NSArray *nodes = [self nodesAtPoint:positionInScene];
     for (SKNode *node in nodes) {
-        if ([node.name isEqualToString:@"playbutton"]) {
-            [_playButton triggerRandomNodeForActionType:@"boom" withUserInfo:nil];
-            //[_bgPad triggerRandomNodeForActionType:@"boom" withUserInfo:nil];
-            //[_playButton runAction:[SKAction sequence:@[[SKAction fadeAlphaTo:0.0 duration:.3], [SKAction runBlock:^{
-            [_sceneDelegate playClicked];
-            //}]]]];
+        if ([node.name isEqualToString:@"playbutton"] && !touched) {
+            touched = YES;
+            [self runAction:[SKAction sequence:@[[SKAction runBlock:^{
+                [_playButton triggerRandomNodeForActionType:@"boom" withUserInfo:nil];
+            }], [SKAction waitForDuration:1], [SKAction runBlock:^{
+                [_sceneDelegate playClicked];
+            }]]]];
         }
     }
 }

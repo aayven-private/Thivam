@@ -14,6 +14,6 @@
 
 @property (nonatomic) NSDictionary *currentLevel;
 
--(void)generateLevelWithGridsize:(CGSize)gridSize andNumberOfClicks:(int)clickNum andNumberOfTargets:(int)targetNum withReferenceNode:(BOOL)withReference;
+-(void)generateLevelWithGridsize:(CGSize)gridSize andNumberOfClicks:(int)clickNum andNumberOfTargets:(int)targetNum withReferenceNode:(BOOL)withReference succesBlock:(void (^)(NSDictionary *levelInfo))successBlock;
 
 @end

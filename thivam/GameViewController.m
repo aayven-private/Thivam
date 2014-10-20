@@ -9,12 +9,16 @@
 #import "GameViewController.h"
 #import "GameScene.h"
 #import "MenuScene.h"
+#import "LevelManager.h"
 
 @interface GameViewController()
 
 @property (nonatomic) GameScene *gameScene;
 @property (nonatomic) MenuScene *menuScene;
 @property (nonatomic) UIImageView *imageView;
+@property (nonatomic) LevelManager *levelManager;
+
+@property (nonatomic) NSDictionary *nextLevel;
 
 @end
 
@@ -23,6 +27,11 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    _levelManager = [[LevelManager alloc] init];
+    [_levelManager generateLevelWithGridsize:CGSizeMake(5, 5) andNumberOfClicks:2 andNumberOfTargets:3 withReferenceNode:YES succesBlock:^(NSDictionary *levelInfo) {
+        _nextLevel = levelInfo;
+    }];
     
     _gameScene = [GameScene sceneWithSize:self.view.bounds.size];
     _gameScene.sceneDelegate = self;
@@ -86,34 +95,40 @@
 -(void)playClicked
 {
     SKView * skView = (SKView *)self.view;
-    
-    //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
         
-        SKTransition *reveal = [SKTransition crossFadeWithDuration:1.3];
-        reveal.pausesOutgoingScene = NO;
-        reveal.pausesIncomingScene = YES;
-        
-        //dispatch_async(dispatch_get_main_queue(), ^{
-            [skView presentScene:_gameScene transition:reveal];
-        //});
-    //});
+    SKTransition *reveal = [SKTransition crossFadeWithDuration:1.3];
+    reveal.pausesOutgoingScene = NO;
+    reveal.pausesIncomingScene = YES;
     
+    [skView presentScene:_gameScene transition:reveal];
+    [_gameScene loadLevel:_nextLevel];
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        [_levelManager generateLevelWithGridsize:CGSizeMake(5, 5) andNumberOfClicks:2 andNumberOfTargets:3 withReferenceNode:YES succesBlock:^(NSDictionary *levelInfo) {
+            _nextLevel = levelInfo;
+        }];
+    });
 }
 
 -(void)menuClicked
 {
     SKView * skView = (SKView *)self.view;
-    
-    //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        
-        SKTransition *reveal = [SKTransition crossFadeWithDuration:.3];
-        reveal.pausesOutgoingScene = NO;
-        reveal.pausesIncomingScene = YES;
-        
-        //dispatch_async(dispatch_get_main_queue(), ^{
-            [skView presentScene:_menuScene transition:reveal];
-        //});
-    //});
+
+    SKTransition *reveal = [SKTransition crossFadeWithDuration:.3];
+    reveal.pausesOutgoingScene = NO;
+    reveal.pausesIncomingScene = YES;
+    [skView presentScene:_menuScene transition:reveal];
+
+}
+
+-(void)levelCompleted
+{
+    [_gameScene loadLevel:_nextLevel];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        [_levelManager generateLevelWithGridsize:CGSizeMake(5, 5) andNumberOfClicks:2 andNumberOfTargets:3 withReferenceNode:YES succesBlock:^(NSDictionary *levelInfo) {
+            _nextLevel = levelInfo;
+        }];
+    });
 }
 
 @end

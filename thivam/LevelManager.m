@@ -23,11 +23,12 @@
 {
     if (self = [super init]) {
         self.currentLevel = nil;
+        self.simulationCount = 0;
     }
     return self;
 }
 
--(void)generateLevelWithGridsize:(CGSize)gridSize andNumberOfClicks:(int)clickNum andNumberOfTargets:(int)targetNum withReferenceNode:(BOOL)withReference
+-(void)generateLevelWithGridsize:(CGSize)gridSize andNumberOfClicks:(int)clickNum andNumberOfTargets:(int)targetNum withReferenceNode:(BOOL)withReference succesBlock:(void (^)(NSDictionary *levelInfo))successBlock
 {
     __block NSMutableDictionary *nodes = [NSMutableDictionary dictionary];
     __block int actualSimulationCount = 0;
@@ -49,6 +50,7 @@
         
         actualSimulationCount++;
         if (_simulationCount == actualSimulationCount) {
+            actualSimulationCount = 0;
             NSMutableDictionary *targetValues = [NSMutableDictionary dictionary];
             
             for (NSValue *targetPoint in targetPoints) {
@@ -65,9 +67,8 @@
             [levelInfo setObject:clicks forKey:@"clicks"];
             [levelInfo setObject:[NSValue valueWithCGSize:gridSize] forKey:@"grid_size"];
 
-            _currentLevel = levelInfo;
+            successBlock(levelInfo);
             [self saveLevel:levelInfo];
-
         }
     };
     
@@ -114,8 +115,8 @@
         int columnIndex = [CommonTools getRandomNumberFromInt:0 toInt:gridSize.width - 1];
         int rowIndex = [CommonTools getRandomNumberFromInt:0 toInt:gridSize.height - 1];
         CGPoint clickPoint = CGPointMake(columnIndex, rowIndex);
-        [_simulationPad triggerNodeAtPosition:clickPoint forActionType:@"boom" withuserInfo:nil withNodeReset:NO];
         [clicks addObject:[NSValue valueWithCGPoint:clickPoint]];
+        [_simulationPad triggerNodeAtPosition:clickPoint forActionType:@"boom" withuserInfo:nil withNodeReset:NO];
     }
 }
 
