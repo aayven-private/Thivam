@@ -10,6 +10,7 @@
 #import "GameScene.h"
 #import "MenuScene.h"
 #import "LevelManager.h"
+#import "LevelDescriptor.h"
 
 @interface GameViewController()
 
@@ -20,6 +21,8 @@
 
 @property (nonatomic) NSDictionary *nextLevel;
 
+@property (nonatomic) int currentLevelIndex;
+
 @end
 
 @implementation GameViewController
@@ -28,8 +31,19 @@
 {
     [super viewDidLoad];
     
+    NSNumber *currentLevel = [[NSUserDefaults standardUserDefaults] objectForKey:kCurrentLevelKey];
+    if (!currentLevel) {
+        currentLevel = [NSNumber numberWithInt:1];
+        [[NSUserDefaults standardUserDefaults] setObject:currentLevel forKey:kCurrentLevelKey];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
+    
+    _currentLevelIndex = currentLevel.intValue;
+    
+    LevelDescriptor *levelDescriptor = [[LevelDescriptor alloc] initWithLevelIndex:_currentLevelIndex];
+    
     _levelManager = [[LevelManager alloc] init];
-    [_levelManager generateLevelWithGridsize:CGSizeMake(5, 5) andNumberOfClicks:2 andNumberOfTargets:3 withReferenceNode:YES succesBlock:^(NSDictionary *levelInfo) {
+    [_levelManager generateLevelWithGridsize:levelDescriptor.gridSize andNumberOfClicks:levelDescriptor.clickNum andNumberOfTargets:levelDescriptor.targetNum withReferenceNode:levelDescriptor.withReference succesBlock:^(NSDictionary *levelInfo) {
         _nextLevel = levelInfo;
     }];
     
@@ -104,7 +118,9 @@
     [_gameScene loadLevel:_nextLevel];
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        [_levelManager generateLevelWithGridsize:CGSizeMake(5, 5) andNumberOfClicks:2 andNumberOfTargets:3 withReferenceNode:YES succesBlock:^(NSDictionary *levelInfo) {
+        _currentLevelIndex++;
+        LevelDescriptor *levelDescriptor = [[LevelDescriptor alloc] initWithLevelIndex:_currentLevelIndex];
+        [_levelManager generateLevelWithGridsize:levelDescriptor.gridSize andNumberOfClicks:levelDescriptor.clickNum andNumberOfTargets:levelDescriptor.targetNum withReferenceNode:levelDescriptor.withReference succesBlock:^(NSDictionary *levelInfo) {
             _nextLevel = levelInfo;
         }];
     });
@@ -125,7 +141,13 @@
 {
     [_gameScene loadLevel:_nextLevel];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        [_levelManager generateLevelWithGridsize:CGSizeMake(5, 5) andNumberOfClicks:2 andNumberOfTargets:3 withReferenceNode:YES succesBlock:^(NSDictionary *levelInfo) {
+        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:_currentLevelIndex] forKey:kCurrentLevelKey];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        
+        _currentLevelIndex++;
+        LevelDescriptor *levelDescriptor = [[LevelDescriptor alloc] initWithLevelIndex:_currentLevelIndex];
+        
+        [_levelManager generateLevelWithGridsize:levelDescriptor.gridSize andNumberOfClicks:levelDescriptor.clickNum andNumberOfTargets:levelDescriptor.targetNum withReferenceNode:levelDescriptor.withReference succesBlock:^(NSDictionary *levelInfo) {
             _nextLevel = levelInfo;
         }];
     });
