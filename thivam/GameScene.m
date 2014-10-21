@@ -305,15 +305,13 @@
     _currentLevelInfo = levelInfo;
     
     __block NSMutableSet *matchingNodes = [NSMutableSet set];
-    NSValue *refPoint_val = [levelInfo objectForKey:@"reference_point"];
-    if (refPoint_val) {
-        _referencePoint = refPoint_val.CGPointValue;
-    } else {
-        _referencePoint = CGPointMake(-1, -1);
-    }
+    __block NSArray *referencePoints =  [levelInfo objectForKey:@"reference_points"];
     
-    NSValue *gridSize_val = [levelInfo objectForKey:@"grid_size"];
-    _gridSize = gridSize_val.CGSizeValue;
+    NSString *gridSize_str = [levelInfo objectForKey:@"grid_size"];
+    NSArray* members = [gridSize_str componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @";"]];
+    NSNumber *columns = [members objectAtIndex:0];
+    NSNumber *rows = [members objectAtIndex:1];
+    _gridSize = CGSizeMake(columns.intValue, rows.intValue);
     __block int nodeCount = _gridSize.height * _gridSize.width;
     __block int currentNodeCount = 0;
     __block NSDictionary *targetValues = [levelInfo objectForKey:@"targets"];
@@ -333,10 +331,23 @@
         int distX = (int)targetNode.columnIndex - (int)sourcePosition.x;
         int distY = (int)targetNode.rowIndex - (int)sourcePosition.y;
         
-        int distX_ref = targetNode.columnIndex - _referencePoint.x;
-        int distY_ref = targetNode.rowIndex - _referencePoint.y;
+        //int distX_ref = targetNode.columnIndex - _referencePoint.x;
+        //int distY_ref = targetNode.rowIndex - _referencePoint.y;
+        
+        int distX_ref = 0;
+        int distY_ref = 0;
+        
+        for (NSString *refPoint_str in referencePoints) {
+            NSArray* members = [refPoint_str componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @";"]];
+            NSNumber *columnIndex = [members objectAtIndex:0];
+            NSNumber *rowIndex = [members objectAtIndex:1];
+            distX_ref += targetNode.columnIndex - columnIndex.intValue;
+            distY_ref += targetNode.rowIndex - rowIndex.intValue;
+        }
+        
+        //targetNode.nodeValue += (distX_ref + distY_ref) + (distX + distY);
 
-        int valueDiff = CGPointEqualToPoint(_referencePoint, CGPointMake(-1, -1)) ? (distX + distY) : ((distX_ref + distY_ref) + (distX + distY));
+        int valueDiff = (distX_ref + distY_ref) + (distX + distY);
         
         double scaleRatio = ((double)valueDiff / (maxDiff));
         
@@ -409,8 +420,16 @@
     [_menuButton runAction:[SKAction fadeAlphaTo:1.0 duration:.3]];
     _gamePad.disableOnFirstTrigger = NO;
     
-    if (!CGPointEqualToPoint(_referencePoint, CGPointMake(-1, -1))) {
+    /*if (!CGPointEqualToPoint(_referencePoint, CGPointMake(-1, -1))) {
         GameObject *refNode = [_gamePad getNodeAtPosition:_referencePoint];
+        refNode.color = [UIColor blueColor];
+    }*/
+    
+    for (NSString *refPoint_str in referencePoints) {
+        NSArray* members = [refPoint_str componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @";"]];
+        NSNumber *columnIndex = [members objectAtIndex:0];
+        NSNumber *rowIndex = [members objectAtIndex:1];
+        GameObject *refNode = [_gamePad getNodeAtPosition:CGPointMake(columnIndex.intValue, rowIndex.intValue)];
         refNode.color = [UIColor blueColor];
     }
     
@@ -418,8 +437,8 @@
         for (int row = 0; row < _gamePad.gridSize.height; row++) {
             GameObject *node = [_gamePad getNodeAtPosition:CGPointMake(column, row)];
             
-            if ([[targetValues allKeys] containsObject:[NSString stringWithFormat:@"%d%d", node.columnIndex, node.rowIndex]]) {
-                NSNumber *targetValue = [targetValues objectForKey:[NSString stringWithFormat:@"%d%d", node.columnIndex, node.rowIndex]];
+            if ([[targetValues allKeys] containsObject:[NSString stringWithFormat:@"%d;%d", node.columnIndex, node.rowIndex]]) {
+                NSNumber *targetValue = [targetValues objectForKey:[NSString stringWithFormat:@"%d;%d", node.columnIndex, node.rowIndex]];
 
                 ((InteractionNode *)node).infoLabel.hidden = NO;
                 ((InteractionNode *)node).infoLabel.text = [NSString stringWithFormat:@"%d", -targetValue.intValue];

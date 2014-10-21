@@ -43,7 +43,7 @@
     LevelDescriptor *levelDescriptor = [[LevelDescriptor alloc] initWithLevelIndex:_currentLevelIndex];
     
     _levelManager = [[LevelManager alloc] init];
-    [_levelManager generateLevelWithGridsize:levelDescriptor.gridSize andNumberOfClicks:levelDescriptor.clickNum andNumberOfTargets:levelDescriptor.targetNum withReferenceNode:levelDescriptor.withReference succesBlock:^(NSDictionary *levelInfo) {
+    [_levelManager generateLevelWithGridsize:levelDescriptor.gridSize andNumberOfClicks:levelDescriptor.clickNum andNumberOfTargets:levelDescriptor.targetNum withNumberOfReferenceNodes:levelDescriptor.referenceNum succesBlock:^(NSDictionary *levelInfo) {
         _nextLevel = levelInfo;
         _currentLevelIndex++;
     }];
@@ -121,7 +121,7 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
         
         LevelDescriptor *levelDescriptor = [[LevelDescriptor alloc] initWithLevelIndex:_currentLevelIndex];
-        [_levelManager generateLevelWithGridsize:levelDescriptor.gridSize andNumberOfClicks:levelDescriptor.clickNum andNumberOfTargets:levelDescriptor.targetNum withReferenceNode:levelDescriptor.withReference succesBlock:^(NSDictionary *levelInfo) {
+        [_levelManager generateLevelWithGridsize:levelDescriptor.gridSize andNumberOfClicks:levelDescriptor.clickNum andNumberOfTargets:levelDescriptor.targetNum withNumberOfReferenceNodes:levelDescriptor.referenceNum succesBlock:^(NSDictionary *levelInfo) {
             _nextLevel = levelInfo;
         }];
     });
@@ -148,7 +148,7 @@
         _currentLevelIndex++;
         LevelDescriptor *levelDescriptor = [[LevelDescriptor alloc] initWithLevelIndex:_currentLevelIndex];
         
-        [_levelManager generateLevelWithGridsize:levelDescriptor.gridSize andNumberOfClicks:levelDescriptor.clickNum andNumberOfTargets:levelDescriptor.targetNum withReferenceNode:levelDescriptor.withReference succesBlock:^(NSDictionary *levelInfo) {
+        [_levelManager generateLevelWithGridsize:levelDescriptor.gridSize andNumberOfClicks:levelDescriptor.clickNum andNumberOfTargets:levelDescriptor.targetNum withNumberOfReferenceNodes:levelDescriptor.referenceNum succesBlock:^(NSDictionary *levelInfo) {
             _nextLevel = levelInfo;
         }];
     });

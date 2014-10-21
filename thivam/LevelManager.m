@@ -28,12 +28,13 @@
     return self;
 }
 
--(void)generateLevelWithGridsize:(CGSize)gridSize andNumberOfClicks:(int)clickNum andNumberOfTargets:(int)targetNum withReferenceNode:(BOOL)withReference succesBlock:(void (^)(NSDictionary *levelInfo))successBlock
+-(void)generateLevelWithGridsize:(CGSize)gridSize andNumberOfClicks:(int)clickNum andNumberOfTargets:(int)targetNum withNumberOfReferenceNodes:(int)referenceCount succesBlock:(void (^)(NSDictionary *levelInfo))successBlock
 {
     __block NSMutableDictionary *nodes = [NSMutableDictionary dictionary];
     __block int actualSimulationCount = 0;
     _simulationCount = clickNum * gridSize.height * gridSize.width;
     __block NSMutableSet *targetPoints = [NSMutableSet set];
+    __block NSMutableSet *referencePoints = [NSMutableSet set];
     __block NSMutableArray *clicks = [NSMutableArray array];
     IBActionDescriptor *boomActionDesc = [[IBActionDescriptor alloc] init];
     boomActionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
@@ -43,30 +44,50 @@
         int distX = (int)targetNode.columnIndex - (int)sourcePosition.x;
         int distY = (int)targetNode.rowIndex - (int)sourcePosition.y;
         
-        int distX_ref = targetNode.columnIndex - _simulationReferencePoint.x;
-        int distY_ref = targetNode.rowIndex - _simulationReferencePoint.y;
+        //int distX_ref = targetNode.columnIndex - _simulationReferencePoint.x;
+        //int distY_ref = targetNode.rowIndex - _simulationReferencePoint.y;
         
-        targetNode.nodeValue += withReference ? (distX_ref + distY_ref) + (distX + distY) : (distX + distY);
+        int distX_ref = 0;
+        int distY_ref = 0;
+        
+        for (NSValue *refPoint_val in referencePoints) {
+            distX_ref += targetNode.columnIndex - refPoint_val.CGPointValue.x;
+            distY_ref += targetNode.rowIndex - refPoint_val.CGPointValue.y;
+        }
+        
+        targetNode.nodeValue += (distX_ref + distY_ref) + (distX + distY);
+        //targetNode.nodeValue += withReference ? (distX_ref + distY_ref) + (distX + distY) : (distX + distY);
         
         actualSimulationCount++;
         if (_simulationCount == actualSimulationCount) {
             actualSimulationCount = 0;
+            
+            NSMutableDictionary *levelInfo = [NSMutableDictionary dictionary];
+            
             NSMutableDictionary *targetValues = [NSMutableDictionary dictionary];
             
             for (NSValue *targetPoint in targetPoints) {
                 CGPoint tp = targetPoint.CGPointValue;
-                SimulationNode *node = [nodes objectForKey:[NSString stringWithFormat:@"%d%d", (int)tp.x, (int)tp.y]];
-                [targetValues setObject:[NSNumber numberWithInt:node.nodeValue] forKey:[NSString stringWithFormat:@"%d%d", node.columnIndex, node.rowIndex]];
+                SimulationNode *node = [nodes objectForKey:[NSString stringWithFormat:@"%d;%d", (int)tp.x, (int)tp.y]];
+                [targetValues setObject:[NSNumber numberWithInt:node.nodeValue] forKey:[NSString stringWithFormat:@"%d;%d", node.columnIndex, node.rowIndex]];
             }
             
-            NSMutableDictionary *levelInfo = [NSMutableDictionary dictionary];
-            if (withReference) {
-                [levelInfo setObject:[NSValue valueWithCGPoint:_simulationReferencePoint] forKey:@"reference_point"];
-            }
             [levelInfo setObject:targetValues forKey:@"targets"];
-            [levelInfo setObject:clicks forKey:@"clicks"];
-            [levelInfo setObject:[NSValue valueWithCGSize:gridSize] forKey:@"grid_size"];
+            
+            NSMutableArray *referencePoints_str = [NSMutableArray arrayWithCapacity:referencePoints.count];
+            for (NSValue *refPoint_val in referencePoints) {
+                [referencePoints_str addObject:[NSString stringWithFormat:@"%d;%d", (int)refPoint_val.CGPointValue.x, (int)refPoint_val.CGPointValue.y]];
+            }
+            [levelInfo setObject:referencePoints_str forKey:@"reference_points"];
 
+            NSMutableArray *clicks_str = [NSMutableArray arrayWithCapacity:referencePoints.count];
+            for (NSValue *clickPoint_val in clicks) {
+                [clicks_str addObject:[NSString stringWithFormat:@"%d;%d", (int)clickPoint_val.CGPointValue.x, (int)clickPoint_val.CGPointValue.y]];
+            }
+            [levelInfo setObject:clicks_str forKey:@"clicks"];
+            
+            [levelInfo setObject:[NSString stringWithFormat:@"%d;%d", (int)gridSize.width, (int)gridSize.height] forKey:@"grid_size"];
+            
             successBlock(levelInfo);
             [self saveLevel:levelInfo];
         }
@@ -81,17 +102,16 @@
         SimulationNode *node = [[SimulationNode alloc] init];
         node.columnIndex = column;
         node.rowIndex = row;
-        [nodes setObject:node forKey:[NSString stringWithFormat:@"%d%d", column, row]];
+        [nodes setObject:node forKey:[NSString stringWithFormat:@"%d;%d", column, row]];
         return node;
     } andActionHeapSize:30];
     [_simulationPad createGridWithNodesActivated:YES];
     [_simulationPad.unifiedActionDescriptors setObject:@[boomActionDesc] forKey:@"boom"];
     [_simulationPad loadConnectionMapWithDescriptor:boomConn forActionType:@"boom"];
     
-    
-    
     int columnIndex = [CommonTools getRandomNumberFromInt:0 toInt:gridSize.width - 1];
     int rowIndex = [CommonTools getRandomNumberFromInt:0 toInt:gridSize.height - 1];
+    
     _simulationReferencePoint = CGPointMake(columnIndex, rowIndex);
     
     NSMutableArray *allPoints = [NSMutableArray array];
@@ -102,12 +122,23 @@
     }
     
     for (int i=0; i<targetNum; i++) {
-        int randomIndex = [CommonTools getRandomNumberFromInt:0 toInt:allPoints.count - 1];
-        
+        int randomIndex = [CommonTools getRandomNumberFromInt:0 toInt:((int)allPoints.count) - 1];
         NSValue *point = [allPoints objectAtIndex:randomIndex];
-        
         [targetPoints addObject:point];
-        
+        [allPoints removeObject:point];
+    }
+    
+    allPoints = [NSMutableArray array];
+    for (int i=0; i<gridSize.width; i++) {
+        for (int j=0; j<gridSize.height; j++) {
+            [allPoints addObject:[NSValue valueWithCGPoint:CGPointMake(i, j)]];
+        }
+    }
+    
+    for (int i=0; i<referenceCount; i++) {
+        int randomIndex = [CommonTools getRandomNumberFromInt:0 toInt:((int)allPoints.count) - 1];
+        NSValue *point = [allPoints objectAtIndex:randomIndex];
+        [referencePoints addObject:point];
         [allPoints removeObject:point];
     }
     

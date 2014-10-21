@@ -15,47 +15,47 @@
     if (self = [super init]) {
         if (levelIndex == 1) {
             self.gridSize = CGSizeMake(2, 2);
-            self.withReference = NO;
+            self.referenceNum = 0;
             self.clickNum = 1;
             self.targetNum = 1;
         } else if (levelIndex < 3) {
             self.gridSize = CGSizeMake(3, 3);
-            self.withReference = NO;
+            self.referenceNum = 1;
             self.clickNum = 2;
             self.targetNum = 2;
         } else if (levelIndex < 6) {
             self.gridSize = CGSizeMake(4, 4);
-            self.withReference = NO;
+            self.referenceNum = 2;
             self.clickNum = 2;
             self.targetNum = 2;
         } else if (levelIndex < 9) {
             self.gridSize = CGSizeMake(5, 5);
-            self.withReference = YES;
+            self.referenceNum = 1;
             self.clickNum = 2;
             self.targetNum = 2;
         } else if (levelIndex < 12) {
             self.gridSize = CGSizeMake(5, 5);
-            self.withReference = YES;
+            self.referenceNum = 1;
             self.clickNum = 2;
             self.targetNum = 3;
         } else if (levelIndex < 15) {
             self.gridSize = CGSizeMake(5, 5);
-            self.withReference = YES;
+            self.referenceNum = 1;
             self.clickNum = 3;
             self.targetNum = 3;
         } else if (levelIndex < 18) {
             self.gridSize = CGSizeMake(6, 6);
-            self.withReference = YES;
+            self.referenceNum = 1;
             self.clickNum = 2;
             self.targetNum = 3;
         } else if (levelIndex < 21) {
             self.gridSize = CGSizeMake(7, 7);
-            self.withReference = YES;
+            self.referenceNum = 1;
             self.clickNum = 2;
             self.targetNum = 3;
         } else {
             self.gridSize = CGSizeMake(7, 7);
-            self.withReference = YES;
+            self.referenceNum = 1;
             self.clickNum = 3;
             self.targetNum = 3;
         }

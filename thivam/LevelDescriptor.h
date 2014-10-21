@@ -12,7 +12,7 @@
 @interface LevelDescriptor : NSObject
 
 @property (nonatomic) CGSize gridSize;
-@property (nonatomic) BOOL withReference;
+@property (nonatomic) int referenceNum;
 @property (nonatomic) int clickNum;
 @property (nonatomic) int targetNum;
 
