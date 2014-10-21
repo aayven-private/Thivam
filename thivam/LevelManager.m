@@ -44,9 +44,6 @@
         int distX = (int)targetNode.columnIndex - (int)sourcePosition.x;
         int distY = (int)targetNode.rowIndex - (int)sourcePosition.y;
         
-        //int distX_ref = targetNode.columnIndex - _simulationReferencePoint.x;
-        //int distY_ref = targetNode.rowIndex - _simulationReferencePoint.y;
-        
         int distX_ref = 0;
         int distY_ref = 0;
         
@@ -56,8 +53,6 @@
         }
         
         targetNode.nodeValue += (distX_ref + distY_ref) + (distX + distY);
-        //targetNode.nodeValue += withReference ? (distX_ref + distY_ref) + (distX + distY) : (distX + distY);
-        
         actualSimulationCount++;
         if (_simulationCount == actualSimulationCount) {
             actualSimulationCount = 0;
