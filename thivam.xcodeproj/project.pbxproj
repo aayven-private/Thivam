@@ -12,6 +12,9 @@
 		B03B2FA119F118CA00668836 /* MenuScene.m in Sources */ = {isa = PBXBuildFile; fileRef = B03B2FA019F118CA00668836 /* MenuScene.m */; };
 		B03B2FA519F50DDD00668836 /* LevelManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B03B2FA419F50DDD00668836 /* LevelManager.m */; };
 		B03B2FA819F5507C00668836 /* LevelDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = B03B2FA719F5507C00668836 /* LevelDescriptor.m */; };
+		B03B2FAC19F666C100668836 /* LevelEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = B03B2FAB19F666C100668836 /* LevelEntity.m */; };
+		B03B2FAF19F66E9300668836 /* LevelEntityHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = B03B2FAE19F66E9300668836 /* LevelEntityHelper.m */; };
+		B03B2FB219F675B100668836 /* HistoryScene.m in Sources */ = {isa = PBXBuildFile; fileRef = B03B2FB119F675B100668836 /* HistoryScene.m */; };
 		B0E3A65019D01A790085BC2F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A64F19D01A790085BC2F /* main.m */; };
 		B0E3A65319D01A790085BC2F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A65219D01A790085BC2F /* AppDelegate.m */; };
 		B0E3A65619D01A790085BC2F /* GameScene.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E3A65519D01A790085BC2F /* GameScene.m */; };
@@ -55,6 +58,12 @@
 		B03B2FA419F50DDD00668836 /* LevelManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LevelManager.m; sourceTree = "<group>"; };
 		B03B2FA619F5507C00668836 /* LevelDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelDescriptor.h; sourceTree = "<group>"; };
 		B03B2FA719F5507C00668836 /* LevelDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LevelDescriptor.m; sourceTree = "<group>"; };
+		B03B2FAA19F666C100668836 /* LevelEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelEntity.h; sourceTree = "<group>"; };
+		B03B2FAB19F666C100668836 /* LevelEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LevelEntity.m; sourceTree = "<group>"; };
+		B03B2FAD19F66E9300668836 /* LevelEntityHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelEntityHelper.h; sourceTree = "<group>"; };
+		B03B2FAE19F66E9300668836 /* LevelEntityHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LevelEntityHelper.m; sourceTree = "<group>"; };
+		B03B2FB019F675B100668836 /* HistoryScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistoryScene.h; sourceTree = "<group>"; };
+		B03B2FB119F675B100668836 /* HistoryScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HistoryScene.m; sourceTree = "<group>"; };
 		B0E3A64A19D01A790085BC2F /* thivam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = thivam.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B0E3A64E19D01A790085BC2F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B0E3A64F19D01A790085BC2F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -126,6 +135,17 @@
 				B03B2FA419F50DDD00668836 /* LevelManager.m */,
 			);
 			name = LevelManagement;
+			sourceTree = "<group>";
+		};
+		B03B2FA919F666B200668836 /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				B03B2FAA19F666C100668836 /* LevelEntity.h */,
+				B03B2FAB19F666C100668836 /* LevelEntity.m */,
+				B03B2FAD19F66E9300668836 /* LevelEntityHelper.h */,
+				B03B2FAE19F66E9300668836 /* LevelEntityHelper.m */,
+			);
+			name = Entities;
 			sourceTree = "<group>";
 		};
 		B0E3A64119D01A780085BC2F = {
@@ -202,6 +222,8 @@
 				B0E3A65719D01A790085BC2F /* GameScene.sks */,
 				B03B2F9F19F118CA00668836 /* MenuScene.h */,
 				B03B2FA019F118CA00668836 /* MenuScene.m */,
+				B03B2FB019F675B100668836 /* HistoryScene.h */,
+				B03B2FB119F675B100668836 /* HistoryScene.m */,
 			);
 			name = Scenes;
 			sourceTree = "<group>";
@@ -280,6 +302,7 @@
 		B0E3A6B219D5B24A0085BC2F /* DBAccessLayer */ = {
 			isa = PBXGroup;
 			children = (
+				B03B2FA919F666B200668836 /* Entities */,
 				B0E3A6BB19D5B2700085BC2F /* DBAccessLayer.h */,
 				B0E3A6BC19D5B2700085BC2F /* DBAccessLayer.m */,
 				B0E3A6C219D5B2A10085BC2F /* ThivamDataModel.xcdatamodeld */,
@@ -402,9 +425,12 @@
 				B0E3A65319D01A790085BC2F /* AppDelegate.m in Sources */,
 				B0E3A6A719D1987D0085BC2F /* IBConnectionDescriptor.m in Sources */,
 				B0E3A68E19D0629E0085BC2F /* IBMatrix.m in Sources */,
+				B03B2FAF19F66E9300668836 /* LevelEntityHelper.m in Sources */,
 				B0E3A65619D01A790085BC2F /* GameScene.m in Sources */,
 				B03B2F9E19EFA86500668836 /* SimulationNode.m in Sources */,
+				B03B2FAC19F666C100668836 /* LevelEntity.m in Sources */,
 				B0E3A6AE19D409710085BC2F /* PadNode.m in Sources */,
+				B03B2FB219F675B100668836 /* HistoryScene.m in Sources */,
 				B0E3A6C419D5B2A10085BC2F /* ThivamDataModel.xcdatamodeld in Sources */,
 				B03B2FA119F118CA00668836 /* MenuScene.m in Sources */,
 				B0E3A65019D01A790085BC2F /* main.m in Sources */,

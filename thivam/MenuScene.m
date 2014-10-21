@@ -11,6 +11,7 @@
 @interface MenuScene()
 
 @property (nonatomic) PadNode *playButton;
+@property (nonatomic) PadNode *historyButton;
 @property (nonatomic) PadNode *bgPad;
 
 @end
@@ -31,7 +32,7 @@
     NSArray *bgColorCodes = [NSArray arrayWithObjects:@"F20C23", @"DE091E", @"CC081C", @"B50415", nil];
     _playButton = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(150, 60) andGridSize:CGSizeMake(7, 3) withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO withborderColor:nil];
     _playButton.name = @"playbutton";
-    _playButton.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
+    _playButton.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0 + 35);
     
     SKLabelNode *playLabel = [SKLabelNode labelNodeWithFontNamed:@"Copperplate-Bold"];
     playLabel.position = CGPointMake(0, 0);
@@ -42,6 +43,20 @@
     playLabel.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
     playLabel.name = @"playbutton";
     [_playButton addChild:playLabel];
+    
+    _historyButton = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(150, 60) andGridSize:CGSizeMake(7, 3) withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO withborderColor:nil];
+    _historyButton.name = @"history";
+    _historyButton.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0 - 35);
+    
+    SKLabelNode *historyLabel = [SKLabelNode labelNodeWithFontNamed:@"Copperplate-Bold"];
+    historyLabel.position = CGPointMake(0, 0);
+    historyLabel.text = @"HISTORY";
+    historyLabel.fontSize = 25;
+    historyLabel.fontColor = [UIColor whiteColor];
+    historyLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
+    historyLabel.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
+    historyLabel.name = @"history";
+    [_historyButton addChild:historyLabel];
     
     IBActionDescriptor *boomActionDesc_button = [[IBActionDescriptor alloc] init];
     boomActionDesc_button.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
@@ -88,7 +103,9 @@
     _bgPad.disableOnFirstTrigger = NO;
     
     [_playButton loadActionDescriptor:boomActionDesc_button andConnectionDescriptor:boomConn forActionType:@"boom"];
+    [_historyButton loadActionDescriptor:boomActionDesc_button andConnectionDescriptor:boomConn forActionType:@"boom"];
     [self addChild:_playButton];
+    [self addChild:_historyButton];
 }
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
@@ -104,6 +121,13 @@
                 [_playButton triggerRandomNodeForActionType:@"boom" withUserInfo:nil];
             }], [SKAction waitForDuration:1], [SKAction runBlock:^{
                 [_sceneDelegate playClicked];
+            }]]]];
+        } else if ([node.name isEqualToString:@"history"] && !touched) {
+            touched = YES;
+            [self runAction:[SKAction sequence:@[[SKAction runBlock:^{
+                [_historyButton triggerRandomNodeForActionType:@"boom" withUserInfo:nil];
+            }], [SKAction waitForDuration:1], [SKAction runBlock:^{
+                [_sceneDelegate historyClicked];
             }]]]];
         }
     }

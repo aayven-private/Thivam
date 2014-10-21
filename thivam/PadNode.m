@@ -25,6 +25,8 @@
 
 @implementation PadNode
 
+@synthesize nodeIndex = _nodeIndex;
+
 -(id)initWithColor:(UIColor *)color size:(CGSize)size andGridSize:(CGSize)gridSize withPhysicsBody:(BOOL)withBody andNodeColorCodes:(NSArray *)colorCodes andInteractionMode:(NSString *)interactionMode forActionType:(NSString *)actionType isInteractive:(BOOL)isInteractive withborderColor:(UIColor *)borderColor
 {
     if (self = [super initWithColor:color size:size]) {
@@ -44,9 +46,12 @@
         self.baseColor = color;
         self.actionPad = [[IBActionPad alloc] initGridWithSize:gridSize andNodeInitBlock:^id<IBActionNodeActor>(int row, int column){
             UIColor *blockColor;
-            if (colorCodes && colorCodes.count > 0) {
+            if (colorCodes && colorCodes.count > 1) {
                 int colorIndex = [CommonTools getRandomNumberFromInt:0 toInt:((int)colorCodes.count - 1)];
                 blockColor = [CommonTools stringToColor:[colorCodes objectAtIndex:colorIndex]];
+            } else if (colorCodes && colorCodes.count == 1) {
+                UIColor *oneColor = [CommonTools stringToColor:[colorCodes objectAtIndex:0]];
+                blockColor = [CommonTools getRandomColorCloseToColor:oneColor withDispersion:0.2];
             } else {
                 blockColor = color;
             }

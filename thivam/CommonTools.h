@@ -24,5 +24,6 @@
 +(NSString *)hmacForKey:(NSString *)key andData:(NSString *)data;
 +(UIColor *)stringToColor:(NSString *) colorString;
 +(UIColor *)stringToColor:(NSString *) colorString withAlpha:(CGFloat)alpha;
++(UIColor *)getRandomColorCloseToColor:(UIColor *)sourceColor withDispersion:(CGFloat)dispersion;
 
 @end

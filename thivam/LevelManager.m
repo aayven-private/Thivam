@@ -8,6 +8,7 @@
 
 #import "LevelManager.h"
 #import "CommonTools.h"
+#import "DBAccessLayer.h"
 
 @interface LevelManager()
 
@@ -84,7 +85,6 @@
             [levelInfo setObject:[NSString stringWithFormat:@"%d;%d", (int)gridSize.width, (int)gridSize.height] forKey:@"grid_size"];
             
             successBlock(levelInfo);
-            [self saveLevel:levelInfo];
         }
     };
     
@@ -146,9 +146,84 @@
     }
 }
 
--(void)saveLevel:(NSDictionary *)levelDescription
+-(void)saveLevel:(NSDictionary *)levelDescription forIndex:(int)levelIndex
 {
     NSLog(@"%@", levelDescription);
+    NSManagedObjectContext *context = [DBAccessLayer createManagedObjectContext];
+    [context performBlock:^{
+        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"LevelEntity"];
+        NSPredicate *levelindexMatchesPredicate = [NSPredicate predicateWithFormat:@"levelIndex == %@", [NSNumber numberWithInt:levelIndex]];
+        [fetchRequest setPredicate:levelindexMatchesPredicate];
+        [fetchRequest setIncludesSubentities:NO];
+        [fetchRequest setIncludesPropertyValues:NO];
+        NSError *error;
+        NSUInteger count = [context countForFetchRequest:fetchRequest error:&error];
+        if (count == 0) {
+            LevelEntity *newEntity = [NSEntityDescription insertNewObjectForEntityForName:@"LevelEntity" inManagedObjectContext:context];
+            newEntity.levelInfo = [NSKeyedArchiver archivedDataWithRootObject:levelDescription];
+            newEntity.levelIndex = [NSNumber numberWithInt:levelIndex];
+            [DBAccessLayer saveContext:context async:YES];
+        }
+    }];
+}
+
+-(LevelEntityHelper *)getLevelForindex:(int)levelIndex
+{
+    __block LevelEntityHelper *result;
+    
+    NSManagedObjectContext *context = [DBAccessLayer createManagedObjectContext];
+    [context performBlockAndWait:^{
+        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"LevelEntity"];
+        NSPredicate *levelindexMatchesPredicate = [NSPredicate predicateWithFormat:@"levelIndex == %@", [NSNumber numberWithInt:levelIndex]];
+        [fetchRequest setPredicate:levelindexMatchesPredicate];
+        NSError *error;
+        NSArray *results = [context executeFetchRequest:fetchRequest error:&error];
+        if (results && results.count > 0) {
+            LevelEntity *level = [results objectAtIndex:0];
+            
+            result = [[LevelEntityHelper alloc] initWithEntity:level];
+        }
+    }];
+    
+    return result;
+}
+
+-(NSArray *)getSavedLevels
+{
+    __block NSMutableArray *result =[NSMutableArray array];
+    
+    NSManagedObjectContext *context = [DBAccessLayer createManagedObjectContext];
+    [context performBlockAndWait:^{
+        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"LevelEntity"];
+        NSError *error;
+        NSArray *levels = [context executeFetchRequest:fetchRequest error:&error];
+        for (LevelEntity *level in levels) {
+            [result addObject:[[LevelEntityHelper alloc] initWithEntity:level]];
+        }
+    }];
+    
+    return result;
+}
+
+-(NSArray *)getLevelsFromIndex:(int)fromIndex toIndex:(int)toIndex
+{
+    __block NSMutableArray *result = [NSMutableArray array];
+    
+    NSManagedObjectContext *context = [DBAccessLayer createManagedObjectContext];
+    [context performBlockAndWait:^{
+        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"LevelEntity"];
+        NSPredicate *levelindexMatchesPredicate = [NSPredicate predicateWithFormat:@"levelIndex >= %@ AND levelIndex <= %@", [NSNumber numberWithInt:fromIndex], [NSNumber numberWithInt:toIndex]];
+        [fetchRequest setPredicate:levelindexMatchesPredicate];
+        NSSortDescriptor *ascendingSort = [[NSSortDescriptor alloc] initWithKey:@"levelIndex" ascending:YES];
+        [fetchRequest setSortDescriptors:@[ascendingSort]];
+        NSError *error;
+        NSArray *levels = [context executeFetchRequest:fetchRequest error:&error];
+        for (LevelEntity *level in levels) {
+            [result addObject:[[LevelEntityHelper alloc] initWithEntity:level]];
+        }
+    }];
+    
+    return result;
 }
 
 @end

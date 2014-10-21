@@ -9,11 +9,16 @@
 #import <Foundation/Foundation.h>
 #import "IBActionPad.h"
 #import "SimulationNode.h"
+#import "LevelEntityHelper.h"
 
 @interface LevelManager : NSObject
 
 @property (nonatomic) NSDictionary *currentLevel;
 
 -(void)generateLevelWithGridsize:(CGSize)gridSize andNumberOfClicks:(int)clickNum andNumberOfTargets:(int)targetNum withNumberOfReferenceNodes:(int)referenceCount succesBlock:(void (^)(NSDictionary *levelInfo))successBlock;
+-(void)saveLevel:(NSDictionary *)levelDescription forIndex:(int)levelIndex;
+-(LevelEntityHelper *)getLevelForindex:(int)levelIndex;
+-(NSArray *)getSavedLevels;
+-(NSArray *)getLevelsFromIndex:(int)fromIndex toIndex:(int)toIndex;
 
 @end

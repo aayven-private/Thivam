@@ -50,5 +50,6 @@ static uint32_t kObjectCategoryActionPad = 0x1 << 1;
 static NSString *kGameTypeColorMatch = @"gametype_colormatch";
 static NSString *kGameTypesShooter = @"gametype_shooter";
 
-static NSString *kCurrentLevelKey = @"current_level";
+static NSString *kCurrentLevelIndexKey = @"current_level_index";
+static NSString *kCurrentLevelInfoKey = @"current_level_info";
 

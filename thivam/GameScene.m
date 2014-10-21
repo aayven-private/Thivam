@@ -340,17 +340,19 @@
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     UITouch *touch = [touches anyObject];
     CGPoint positionInScene = [touch locationInNode:self];
-    
+    BOOL touched = NO;
     NSArray *nodes = [self nodesAtPoint:positionInScene];
     for (SKNode *node in nodes) {
-        if ([node.name isEqualToString:@"reset"]) {
+        if ([node.name isEqualToString:@"reset"] && !touched) {
+            touched = YES;
             [_resetNode triggerRandomNodeForActionType:@"boom" withUserInfo:nil];
             [_gamePad runAction:[SKAction fadeAlphaTo:0.0 duration:.6]];
             [_menuButton runAction:[SKAction fadeAlphaTo:0.0 duration:.6]];
             [_resetNode runAction:[SKAction sequence:@[[SKAction fadeAlphaTo:0.0 duration:.6], [SKAction runBlock:^{
                 [self loadLevel:_currentLevelInfo];
             }]]]];
-        } else if ([node.name isEqualToString:@"menu"]) {
+        } else if ([node.name isEqualToString:@"menu"] && !touched) {
+            touched = YES;
             [_menuButton triggerRandomNodeForActionType:@"boom" withUserInfo:nil];
             [_gamePad runAction:[SKAction fadeAlphaTo:0.0 duration:.6]];
             [_resetNode runAction:[SKAction fadeAlphaTo:0.0 duration:.6]];

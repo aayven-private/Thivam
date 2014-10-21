@@ -21,6 +21,8 @@ static NSString *kInteractionMode_none = @"interaction_mode_none";
 @property (nonatomic) BOOL disableOnFirstTrigger;
 //@property (nonatomic) BOOL isDisabled;
 @property (nonatomic) NSString *userActionType;
+@property (nonatomic) int nodeIndex;
+@property (nonatomic) SKLabelNode *infoLabel;
 
 -(id)initWithColor:(UIColor *)color size:(CGSize)size andGridSize:(CGSize)gridSize withPhysicsBody:(BOOL)withBody andNodeColorCodes:(NSArray *)colorCodes andInteractionMode:(NSString *)interactionMode forActionType:(NSString *)actionType isInteractive:(BOOL)isInteractive withborderColor:(UIColor *)borderColor;
 -(void)loadActionDescriptor:(IBActionDescriptor *)actionDescriptor andConnectionDescriptor:(IBConnectionDescriptor *)connectionDescriptor forActionType:(NSString *)actionType;

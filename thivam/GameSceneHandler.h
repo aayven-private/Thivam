@@ -13,6 +13,7 @@
 
 -(void)playClicked;
 -(void)menuClicked;
+-(void)historyClicked;
 -(void)levelCompleted;
 
 @end
