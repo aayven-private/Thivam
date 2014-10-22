@@ -14,7 +14,6 @@
 @interface HistoryScene()
 
 @property (nonatomic) NSMutableArray *levelNodes;
-@property (nonatomic) int currentEndIndex;
 @property (nonatomic) int currentLevelIndex;
 @property (nonatomic) PadNode *menuButton;
 @property (nonatomic) PadNode *bgPad;
@@ -39,7 +38,7 @@
     //!!!!
     //_currentLevelIndex = 7;
     
-    _currentEndIndex = _currentLevelIndex;
+    //_currentEndIndex = _currentLevelIndex;
     
     [self initEnvironment];
 }
@@ -231,10 +230,12 @@
             PadNode *clickedLevel = (PadNode *)node;
             LevelManager *manager = [[LevelManager alloc] init];
             LevelEntityHelper *level = [manager getLevelForIndex:clickedLevel.nodeIndex];
-            [clickedLevel triggerRandomNodeForActionType:@"boom" withUserInfo:nil];
-            [clickedLevel runAction:[SKAction sequence:@[[SKAction waitForDuration:.8], [SKAction runBlock:^{
-                [_sceneDelegate historyLevelClicked:level];
-            }]]]];
+            if (level) {
+                [clickedLevel triggerRandomNodeForActionType:@"boom" withUserInfo:nil];
+                [clickedLevel runAction:[SKAction sequence:@[[SKAction waitForDuration:.8], [SKAction runBlock:^{
+                    [_sceneDelegate historyLevelClicked:level];
+                }]]]];
+            }
         }
     }
 }

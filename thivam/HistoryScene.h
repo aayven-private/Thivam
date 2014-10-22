@@ -12,6 +12,7 @@
 @interface HistoryScene : SKScene
 
 @property (nonatomic, weak) id<GameSceneHandler> sceneDelegate;
+@property (nonatomic) int currentEndIndex;
 
 -(void)initEnvironment;
 

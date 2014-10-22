@@ -73,6 +73,8 @@
     _historyScene = [HistoryScene sceneWithSize:self.view.bounds.size];
     _historyScene.sceneDelegate = self;
     _historyScene.scaleMode = SKSceneScaleModeAspectFill;
+    
+    _historyScene.currentEndIndex = _currentLevelIndex - 1;
 }
 
 - (BOOL)shouldAutorotate
@@ -174,7 +176,7 @@
         
         _currentLevelIndex++;
         _currentLevel = _nextLevel;
-        
+        _historyScene.currentEndIndex = _currentLevelIndex - 1;
         [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:_currentLevelIndex] forKey:kCurrentLevelIndexKey];
         [[NSUserDefaults standardUserDefaults] setObject:_currentLevel forKey:kCurrentLevelInfoKey];
         [[NSUserDefaults standardUserDefaults] synchronize];
