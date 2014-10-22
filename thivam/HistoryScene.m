@@ -9,6 +9,7 @@
 #import "HistoryScene.h"
 #import "Constants.h"
 #import "PadNode.h"
+#import "LevelManager.h"
 
 @interface HistoryScene()
 
@@ -116,7 +117,7 @@
     [self addChild:_menuButton];
     
     for (int i=0; i<4; i++) {
-        PadNode *levelNode = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(80, 80) andGridSize:CGSizeMake(3, 3) withPhysicsBody:NO andNodeColorCodes:@[@"FF0000"] andInteractionMode:kInteractionMode_touch forActionType:@"boom" isInteractive:NO withborderColor:nil];
+        PadNode *levelNode = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(80, 80) andGridSize:CGSizeMake(3, 3) withPhysicsBody:NO andNodeColorCodes:@[@"FF0000"] andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO withborderColor:nil];
         levelNode.hidden = YES;
         SKLabelNode *indexLabel = [SKLabelNode labelNodeWithFontNamed:@"Copperplate-Bold"];
         indexLabel.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
@@ -124,10 +125,28 @@
         indexLabel.fontSize = 22;
         indexLabel.position = CGPointMake(0, 0);
         indexLabel.fontColor = [UIColor blackColor];
+        indexLabel.userInteractionEnabled = NO;
         levelNode.infoLabel = indexLabel;
         [levelNode addChild:levelNode.infoLabel];
+        levelNode.name = @"levelnode";
         [_levelNodes addObject:levelNode];
         [self addChild:levelNode];
+        
+        IBActionDescriptor *boomActionDesc_levelNode = [[IBActionDescriptor alloc] init];
+        boomActionDesc_levelNode.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
+            GameObject *targetNode = (GameObject *)target;
+            CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
+            double distX_abs = fabs((double)targetNode.columnIndex - (double)sourcePosition.x);
+            double distY_abs = fabs((double)targetNode.rowIndex - (double)sourcePosition.y);
+            double damping = (distX_abs + distY_abs) / ((double)levelNode.gridSize.width - 1 + (double)levelNode.gridSize.height - 1);
+            
+            SKAction *scaleSequence = [SKAction sequence:@[[SKAction scaleTo:.5 + damping * 0.5 duration:.3], [SKAction scaleTo:1.3 - damping * 0.3 duration:.3], [SKAction group:@[[SKAction scaleTo:1 duration:.3], [SKAction runBlock:^{
+                
+            }]]]]];
+            [targetNode runAction:scaleSequence];
+        };
+        
+        [levelNode loadActionDescriptor:boomActionDesc_levelNode andConnectionDescriptor:boomConn forActionType:@"boom"];
     }
     [self initGridWithAnimation:NO];
     //int numOfNodes = (currentLevelIndex.intValue < 4 ? currentLevelIndex.intValue : 4);
@@ -206,6 +225,15 @@
             [_menuButton triggerRandomNodeForActionType:@"boom" withUserInfo:nil];
             [_menuButton runAction:[SKAction sequence:@[[SKAction waitForDuration:.8], [SKAction runBlock:^{
                 [_sceneDelegate menuClicked];
+            }]]]];
+        } else if ([node.name isEqualToString:@"levelnode"] && !touched) {
+            touched = YES;
+            PadNode *clickedLevel = (PadNode *)node;
+            LevelManager *manager = [[LevelManager alloc] init];
+            LevelEntityHelper *level = [manager getLevelForIndex:clickedLevel.nodeIndex];
+            [clickedLevel triggerRandomNodeForActionType:@"boom" withUserInfo:nil];
+            [clickedLevel runAction:[SKAction sequence:@[[SKAction waitForDuration:.8], [SKAction runBlock:^{
+                [_sceneDelegate historyLevelClicked:level];
             }]]]];
         }
     }

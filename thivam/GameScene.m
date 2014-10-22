@@ -46,6 +46,8 @@
 @property (nonatomic) PadNode *resetNode;
 @property (nonatomic) PadNode *menuButton;
 
+@property (nonatomic) BOOL isCompletedLevel;
+
 @end
 
 @implementation GameScene
@@ -109,8 +111,10 @@
     _bgPad.name = @"permanent";
 }
 
--(void)loadLevel:(NSDictionary *)levelInfo
+-(void)loadLevel:(NSDictionary *)levelInfo isCompleted:(BOOL)isCompleted
 {
+    _isCompletedLevel = isCompleted;
+    
     for (SKNode *node in self.children) {
         if (![node.name isEqual:@"permanent"]) {
             [node removeFromParent];
@@ -254,7 +258,11 @@
                 [self runAction:[SKAction sequence:@[[SKAction waitForDuration:.8], [SKAction runBlock:^{
                     [_gamePad triggerNodeAtPosition:sourcePosition forActionType:@"next_level" withUserInfo:nil forceDisable:NO withNodeReset:NO];
                 }], [SKAction waitForDuration:1], [SKAction runBlock:^{
-                    [_sceneDelegate levelCompleted];
+                    if (_isCompletedLevel) {
+                        [_sceneDelegate historyClicked];
+                    } else {
+                        [_sceneDelegate levelCompleted];
+                    }
                 }]]]];
             } else {
                 currentNodeCount = 0;
@@ -349,7 +357,7 @@
             [_gamePad runAction:[SKAction fadeAlphaTo:0.0 duration:.6]];
             [_menuButton runAction:[SKAction fadeAlphaTo:0.0 duration:.6]];
             [_resetNode runAction:[SKAction sequence:@[[SKAction fadeAlphaTo:0.0 duration:.6], [SKAction runBlock:^{
-                [self loadLevel:_currentLevelInfo];
+                [self loadLevel:_currentLevelInfo isCompleted:_isCompletedLevel];
             }]]]];
         } else if ([node.name isEqualToString:@"menu"] && !touched) {
             touched = YES;
@@ -357,7 +365,11 @@
             [_gamePad runAction:[SKAction fadeAlphaTo:0.0 duration:.6]];
             [_resetNode runAction:[SKAction fadeAlphaTo:0.0 duration:.6]];
             [_menuButton runAction:[SKAction sequence:@[[SKAction fadeAlphaTo:0.0 duration:.6], [SKAction runBlock:^{
-                [_sceneDelegate menuClicked];
+                if (_isCompletedLevel) {
+                    [_sceneDelegate historyClicked];
+                } else {
+                    [_sceneDelegate menuClicked];
+                }
             }]]]];
         }
     }

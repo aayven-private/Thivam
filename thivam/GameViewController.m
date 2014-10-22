@@ -51,12 +51,12 @@
     NSDictionary *currentLevelInfo = [[NSUserDefaults standardUserDefaults] objectForKey:kCurrentLevelInfoKey];
     if (currentLevelInfo) {
         _currentLevel = currentLevelInfo;
-        _currentLevelIndex++;
+        //_currentLevelIndex++;
         NSLog(@"%@", _currentLevel);
     } else {
         [_levelManager generateLevelWithGridsize:levelDescriptor.gridSize andNumberOfClicks:levelDescriptor.clickNum andNumberOfTargets:levelDescriptor.targetNum withNumberOfReferenceNodes:levelDescriptor.referenceNum succesBlock:^(NSDictionary *levelInfo) {
             _currentLevel = levelInfo;
-            _currentLevelIndex++;
+            //_currentLevelIndex++;
             [[NSUserDefaults standardUserDefaults] setObject:_currentLevel forKey:kCurrentLevelInfoKey];
             [[NSUserDefaults standardUserDefaults] synchronize];
         }];
@@ -134,10 +134,10 @@
     reveal.pausesIncomingScene = YES;
     
     [skView presentScene:_gameScene transition:reveal];
-    [_gameScene loadLevel:_currentLevel];
+    [_gameScene loadLevel:_currentLevel isCompleted:NO];
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        LevelDescriptor *levelDescriptor = [[LevelDescriptor alloc] initWithLevelIndex:_currentLevelIndex];
+        LevelDescriptor *levelDescriptor = [[LevelDescriptor alloc] initWithLevelIndex:_currentLevelIndex + 1];
         [_levelManager generateLevelWithGridsize:levelDescriptor.gridSize andNumberOfClicks:levelDescriptor.clickNum andNumberOfTargets:levelDescriptor.targetNum withNumberOfReferenceNodes:levelDescriptor.referenceNum succesBlock:^(NSDictionary *levelInfo) {
             _nextLevel = levelInfo;
         }];
@@ -152,7 +152,6 @@
     reveal.pausesOutgoingScene = NO;
     reveal.pausesIncomingScene = YES;
     [skView presentScene:_menuScene transition:reveal];
-
 }
 
 -(void)historyClicked
@@ -167,26 +166,37 @@
 
 -(void)levelCompleted
 {
-    [_gameScene loadLevel:_nextLevel];
-    
-    [[NSUserDefaults standardUserDefaults] setObject:_currentLevel forKey:kCurrentLevelInfoKey];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+    [_gameScene loadLevel:_nextLevel isCompleted:NO];
+
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        _currentLevel = _nextLevel;
-        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:_currentLevelIndex] forKey:kCurrentLevelIndexKey];
-        [[NSUserDefaults standardUserDefaults] setObject:_currentLevel forKey:kCurrentLevelInfoKey];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-        
         LevelManager *levelManager = [[LevelManager alloc] init];
         [levelManager saveLevel:_currentLevel forIndex:_currentLevelIndex];
         
         _currentLevelIndex++;
+        _currentLevel = _nextLevel;
+        
+        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:_currentLevelIndex] forKey:kCurrentLevelIndexKey];
+        [[NSUserDefaults standardUserDefaults] setObject:_currentLevel forKey:kCurrentLevelInfoKey];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        
         LevelDescriptor *levelDescriptor = [[LevelDescriptor alloc] initWithLevelIndex:_currentLevelIndex];
         
         [_levelManager generateLevelWithGridsize:levelDescriptor.gridSize andNumberOfClicks:levelDescriptor.clickNum andNumberOfTargets:levelDescriptor.targetNum withNumberOfReferenceNodes:levelDescriptor.referenceNum succesBlock:^(NSDictionary *levelInfo) {
             _nextLevel = levelInfo;
         }];
     });
+}
+
+-(void)historyLevelClicked:(LevelEntityHelper *)level
+{
+    SKView * skView = (SKView *)self.view;
+    
+    SKTransition *reveal = [SKTransition crossFadeWithDuration:1.3];
+    reveal.pausesOutgoingScene = NO;
+    reveal.pausesIncomingScene = YES;
+    
+    [skView presentScene:_gameScene transition:reveal];
+    [_gameScene loadLevel:level.levelInfo isCompleted:YES];
 }
 
 @end

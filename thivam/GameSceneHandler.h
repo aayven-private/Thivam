@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "LevelEntityHelper.h"
 
 @protocol GameSceneHandler <NSObject>
 
@@ -15,5 +16,6 @@
 -(void)menuClicked;
 -(void)historyClicked;
 -(void)levelCompleted;
+-(void)historyLevelClicked:(LevelEntityHelper *)level;
 
 @end

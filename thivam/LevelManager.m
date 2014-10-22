@@ -167,7 +167,7 @@
     }];
 }
 
--(LevelEntityHelper *)getLevelForindex:(int)levelIndex
+-(LevelEntityHelper *)getLevelForIndex:(int)levelIndex
 {
     __block LevelEntityHelper *result;
     
