@@ -18,7 +18,7 @@
             self.referenceNum = 0;
             self.clickNum = 1;
             self.targetNum = 1;
-            self.gridColorScheme = @"D7FADD";
+            self.gridColorScheme = @"A5FAB5";
         } else if (levelIndex < 5) {
             self.gridSize = CGSizeMake(3, 3);
             self.referenceNum = 0;

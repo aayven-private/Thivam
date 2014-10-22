@@ -64,12 +64,27 @@
         _currentLevel = currentLevelInfo;
         //_currentLevelIndex++;
         NSLog(@"%@", _currentLevel);
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+            LevelDescriptor *levelDescriptor = [[LevelDescriptor alloc] initWithLevelIndex:_currentLevelIndex + 1];
+            //_currentLevelDescriptor = levelDescriptor;
+            [_levelManager generateLevelWithGridsize:levelDescriptor.gridSize andNumberOfClicks:levelDescriptor.clickNum andNumberOfTargets:levelDescriptor.targetNum withNumberOfReferenceNodes:levelDescriptor.referenceNum succesBlock:^(NSDictionary *levelInfo) {
+                _nextLevel = levelInfo;
+            }];
+        });
     } else {
         [_levelManager generateLevelWithGridsize:levelDescriptor.gridSize andNumberOfClicks:levelDescriptor.clickNum andNumberOfTargets:levelDescriptor.targetNum withNumberOfReferenceNodes:levelDescriptor.referenceNum succesBlock:^(NSDictionary *levelInfo) {
             _currentLevel = levelInfo;
             //_currentLevelIndex++;
             [[NSUserDefaults standardUserDefaults] setObject:_currentLevel forKey:kCurrentLevelInfoKey];
             [[NSUserDefaults standardUserDefaults] synchronize];
+            
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+                LevelDescriptor *levelDescriptor = [[LevelDescriptor alloc] initWithLevelIndex:_currentLevelIndex + 1];
+                //_currentLevelDescriptor = levelDescriptor;
+                [_levelManager generateLevelWithGridsize:levelDescriptor.gridSize andNumberOfClicks:levelDescriptor.clickNum andNumberOfTargets:levelDescriptor.targetNum withNumberOfReferenceNodes:levelDescriptor.referenceNum succesBlock:^(NSDictionary *levelInfo) {
+                    _nextLevel = levelInfo;
+                }];
+            });
         }];
     }
     
@@ -148,14 +163,6 @@
     
     [skView presentScene:_gameScene transition:reveal];
     [_gameScene loadLevel:_currentLevel isCompleted:NO andColorScheme:_currentLevelDescriptor.gridColorScheme];
-    
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        LevelDescriptor *levelDescriptor = [[LevelDescriptor alloc] initWithLevelIndex:_currentLevelIndex + 1];
-        //_currentLevelDescriptor = levelDescriptor;
-        [_levelManager generateLevelWithGridsize:levelDescriptor.gridSize andNumberOfClicks:levelDescriptor.clickNum andNumberOfTargets:levelDescriptor.targetNum withNumberOfReferenceNodes:levelDescriptor.referenceNum succesBlock:^(NSDictionary *levelInfo) {
-            _nextLevel = levelInfo;
-        }];
-    });
 }
 
 -(void)menuClicked
@@ -194,7 +201,7 @@
         [[NSUserDefaults standardUserDefaults] setObject:_currentLevel forKey:kCurrentLevelInfoKey];
         [[NSUserDefaults standardUserDefaults] synchronize];
         
-        LevelDescriptor *levelDescriptor = [[LevelDescriptor alloc] initWithLevelIndex:_currentLevelIndex];
+        LevelDescriptor *levelDescriptor = [[LevelDescriptor alloc] initWithLevelIndex:_currentLevelIndex + 1];
         _currentLevelDescriptor = levelDescriptor;
         [_levelManager generateLevelWithGridsize:levelDescriptor.gridSize andNumberOfClicks:levelDescriptor.clickNum andNumberOfTargets:levelDescriptor.targetNum withNumberOfReferenceNodes:levelDescriptor.referenceNum succesBlock:^(NSDictionary *levelInfo) {
             _nextLevel = levelInfo;

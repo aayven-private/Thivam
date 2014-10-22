@@ -295,6 +295,13 @@
         NSNumber *rowIndex = [members objectAtIndex:1];
         GameObject *refNode = [_gamePad getNodeAtPosition:CGPointMake(columnIndex.intValue, rowIndex.intValue)];
         refNode.color = [UIColor blueColor];
+        
+        /*SKSpriteNode *marker = [[SKSpriteNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(3 * refNode.size.width / 4, 3 * refNode.size.height / 4)];
+        marker.position = CGPointMake(0, 0);
+        marker.userInteractionEnabled = NO;
+        ((InteractionNode *)refNode).infoLabel.fontColor = [UIColor whiteColor];
+        //marker.zPosition = ((InteractionNode *)refNode).infoLabel.zPosition - 1;
+        [refNode addChild:marker];*/
     }
     
     for (int column = 0; column < _gamePad.gridSize.width; column++) {
