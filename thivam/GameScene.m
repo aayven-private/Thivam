@@ -42,6 +42,7 @@
 @property (nonatomic) CGPoint referencePoint;
 
 @property (nonatomic) NSDictionary *currentLevelInfo;
+@property (nonatomic) NSString *currentColorScheme;
 
 @property (nonatomic) PadNode *resetNode;
 @property (nonatomic) PadNode *menuButton;
@@ -111,10 +112,10 @@
     _bgPad.name = @"permanent";
 }
 
--(void)loadLevel:(NSDictionary *)levelInfo isCompleted:(BOOL)isCompleted
+-(void)loadLevel:(NSDictionary *)levelInfo isCompleted:(BOOL)isCompleted andColorScheme:(NSString *)colorScheme
 {
     _isCompletedLevel = isCompleted;
-    
+    _currentColorScheme = colorScheme;
     for (SKNode *node in self.children) {
         if (![node.name isEqual:@"permanent"]) {
             [node removeFromParent];
@@ -122,7 +123,7 @@
     }
     
     NSArray *bgColorCodes = [NSArray arrayWithObjects:@"F20C23", @"DE091E", @"CC081C", @"B50415", nil];
-    _resetNode = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(150, 60) andGridSize:CGSizeMake(7, 3) withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO withborderColor:nil];
+    _resetNode = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(150, 60) andGridSize:CGSizeMake(7, 3) withPhysicsBody:NO andNodeColorCodes:@[_currentColorScheme] andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO withborderColor:nil];
     _resetNode.name = @"reset";
     _resetNode.position = CGPointMake(self.size.width / 2, 50);
     
@@ -130,7 +131,7 @@
     resetLabel.position = CGPointMake(0, 0);
     resetLabel.text = @"RESET";
     resetLabel.fontSize = 25;
-    resetLabel.fontColor = [UIColor whiteColor];
+    resetLabel.fontColor = [UIColor blackColor];
     resetLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
     resetLabel.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
     resetLabel.name = @"reset";
@@ -152,7 +153,7 @@
         [targetNode runAction:scaleSequence];
     };
     
-    _menuButton = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(150, 60) andGridSize:CGSizeMake(7, 3) withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO withborderColor:nil];
+    _menuButton = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(150, 60) andGridSize:CGSizeMake(7, 3) withPhysicsBody:NO andNodeColorCodes:@[_currentColorScheme] andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO withborderColor:nil];
     _menuButton.name = @"menu";
     _menuButton.position = CGPointMake(self.size.width / 2, self.size.height - 50);
     
@@ -160,7 +161,7 @@
     menuLabel.position = CGPointMake(0, 0);
     menuLabel.text = @"MENU";
     menuLabel.fontSize = 25;
-    menuLabel.fontColor = [UIColor whiteColor];
+    menuLabel.fontColor = [UIColor blackColor];
     menuLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
     menuLabel.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
     menuLabel.name = @"menu";
@@ -275,7 +276,7 @@
     
     CGSize playAreaSize = CGSizeMake(self.size.width - 40, self.size.width - 40);
     
-    _gamePad = [[PadNode alloc] initWithColor:[UIColor clearColor] size:playAreaSize andGridSize:_gridSize withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_touch forActionType:@"boom" isInteractive:YES withborderColor:[UIColor blackColor]];
+    _gamePad = [[PadNode alloc] initWithColor:[UIColor clearColor] size:playAreaSize andGridSize:_gridSize withPhysicsBody:NO andNodeColorCodes:@[_currentColorScheme] andInteractionMode:kInteractionMode_touch forActionType:@"boom" isInteractive:YES withborderColor:[UIColor blackColor]];
     _gamePad.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
     [_gamePad loadActionDescriptor:boomActionDesc andConnectionDescriptor:boomConn forActionType:@"boom"];
     [self loadNextLevelEffect];
@@ -357,7 +358,7 @@
             [_gamePad runAction:[SKAction fadeAlphaTo:0.0 duration:.6]];
             [_menuButton runAction:[SKAction fadeAlphaTo:0.0 duration:.6]];
             [_resetNode runAction:[SKAction sequence:@[[SKAction fadeAlphaTo:0.0 duration:.6], [SKAction runBlock:^{
-                [self loadLevel:_currentLevelInfo isCompleted:_isCompletedLevel];
+                [self loadLevel:_currentLevelInfo isCompleted:_isCompletedLevel andColorScheme:_currentColorScheme];
             }]]]];
         } else if ([node.name isEqualToString:@"menu"] && !touched) {
             touched = YES;

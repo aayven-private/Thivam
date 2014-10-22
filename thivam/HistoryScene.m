@@ -10,6 +10,7 @@
 #import "Constants.h"
 #import "PadNode.h"
 #import "LevelManager.h"
+#import "LevelDescriptor.h"
 
 @interface HistoryScene()
 
@@ -36,7 +37,7 @@
     _currentLevelIndex = userLevelIndex.intValue - 1;
     
     //!!!!
-    //_currentLevelIndex = 7;
+    //_currentLevelIndex = 101;
     
     //_currentEndIndex = _currentLevelIndex;
     
@@ -163,6 +164,9 @@
         levelNode.hidden = NO;
         int levelIndex = _currentEndIndex - (numOfNodes - i);
         levelNode.nodeIndex = levelIndex;
+        
+        LevelDescriptor *desc = [[LevelDescriptor alloc] initWithLevelIndex:levelIndex];
+        [levelNode recolorizeWithColorScheme:desc.gridColorScheme];
         
         levelNode.infoLabel.text = [NSString stringWithFormat:@"%d", levelIndex];
         

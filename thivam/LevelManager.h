@@ -16,7 +16,7 @@
 @property (nonatomic) NSDictionary *currentLevel;
 
 -(void)generateLevelWithGridsize:(CGSize)gridSize andNumberOfClicks:(int)clickNum andNumberOfTargets:(int)targetNum withNumberOfReferenceNodes:(int)referenceCount succesBlock:(void (^)(NSDictionary *levelInfo))successBlock;
--(void)saveLevel:(NSDictionary *)levelDescription forIndex:(int)levelIndex;
+-(void)saveLevel:(NSDictionary *)levelDescription forIndex:(int)levelIndex withColorScheme:(NSString *)colorScheme;
 -(LevelEntityHelper *)getLevelForIndex:(int)levelIndex;
 -(NSArray *)getSavedLevels;
 -(NSArray *)getLevelsFromIndex:(int)fromIndex toIndex:(int)toIndex;

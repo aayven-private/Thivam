@@ -329,4 +329,14 @@
     return nil;
 }
 
+-(void)recolorizeWithColorScheme:(NSString *)colorScheme
+{
+    for (SKNode *node in self.children) {
+        if ([node isKindOfClass:[InteractionNode class]]) {
+            ((InteractionNode *)node).color = [CommonTools getRandomColorCloseToColor:[CommonTools stringToColor:colorScheme] withDispersion:.2];
+            ((InteractionNode *)node).baseColor = [CommonTools getRandomColorCloseToColor:[CommonTools stringToColor:colorScheme] withDispersion:.2];
+        }
+    }
+}
+
 @end

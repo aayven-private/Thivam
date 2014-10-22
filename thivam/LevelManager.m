@@ -146,9 +146,9 @@
     }
 }
 
--(void)saveLevel:(NSDictionary *)levelDescription forIndex:(int)levelIndex
+-(void)saveLevel:(NSDictionary *)levelDescription forIndex:(int)levelIndex withColorScheme:(NSString *)colorScheme
 {
-    NSLog(@"%@", levelDescription);
+    //NSLog(@"%@", levelDescription);
     NSManagedObjectContext *context = [DBAccessLayer createManagedObjectContext];
     [context performBlock:^{
         NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"LevelEntity"];
@@ -162,6 +162,7 @@
             LevelEntity *newEntity = [NSEntityDescription insertNewObjectForEntityForName:@"LevelEntity" inManagedObjectContext:context];
             newEntity.levelInfo = [NSKeyedArchiver archivedDataWithRootObject:levelDescription];
             newEntity.levelIndex = [NSNumber numberWithInt:levelIndex];
+            newEntity.gridColorScheme = colorScheme;
             [DBAccessLayer saveContext:context async:YES];
         }
     }];

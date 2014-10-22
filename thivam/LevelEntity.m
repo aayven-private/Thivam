@@ -13,5 +13,6 @@
 
 @dynamic levelIndex;
 @dynamic levelInfo;
+@dynamic gridColorScheme;
 
 @end

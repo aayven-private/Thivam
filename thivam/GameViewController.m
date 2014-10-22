@@ -26,6 +26,7 @@
 @property (nonatomic) NSDictionary *nextLevel;
 
 @property (nonatomic) int currentLevelIndex;
+@property (nonatomic) LevelDescriptor *currentLevelDescriptor;
 
 @end
 
@@ -45,10 +46,20 @@
     _currentLevelIndex = currentLevel.intValue;
     
     LevelDescriptor *levelDescriptor = [[LevelDescriptor alloc] initWithLevelIndex:_currentLevelIndex];
+    _currentLevelDescriptor = levelDescriptor;
     
     _levelManager = [[LevelManager alloc] init];
     
     NSDictionary *currentLevelInfo = [[NSUserDefaults standardUserDefaults] objectForKey:kCurrentLevelInfoKey];
+    
+    //!!!!!!!!
+    
+    //_currentLevelIndex = 101;
+    //currentLevelInfo = nil;
+    
+    //!!!!!!!!
+    
+    
     if (currentLevelInfo) {
         _currentLevel = currentLevelInfo;
         //_currentLevelIndex++;
@@ -136,10 +147,11 @@
     reveal.pausesIncomingScene = YES;
     
     [skView presentScene:_gameScene transition:reveal];
-    [_gameScene loadLevel:_currentLevel isCompleted:NO];
+    [_gameScene loadLevel:_currentLevel isCompleted:NO andColorScheme:_currentLevelDescriptor.gridColorScheme];
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
         LevelDescriptor *levelDescriptor = [[LevelDescriptor alloc] initWithLevelIndex:_currentLevelIndex + 1];
+        //_currentLevelDescriptor = levelDescriptor;
         [_levelManager generateLevelWithGridsize:levelDescriptor.gridSize andNumberOfClicks:levelDescriptor.clickNum andNumberOfTargets:levelDescriptor.targetNum withNumberOfReferenceNodes:levelDescriptor.referenceNum succesBlock:^(NSDictionary *levelInfo) {
             _nextLevel = levelInfo;
         }];
@@ -168,11 +180,12 @@
 
 -(void)levelCompleted
 {
-    [_gameScene loadLevel:_nextLevel isCompleted:NO];
+    NSLog(@"%@", _nextLevel);
+    [_gameScene loadLevel:_nextLevel isCompleted:NO andColorScheme:_currentLevelDescriptor.gridColorScheme];
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
         LevelManager *levelManager = [[LevelManager alloc] init];
-        [levelManager saveLevel:_currentLevel forIndex:_currentLevelIndex];
+        [levelManager saveLevel:_currentLevel forIndex:_currentLevelIndex withColorScheme:_currentLevelDescriptor.gridColorScheme];
         
         _currentLevelIndex++;
         _currentLevel = _nextLevel;
@@ -182,7 +195,7 @@
         [[NSUserDefaults standardUserDefaults] synchronize];
         
         LevelDescriptor *levelDescriptor = [[LevelDescriptor alloc] initWithLevelIndex:_currentLevelIndex];
-        
+        _currentLevelDescriptor = levelDescriptor;
         [_levelManager generateLevelWithGridsize:levelDescriptor.gridSize andNumberOfClicks:levelDescriptor.clickNum andNumberOfTargets:levelDescriptor.targetNum withNumberOfReferenceNodes:levelDescriptor.referenceNum succesBlock:^(NSDictionary *levelInfo) {
             _nextLevel = levelInfo;
         }];
@@ -198,7 +211,7 @@
     reveal.pausesIncomingScene = YES;
     
     [skView presentScene:_gameScene transition:reveal];
-    [_gameScene loadLevel:level.levelInfo isCompleted:YES];
+    [_gameScene loadLevel:level.levelInfo isCompleted:YES andColorScheme:level.gridColorScheme];
 }
 
 @end
