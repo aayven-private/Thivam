@@ -163,7 +163,22 @@
     
     [skView presentScene:_gameScene transition:reveal];
     LevelDescriptor *desc = [[LevelDescriptor alloc] initWithLevelIndex:_currentLevelIndex];
-    [_gameScene loadLevel:_currentLevel isCompleted:NO andGridColorScheme:desc.gridColorScheme andBgColorScheme:desc.bgColorScheme];
+    [_gameScene loadLevel:_currentLevel isCompleted:NO andGridColorScheme:desc.gridColorScheme andBgColorScheme:desc.bgColorScheme isQuest:YES];
+}
+
+-(void)randomPlayClicked
+{
+    SKView * skView = (SKView *)self.view;
+    SKTransition *reveal = [SKTransition crossFadeWithDuration:1.3];
+    reveal.pausesOutgoingScene = NO;
+    reveal.pausesIncomingScene = YES;
+
+    NSNumber *currentDifficulty = [[NSUserDefaults standardUserDefaults] objectForKey:kCurrentDifficultyKey];
+    LevelDescriptor *desc = [[LevelDescriptor alloc] initWithDifficulty:currentDifficulty.intValue];
+    [_levelManager generateLevelWithGridsize:desc.gridSize andNumberOfClicks:desc.clickNum andNumberOfTargets:desc.targetNum withNumberOfReferenceNodes:desc.referenceNum succesBlock:^(NSDictionary *levelInfo) {
+        [skView presentScene:_gameScene transition:reveal];
+        [_gameScene loadLevel:levelInfo isCompleted:NO andGridColorScheme:desc.gridColorScheme andBgColorScheme:desc.bgColorScheme isQuest:NO];
+    }];
 }
 
 -(void)menuClicked
@@ -186,11 +201,11 @@
     [skView presentScene:_historyScene transition:reveal];
 }
 
--(void)levelCompleted
+-(void)questLevelCompleted
 {
     NSLog(@"%@", _nextLevel);
     LevelDescriptor *desc = [[LevelDescriptor alloc] initWithLevelIndex:_currentLevelIndex + 1];
-    [_gameScene loadLevel:_nextLevel isCompleted:NO andGridColorScheme:desc.gridColorScheme andBgColorScheme:desc.bgColorScheme];
+    [_gameScene loadLevel:_nextLevel isCompleted:NO andGridColorScheme:desc.gridColorScheme andBgColorScheme:desc.bgColorScheme isQuest:YES];
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
         LevelManager *levelManager = [[LevelManager alloc] init];
@@ -211,6 +226,15 @@
     });
 }
 
+-(void)randomLevelCompleted
+{
+    NSNumber *currentDifficulty = [[NSUserDefaults standardUserDefaults] objectForKey:kCurrentDifficultyKey];
+    LevelDescriptor *desc = [[LevelDescriptor alloc] initWithDifficulty:currentDifficulty.intValue];
+    [_levelManager generateLevelWithGridsize:desc.gridSize andNumberOfClicks:desc.clickNum andNumberOfTargets:desc.targetNum withNumberOfReferenceNodes:desc.referenceNum succesBlock:^(NSDictionary *levelInfo) {
+        [_gameScene loadLevel:levelInfo isCompleted:NO andGridColorScheme:desc.gridColorScheme andBgColorScheme:desc.bgColorScheme isQuest:NO];
+    }];
+}
+
 -(void)historyLevelClicked:(LevelEntityHelper *)level
 {
     SKView * skView = (SKView *)self.view;
@@ -221,7 +245,7 @@
     
     [skView presentScene:_gameScene transition:reveal];
     LevelDescriptor *desc = [[LevelDescriptor alloc] initWithLevelIndex:level.levelIndex];
-    [_gameScene loadLevel:level.levelInfo isCompleted:YES andGridColorScheme:desc.gridColorScheme andBgColorScheme:desc.bgColorScheme];
+    [_gameScene loadLevel:level.levelInfo isCompleted:YES andGridColorScheme:desc.gridColorScheme andBgColorScheme:desc.bgColorScheme isQuest:YES];
 }
 
 @end

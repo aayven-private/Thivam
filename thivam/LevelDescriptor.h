@@ -19,5 +19,6 @@
 @property (nonatomic) NSString *bgColorScheme;
 
 -(id)initWithLevelIndex:(int)levelIndex;
+-(id)initWithDifficulty:(int)difficulty;
 
 @end

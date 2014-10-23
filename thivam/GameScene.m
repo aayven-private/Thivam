@@ -50,6 +50,7 @@
 @property (nonatomic) PadNode *helpButton;
 
 @property (nonatomic) BOOL isCompletedLevel;
+@property (nonatomic) BOOL isQuestLevel;
 
 @property (nonatomic) NSArray *clicks;
 
@@ -116,12 +117,12 @@
     _bgPad.name = @"permanent";
 }
 
--(void)loadLevel:(NSDictionary *)levelInfo isCompleted:(BOOL)isCompleted andGridColorScheme:(NSString *)colorScheme andBgColorScheme:(NSString *)bgColorScheme
+-(void)loadLevel:(NSDictionary *)levelInfo isCompleted:(BOOL)isCompleted andGridColorScheme:(NSString *)colorScheme andBgColorScheme:(NSString *)bgColorScheme isQuest:(BOOL)isQuest
 {
     if (bgColorScheme) {
         [_bgPad recolorizeWithColorScheme:bgColorScheme];
     }
-    
+    _isQuestLevel = isQuest;
     _isCompletedLevel = isCompleted;
     _currentColorScheme = colorScheme;
     _currentBgColorScheme = bgColorScheme;
@@ -186,7 +187,7 @@
     
     SKLabelNode *menuLabel = [SKLabelNode labelNodeWithFontNamed:@"Copperplate-Bold"];
     menuLabel.position = CGPointMake(0, 0);
-    menuLabel.text = @"MENU";
+    menuLabel.text = @"BACK";
     menuLabel.fontSize = 18;
     menuLabel.fontColor = [UIColor blackColor];
     menuLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
@@ -295,7 +296,11 @@
                     if (_isCompletedLevel) {
                         [_sceneDelegate historyClicked];
                     } else {
-                        [_sceneDelegate levelCompleted];
+                        if (_isQuestLevel) {
+                            [_sceneDelegate questLevelCompleted];
+                        } else {
+                            [_sceneDelegate randomLevelCompleted];
+                        }
                     }
                 }]]]];
             } else {
@@ -411,7 +416,7 @@
             [_menuButton runAction:fadeAction];
             [_helpButton runAction:fadeAction];
             [_resetNode runAction:[SKAction sequence:@[fadeAction, [SKAction runBlock:^{
-                [self loadLevel:_currentLevelInfo isCompleted:_isCompletedLevel andGridColorScheme:_currentColorScheme andBgColorScheme:_currentBgColorScheme];
+                [self loadLevel:_currentLevelInfo isCompleted:_isCompletedLevel andGridColorScheme:_currentColorScheme andBgColorScheme:_currentBgColorScheme isQuest:_isQuestLevel];
             }]]]];
         } else if ([node.name isEqualToString:@"menu"] && !touched) {
             touched = YES;

@@ -52,4 +52,6 @@ static NSString *kGameTypesShooter = @"gametype_shooter";
 
 static NSString *kCurrentLevelIndexKey = @"current_level_index";
 static NSString *kCurrentLevelInfoKey = @"current_level_info";
+static NSString *kCurrentDifficultyKey = @"current_difficulty";
+
 

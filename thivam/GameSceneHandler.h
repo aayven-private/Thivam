@@ -13,9 +13,11 @@
 @protocol GameSceneHandler <NSObject>
 
 -(void)playClicked;
+-(void)randomPlayClicked;
 -(void)menuClicked;
 -(void)historyClicked;
--(void)levelCompleted;
+-(void)questLevelCompleted;
+-(void)randomLevelCompleted;
 -(void)historyLevelClicked:(LevelEntityHelper *)level;
 
 @end

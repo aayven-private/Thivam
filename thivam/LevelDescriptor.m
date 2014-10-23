@@ -7,6 +7,7 @@
 //
 
 #import "LevelDescriptor.h"
+#import "CommonTools.h"
 
 @implementation LevelDescriptor
 
@@ -195,6 +196,58 @@
             self.targetNum = 6;
             self.gridColorScheme = @"CC00CC";
             self.bgColorScheme = @"000066";
+        }
+    }
+    return self;
+}
+
+-(id)initWithDifficulty:(int)difficulty
+{
+    if (self = [super init]) {
+        switch (difficulty) {
+            case 1: {
+                self.gridSize = CGSizeMake(3, 3);
+                self.referenceNum = 0;
+                self.clickNum = 2;
+                self.targetNum = 1;
+                self.gridColorScheme = @"00FF00";
+                self.bgColorScheme = @"0000FF";
+            } break;
+            case 2: {
+                int gridSize = [CommonTools getRandomNumberFromInt:3 toInt:4];
+                self.gridSize = CGSizeMake(gridSize, gridSize);
+                self.referenceNum = 0;
+                self.clickNum = 2;
+                self.targetNum = 2;
+                self.gridColorScheme = @"FFFF00";
+                self.bgColorScheme = @"006600";
+            } break;
+            case 3: {
+                int gridSize = [CommonTools getRandomNumberFromInt:5 toInt:6];
+                self.gridSize = CGSizeMake(gridSize, gridSize);
+                self.referenceNum = 1;
+                self.clickNum = 2;
+                self.targetNum = [CommonTools getRandomNumberFromInt:2 toInt:3];
+                self.gridColorScheme = @"FF6600";
+                self.bgColorScheme = @"61619C";
+            } break;
+            case 4: {
+                int gridSize = [CommonTools getRandomNumberFromInt:6 toInt:7];
+                self.gridSize = CGSizeMake(gridSize, gridSize);
+                self.referenceNum = [CommonTools getRandomNumberFromInt:1 toInt:2];
+                self.clickNum = 2;
+                self.targetNum = [CommonTools getRandomNumberFromInt:2 toInt:3];
+                self.gridColorScheme = @"FF3300";
+                self.bgColorScheme = @"660066";
+            } break;
+            case 5: {
+                self.gridSize = CGSizeMake(7, 7);
+                self.referenceNum = [CommonTools getRandomNumberFromInt:2 toInt:3];
+                self.clickNum = 3;
+                self.targetNum = [CommonTools getRandomNumberFromInt:3 toInt:4];
+                self.gridColorScheme = @"FF0000";
+                self.bgColorScheme = @"0000FF";
+            } break;
         }
     }
     return self;

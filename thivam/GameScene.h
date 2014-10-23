@@ -15,6 +15,6 @@
 @property (nonatomic, weak) id<GameSceneHandler> sceneDelegate;
 
 -(void)initEnvironment;
--(void)loadLevel:(NSDictionary *)levelInfo isCompleted:(BOOL)isCompleted andGridColorScheme:(NSString *)colorScheme andBgColorScheme:(NSString *)bgColorScheme;
+-(void)loadLevel:(NSDictionary *)levelInfo isCompleted:(BOOL)isCompleted andGridColorScheme:(NSString *)colorScheme andBgColorScheme:(NSString *)bgColorScheme isQuest:(BOOL)isQuest;
 
 @end
