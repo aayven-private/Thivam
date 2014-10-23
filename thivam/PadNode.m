@@ -51,7 +51,7 @@
                 blockColor = [CommonTools stringToColor:[colorCodes objectAtIndex:colorIndex]];
             } else if (colorCodes && colorCodes.count == 1) {
                 UIColor *oneColor = [CommonTools stringToColor:[colorCodes objectAtIndex:0]];
-                blockColor = [CommonTools getRandomColorCloseToColor:oneColor withDispersion:0.2];
+                blockColor = [CommonTools getRandomColorCloseToColor:oneColor withDispersion:0.15];
             } else {
                 blockColor = color;
             }
@@ -333,8 +333,13 @@
 {
     for (SKNode *node in self.children) {
         if ([node isKindOfClass:[InteractionNode class]]) {
-            ((InteractionNode *)node).color = [CommonTools getRandomColorCloseToColor:[CommonTools stringToColor:colorScheme] withDispersion:.2];
-            ((InteractionNode *)node).baseColor = [CommonTools getRandomColorCloseToColor:[CommonTools stringToColor:colorScheme] withDispersion:.2];
+            InteractionNode *targetNode = (InteractionNode *)node;
+            if (targetNode.innerNode) {
+                targetNode.innerNode.color = [CommonTools getRandomColorCloseToColor:[CommonTools stringToColor:colorScheme] withDispersion:.1];
+            } else {
+                targetNode.color = [CommonTools getRandomColorCloseToColor:[CommonTools stringToColor:colorScheme] withDispersion:.1];
+            }
+            targetNode.baseColor = [CommonTools getRandomColorCloseToColor:[CommonTools stringToColor:colorScheme] withDispersion:.1];
         }
     }
 }

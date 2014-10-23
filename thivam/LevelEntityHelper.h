@@ -13,7 +13,6 @@
 
 @property (nonatomic) int levelIndex;
 @property (nonatomic) NSDictionary *levelInfo;
-@property (nonatomic) NSString *gridColorScheme;
 
 -(id)initWithEntity:(LevelEntity *)entity;
 

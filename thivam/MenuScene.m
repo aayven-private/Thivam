@@ -7,6 +7,7 @@
 //
 
 #import "MenuScene.h"
+#import "LevelDescriptor.h"
 
 @interface MenuScene()
 
@@ -29,8 +30,18 @@
 {
     [self removeAllChildren];
     
+    NSNumber *currentLevel = [[NSUserDefaults standardUserDefaults] objectForKey:kCurrentLevelIndexKey];
+    if (!currentLevel) {
+        currentLevel = [NSNumber numberWithInt:1];
+        [[NSUserDefaults standardUserDefaults] setObject:currentLevel forKey:kCurrentLevelIndexKey];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
+
+    
+    LevelDescriptor *desc = [[LevelDescriptor alloc] initWithLevelIndex:currentLevel.intValue];
+    
     NSArray *bgColorCodes = [NSArray arrayWithObjects:@"F20C23", @"DE091E", @"CC081C", @"B50415", nil];
-    _playButton = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(150, 60) andGridSize:CGSizeMake(7, 3) withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO withborderColor:nil];
+    _playButton = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(150, 60) andGridSize:CGSizeMake(7, 3) withPhysicsBody:NO andNodeColorCodes:@[desc.gridColorScheme] andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO withborderColor:nil];
     _playButton.name = @"playbutton";
     _playButton.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0 + 35);
     
@@ -38,13 +49,13 @@
     playLabel.position = CGPointMake(0, 0);
     playLabel.text = @"PLAY";
     playLabel.fontSize = 25;
-    playLabel.fontColor = [UIColor whiteColor];
+    playLabel.fontColor = [UIColor blackColor];
     playLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
     playLabel.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
     playLabel.name = @"playbutton";
     [_playButton addChild:playLabel];
     
-    _historyButton = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(150, 60) andGridSize:CGSizeMake(7, 3) withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO withborderColor:nil];
+    _historyButton = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(150, 60) andGridSize:CGSizeMake(7, 3) withPhysicsBody:NO andNodeColorCodes:@[desc.gridColorScheme] andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO withborderColor:nil];
     _historyButton.name = @"history";
     _historyButton.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0 - 35);
     
@@ -52,7 +63,7 @@
     historyLabel.position = CGPointMake(0, 0);
     historyLabel.text = @"HISTORY";
     historyLabel.fontSize = 25;
-    historyLabel.fontColor = [UIColor whiteColor];
+    historyLabel.fontColor = [UIColor blackColor];
     historyLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
     historyLabel.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
     historyLabel.name = @"history";
@@ -95,7 +106,7 @@
     
     bgColorCodes = [NSArray arrayWithObjects:@"8D8EF2", @"787AD6", @"1E21F7", @"1D1FA1", nil];
     //_nodeCount = bgGridSize.width * bgGridSize.height;
-    _bgPad = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:bgGridSize withPhysicsBody:NO andNodeColorCodes:bgColorCodes andInteractionMode:kInteractionMode_touch forActionType:@"boom" isInteractive:NO withborderColor:[UIColor blackColor]];
+    _bgPad = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:bgGridSize withPhysicsBody:NO andNodeColorCodes:@[desc.bgColorScheme] andInteractionMode:kInteractionMode_touch forActionType:@"boom" isInteractive:NO withborderColor:[UIColor blackColor]];
     _bgPad.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
     [_bgPad loadActionDescriptor:boomActionDesc_bg andConnectionDescriptor:boomConn forActionType:@"boom"];
     _bgPad.alpha = .6;

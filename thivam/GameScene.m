@@ -43,11 +43,15 @@
 
 @property (nonatomic) NSDictionary *currentLevelInfo;
 @property (nonatomic) NSString *currentColorScheme;
+@property (nonatomic) NSString *currentBgColorScheme;
 
 @property (nonatomic) PadNode *resetNode;
 @property (nonatomic) PadNode *menuButton;
+@property (nonatomic) PadNode *helpButton;
 
 @property (nonatomic) BOOL isCompletedLevel;
+
+@property (nonatomic) NSArray *clicks;
 
 @end
 
@@ -112,10 +116,15 @@
     _bgPad.name = @"permanent";
 }
 
--(void)loadLevel:(NSDictionary *)levelInfo isCompleted:(BOOL)isCompleted andColorScheme:(NSString *)colorScheme
+-(void)loadLevel:(NSDictionary *)levelInfo isCompleted:(BOOL)isCompleted andGridColorScheme:(NSString *)colorScheme andBgColorScheme:(NSString *)bgColorScheme
 {
+    if (bgColorScheme) {
+        [_bgPad recolorizeWithColorScheme:bgColorScheme];
+    }
+    
     _isCompletedLevel = isCompleted;
     _currentColorScheme = colorScheme;
+    _currentBgColorScheme = bgColorScheme;
     for (SKNode *node in self.children) {
         if (![node.name isEqual:@"permanent"]) {
             [node removeFromParent];
@@ -123,21 +132,33 @@
     }
     
     NSArray *bgColorCodes = [NSArray arrayWithObjects:@"F20C23", @"DE091E", @"CC081C", @"B50415", nil];
-    _resetNode = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(150, 60) andGridSize:CGSizeMake(7, 3) withPhysicsBody:NO andNodeColorCodes:@[_currentColorScheme] andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO withborderColor:nil];
+    _resetNode = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(60, 60) andGridSize:CGSizeMake(5, 5) withPhysicsBody:NO andNodeColorCodes:@[_currentColorScheme] andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO withborderColor:nil];
     _resetNode.name = @"reset";
-    _resetNode.position = CGPointMake(self.size.width / 2, 50);
+    _resetNode.position = CGPointMake(self.size.width / 2 + 100, self.size.height - 50);
     
     SKLabelNode *resetLabel = [SKLabelNode labelNodeWithFontNamed:@"Copperplate-Bold"];
     resetLabel.position = CGPointMake(0, 0);
     resetLabel.text = @"RESET";
-    resetLabel.fontSize = 25;
+    resetLabel.fontSize = 18;
     resetLabel.fontColor = [UIColor blackColor];
     resetLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
     resetLabel.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
     resetLabel.name = @"reset";
     [_resetNode addChild:resetLabel];
     
+    _helpButton = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(60, 60) andGridSize:CGSizeMake(5, 5) withPhysicsBody:NO andNodeColorCodes:@[_currentColorScheme] andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO withborderColor:nil];
+    _helpButton.name = @"help";
+    _helpButton.position = CGPointMake(self.size.width / 2, 50);
     
+    SKLabelNode *helpLabel = [SKLabelNode labelNodeWithFontNamed:@"Copperplate-Bold"];
+    helpLabel.position = CGPointMake(0, 0);
+    helpLabel.text = @"?";
+    helpLabel.fontSize = 35;
+    helpLabel.fontColor = [UIColor blackColor];
+    helpLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
+    helpLabel.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
+    helpLabel.name = @"help";
+    [_helpButton addChild:helpLabel];
     
     IBActionDescriptor *boomActionDesc_button = [[IBActionDescriptor alloc] init];
     boomActionDesc_button.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
@@ -153,14 +174,20 @@
         [targetNode runAction:scaleSequence];
     };
     
-    _menuButton = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(150, 60) andGridSize:CGSizeMake(7, 3) withPhysicsBody:NO andNodeColorCodes:@[_currentColorScheme] andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO withborderColor:nil];
+    IBActionDescriptor *boomActionDesc_help = [[IBActionDescriptor alloc] init];
+    boomActionDesc_help.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
+        GameObject *targetNode = (GameObject *)target;
+        [targetNode runAction:[SKAction sequence:@[[SKAction scaleTo:.5 duration:.3], [SKAction scaleTo:1.0 duration:.3]]]];
+    };
+    
+    _menuButton = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(60, 60) andGridSize:CGSizeMake(5, 5) withPhysicsBody:NO andNodeColorCodes:@[_currentColorScheme] andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO withborderColor:nil];
     _menuButton.name = @"menu";
-    _menuButton.position = CGPointMake(self.size.width / 2, self.size.height - 50);
+    _menuButton.position = CGPointMake(self.size.width / 2 - 100, self.size.height - 50);
     
     SKLabelNode *menuLabel = [SKLabelNode labelNodeWithFontNamed:@"Copperplate-Bold"];
     menuLabel.position = CGPointMake(0, 0);
     menuLabel.text = @"MENU";
-    menuLabel.fontSize = 25;
+    menuLabel.fontSize = 18;
     menuLabel.fontColor = [UIColor blackColor];
     menuLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
     menuLabel.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
@@ -178,6 +205,9 @@
     [_menuButton loadActionDescriptor:boomActionDesc_button andConnectionDescriptor:boomConn forActionType:@"boom"];
     [self addChild:_menuButton];
     
+    [_helpButton loadActionDescriptor:boomActionDesc_button andConnectionDescriptor:boomConn forActionType:@"boom"];
+    [self addChild:_helpButton];
+    
     _currentLevelInfo = levelInfo;
     
     __block NSMutableSet *matchingNodes = [NSMutableSet set];
@@ -187,6 +217,7 @@
     NSArray* members = [gridSize_str componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @";"]];
     NSNumber *columns = [members objectAtIndex:0];
     NSNumber *rows = [members objectAtIndex:1];
+    
     _gridSize = CGSizeMake(columns.intValue, rows.intValue);
     __block int nodeCount = _gridSize.height * _gridSize.width;
     __block int currentNodeCount = 0;
@@ -254,8 +285,10 @@
         if (currentNodeCount == nodeCount) {
             if (matchingNodes.count == targetValues.allKeys.count) {
                 CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
-                [_resetNode runAction:[SKAction fadeAlphaTo:0.0 duration:1.3]];
-                [_menuButton runAction:[SKAction fadeAlphaTo:0.0 duration:1.3]];
+                SKAction *fadeAction = [SKAction fadeAlphaTo:0.0 duration:1.3];
+                [_resetNode runAction:fadeAction];
+                [_menuButton runAction:fadeAction];
+                [_helpButton runAction:fadeAction];
                 [self runAction:[SKAction sequence:@[[SKAction waitForDuration:.8], [SKAction runBlock:^{
                     [_gamePad triggerNodeAtPosition:sourcePosition forActionType:@"next_level" withUserInfo:nil forceDisable:NO withNodeReset:NO];
                 }], [SKAction waitForDuration:1], [SKAction runBlock:^{
@@ -274,34 +307,45 @@
     bgColorCodes = [NSArray arrayWithObjects:@"F20C23", @"DE091E", @"CC081C", @"B50415", nil];
     _nodeCount = _gridSize.width * _gridSize.height;
     
+    _clicks = [levelInfo objectForKey:@"clicks"];
+    
     CGSize playAreaSize = CGSizeMake(self.size.width - 40, self.size.width - 40);
     
     _gamePad = [[PadNode alloc] initWithColor:[UIColor clearColor] size:playAreaSize andGridSize:_gridSize withPhysicsBody:NO andNodeColorCodes:@[_currentColorScheme] andInteractionMode:kInteractionMode_touch forActionType:@"boom" isInteractive:YES withborderColor:[UIColor blackColor]];
     _gamePad.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
     [_gamePad loadActionDescriptor:boomActionDesc andConnectionDescriptor:boomConn forActionType:@"boom"];
+    [_gamePad loadActionDescriptor:boomActionDesc_help andConnectionDescriptor:nil forActionType:@"help"];
     [self loadNextLevelEffect];
     _gamePad.alpha = 0;
     _resetNode.alpha = 0;
     _menuButton.alpha = 0;
+    _helpButton.alpha = 0;
     [self addChild:_gamePad];
-    [_gamePad runAction:[SKAction fadeAlphaTo:1.0 duration:.3]];
-    [_resetNode runAction:[SKAction fadeAlphaTo:1.0 duration:.3]];
-    [_menuButton runAction:[SKAction fadeAlphaTo:1.0 duration:.3]];
+    SKAction *fadeAction = [SKAction fadeAlphaTo:1.0 duration:.3];
+    [_gamePad runAction:fadeAction];
+    [_resetNode runAction:fadeAction];
+    [_menuButton runAction:fadeAction];
+    [_helpButton runAction:fadeAction];
     _gamePad.disableOnFirstTrigger = NO;
     
     for (NSString *refPoint_str in referencePoints) {
         NSArray* members = [refPoint_str componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @";"]];
         NSNumber *columnIndex = [members objectAtIndex:0];
         NSNumber *rowIndex = [members objectAtIndex:1];
-        GameObject *refNode = [_gamePad getNodeAtPosition:CGPointMake(columnIndex.intValue, rowIndex.intValue)];
+        InteractionNode *refNode = (InteractionNode *)[_gamePad getNodeAtPosition:CGPointMake(columnIndex.intValue, rowIndex.intValue)];
         refNode.color = [UIColor blueColor];
         
-        /*SKSpriteNode *marker = [[SKSpriteNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(3 * refNode.size.width / 4, 3 * refNode.size.height / 4)];
+        SKSpriteNode *marker = [[SKSpriteNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(3 * refNode.size.width / 4, 3 * refNode.size.height / 4)];
         marker.position = CGPointMake(0, 0);
         marker.userInteractionEnabled = NO;
-        ((InteractionNode *)refNode).infoLabel.fontColor = [UIColor whiteColor];
+        if (refNode.infoLabel) {
+            [refNode.infoLabel removeFromParent];
+        }
         //marker.zPosition = ((InteractionNode *)refNode).infoLabel.zPosition - 1;
-        [refNode addChild:marker];*/
+        [refNode addChild:marker];
+        
+        refNode.infoLabel.fontColor = [UIColor whiteColor];
+        [marker addChild:refNode.infoLabel];
     }
     
     for (int column = 0; column < _gamePad.gridSize.width; column++) {
@@ -358,27 +402,39 @@
     CGPoint positionInScene = [touch locationInNode:self];
     BOOL touched = NO;
     NSArray *nodes = [self nodesAtPoint:positionInScene];
+    SKAction *fadeAction = [SKAction fadeAlphaTo:0.0 duration:.6];
     for (SKNode *node in nodes) {
         if ([node.name isEqualToString:@"reset"] && !touched) {
             touched = YES;
             [_resetNode triggerRandomNodeForActionType:@"boom" withUserInfo:nil];
-            [_gamePad runAction:[SKAction fadeAlphaTo:0.0 duration:.6]];
-            [_menuButton runAction:[SKAction fadeAlphaTo:0.0 duration:.6]];
-            [_resetNode runAction:[SKAction sequence:@[[SKAction fadeAlphaTo:0.0 duration:.6], [SKAction runBlock:^{
-                [self loadLevel:_currentLevelInfo isCompleted:_isCompletedLevel andColorScheme:_currentColorScheme];
+            [_gamePad runAction:fadeAction];
+            [_menuButton runAction:fadeAction];
+            [_helpButton runAction:fadeAction];
+            [_resetNode runAction:[SKAction sequence:@[fadeAction, [SKAction runBlock:^{
+                [self loadLevel:_currentLevelInfo isCompleted:_isCompletedLevel andGridColorScheme:_currentColorScheme andBgColorScheme:_currentBgColorScheme];
             }]]]];
         } else if ([node.name isEqualToString:@"menu"] && !touched) {
             touched = YES;
             [_menuButton triggerRandomNodeForActionType:@"boom" withUserInfo:nil];
-            [_gamePad runAction:[SKAction fadeAlphaTo:0.0 duration:.6]];
-            [_resetNode runAction:[SKAction fadeAlphaTo:0.0 duration:.6]];
-            [_menuButton runAction:[SKAction sequence:@[[SKAction fadeAlphaTo:0.0 duration:.6], [SKAction runBlock:^{
+            [_gamePad runAction:fadeAction];
+            [_resetNode runAction:fadeAction];
+            [_helpButton runAction:fadeAction];
+            [_menuButton runAction:[SKAction sequence:@[fadeAction, [SKAction runBlock:^{
                 if (_isCompletedLevel) {
                     [_sceneDelegate historyClicked];
                 } else {
                     [_sceneDelegate menuClicked];
                 }
             }]]]];
+        } else if ([node.name isEqualToString:@"help"] && !touched) {
+            touched = YES;
+            [_helpButton triggerRandomNodeForActionType:@"boom" withUserInfo:nil];
+            NSString *click = [_clicks objectAtIndex:0];
+            NSArray* members = [click componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @";"]];
+            NSNumber *columnIndex = [members objectAtIndex:0];
+            NSNumber *rowIndex = [members objectAtIndex:1];
+            [_gamePad triggerNodeAtPosition:CGPointMake(columnIndex.intValue, rowIndex.intValue) forActionType:@"help" withUserInfo:nil forceDisable:NO withNodeReset:NO];
+            [_helpButton runAction:fadeAction];
         }
     }
 }

@@ -12,6 +12,7 @@
 
 @property (nonatomic) SKLabelNode *infoLabel;
 @property (nonatomic) int nodeValue;
+@property (nonatomic) SKSpriteNode *innerNode;
 
 -(id)initWithColor:(UIColor *)color size:(CGSize)size andBorderColor:(UIColor *)borderColor;
 

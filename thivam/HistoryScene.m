@@ -107,7 +107,7 @@
     menuLabel.position = CGPointMake(0, 0);
     menuLabel.text = @"MENU";
     menuLabel.fontSize = 25;
-    menuLabel.fontColor = [UIColor whiteColor];
+    menuLabel.fontColor = [UIColor blackColor];
     menuLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
     menuLabel.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
     menuLabel.name = @"menu";
@@ -159,6 +159,9 @@
         numOfNodes = 4;
     }
     
+    LevelDescriptor *desc = [[LevelDescriptor alloc] initWithLevelIndex:_currentEndIndex];
+    [_menuButton recolorizeWithColorScheme:desc.gridColorScheme];
+    [_bgPad recolorizeWithColorScheme:desc.bgColorScheme];
     for (int i=numOfNodes; i>=1; i--) {
         PadNode *levelNode = [_levelNodes objectAtIndex:i - 1];
         levelNode.hidden = NO;

@@ -15,7 +15,6 @@
     if (self = [super init]) {
         self.levelIndex = entity.levelIndex.intValue;
         self.levelInfo = (NSDictionary *)[NSKeyedUnarchiver unarchiveObjectWithData:entity.levelInfo];
-        self.gridColorScheme = entity.gridColorScheme;
     }
     return self;
 }

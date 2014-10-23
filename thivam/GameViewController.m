@@ -162,7 +162,8 @@
     reveal.pausesIncomingScene = YES;
     
     [skView presentScene:_gameScene transition:reveal];
-    [_gameScene loadLevel:_currentLevel isCompleted:NO andColorScheme:_currentLevelDescriptor.gridColorScheme];
+    LevelDescriptor *desc = [[LevelDescriptor alloc] initWithLevelIndex:_currentLevelIndex];
+    [_gameScene loadLevel:_currentLevel isCompleted:NO andGridColorScheme:desc.gridColorScheme andBgColorScheme:desc.bgColorScheme];
 }
 
 -(void)menuClicked
@@ -188,7 +189,8 @@
 -(void)levelCompleted
 {
     NSLog(@"%@", _nextLevel);
-    [_gameScene loadLevel:_nextLevel isCompleted:NO andColorScheme:_currentLevelDescriptor.gridColorScheme];
+    LevelDescriptor *desc = [[LevelDescriptor alloc] initWithLevelIndex:_currentLevelIndex + 1];
+    [_gameScene loadLevel:_nextLevel isCompleted:NO andGridColorScheme:desc.gridColorScheme andBgColorScheme:desc.bgColorScheme];
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
         LevelManager *levelManager = [[LevelManager alloc] init];
@@ -218,7 +220,8 @@
     reveal.pausesIncomingScene = YES;
     
     [skView presentScene:_gameScene transition:reveal];
-    [_gameScene loadLevel:level.levelInfo isCompleted:YES andColorScheme:level.gridColorScheme];
+    LevelDescriptor *desc = [[LevelDescriptor alloc] initWithLevelIndex:level.levelIndex];
+    [_gameScene loadLevel:level.levelInfo isCompleted:YES andGridColorScheme:desc.gridColorScheme andBgColorScheme:desc.bgColorScheme];
 }
 
 @end

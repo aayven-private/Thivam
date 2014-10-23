@@ -14,6 +14,5 @@
 
 @property (nonatomic, retain) NSNumber * levelIndex;
 @property (nonatomic, retain) NSData * levelInfo;
-@property (nonatomic, retain) NSString * gridColorScheme;
 
 @end

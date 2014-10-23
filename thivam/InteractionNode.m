@@ -37,9 +37,9 @@
         self.isBlocker = NO;
         
         if (borderColor) {
-            SKSpriteNode *innerNode = [[SKSpriteNode alloc] initWithColor:color size:CGSizeMake(size.width - 5, size.height - 5)];
-            innerNode.position = CGPointMake(0, 0);
-            [self addChild:innerNode];
+            _innerNode = [[SKSpriteNode alloc] initWithColor:color size:CGSizeMake(size.width - 5, size.height - 5)];
+            _innerNode.position = CGPointMake(0, 0);
+            [self addChild:_innerNode];
         }
         
         self.infoLabel = [SKLabelNode labelNodeWithFontNamed:@"Copperplate-Bold"];

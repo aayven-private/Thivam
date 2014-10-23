@@ -16,6 +16,7 @@
 @property (nonatomic) int clickNum;
 @property (nonatomic) int targetNum;
 @property (nonatomic) NSString *gridColorScheme;
+@property (nonatomic) NSString *bgColorScheme;
 
 -(id)initWithLevelIndex:(int)levelIndex;
 
