@@ -125,7 +125,7 @@
     difficultyLabel.name = @"puzzle";
     [_randomPuzzleButton addChild:difficultyLabel];
     
-    _diffIncreaseButton = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(60, 60) andGridSize:CGSizeMake(7, 3) withPhysicsBody:NO andNodeColorCodes:@[desc.gridColorScheme] andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO withborderColor:nil];
+    _diffIncreaseButton = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(60, 60) andGridSize:CGSizeMake(3, 3) withPhysicsBody:NO andNodeColorCodes:@[desc.gridColorScheme] andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO withborderColor:nil];
     _diffIncreaseButton.name = @"diff_plus";
     _diffIncreaseButton.position = CGPointMake(self.size.width / 2.0 + 115, self.size.height / 2.0);
     
@@ -139,7 +139,7 @@
     diffIncLabel.name = @"diff_plus";
     [_diffIncreaseButton addChild:diffIncLabel];
     
-    _diffDecreaseButton = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(60, 60) andGridSize:CGSizeMake(7, 3) withPhysicsBody:NO andNodeColorCodes:@[desc.gridColorScheme] andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO withborderColor:nil];
+    _diffDecreaseButton = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(60, 60) andGridSize:CGSizeMake(3, 3) withPhysicsBody:NO andNodeColorCodes:@[desc.gridColorScheme] andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO withborderColor:nil];
     _diffDecreaseButton.name = @"diff_minus";
     _diffDecreaseButton.position = CGPointMake(self.size.width / 2.0 - 115, self.size.height / 2.0);
     
