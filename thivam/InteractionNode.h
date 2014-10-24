@@ -10,7 +10,8 @@
 
 @interface InteractionNode : GameObject
 
-@property (nonatomic) SKLabelNode *infoLabel;
+@property (nonatomic) SKLabelNode *valueLabel;
+@property (nonatomic) SKNode *infoNode;
 @property (nonatomic) int nodeValue;
 @property (nonatomic) SKSpriteNode *innerNode;
 

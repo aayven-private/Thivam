@@ -10,7 +10,8 @@
 
 @interface InteractionNode()
 
-
+@property (nonatomic) BOOL isLongTap;
+@property (nonatomic) NSTimer *longTapTimer;
 
 @end
 
@@ -42,15 +43,16 @@
             [self addChild:_innerNode];
         }
         
-        self.infoLabel = [SKLabelNode labelNodeWithFontNamed:@"Copperplate-Bold"];
-        self.infoLabel.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
-        self.infoLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
-        self.infoLabel.fontSize = 22;
-        self.infoLabel.position = CGPointMake(0, 0);
-        self.infoLabel.fontColor = [UIColor blackColor];
-        self.infoLabel.text = @"0";
-        [self addChild:self.infoLabel];
+        self.valueLabel = [SKLabelNode labelNodeWithFontNamed:@"Copperplate-Bold"];
+        self.valueLabel.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
+        self.valueLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
+        self.valueLabel.fontSize = 22;
+        self.valueLabel.position = CGPointMake(0, 0);
+        self.valueLabel.fontColor = [UIColor blackColor];
+        self.valueLabel.text = @"0";
+        [self addChild:self.valueLabel];
         
+        self.isLongTap = NO;
         self.nodeValue = 0;
     }
     return self;
@@ -58,7 +60,25 @@
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    [self.delegate nodeTriggeredAtRow:_rowIndex andColumn:_columnIndex forActionType:_userActionType withUserInfo:nil];
+    _longTapTimer = [NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(longTap:) userInfo:nil repeats:NO];
+}
+
+-(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    [_longTapTimer invalidate];
+    _longTapTimer = nil;
+    if (_isLongTap) {
+        [self.delegate nodeTriggeredAtRow:_rowIndex andColumn:_columnIndex forActionType:[NSString stringWithFormat:@"%@_touchup_longtap", _userActionType] withUserInfo:nil];
+    } else {
+        [self.delegate nodeTriggeredAtRow:_rowIndex andColumn:_columnIndex forActionType:[NSString stringWithFormat:@"%@_touchup", _userActionType] withUserInfo:nil];
+    }
+    _isLongTap = NO;
+}
+
+-(void)longTap:(NSTimer *)sender
+{
+    _isLongTap = YES;
+    [self.delegate nodeTriggeredAtRow:_rowIndex andColumn:_columnIndex forActionType:[NSString stringWithFormat:@"%@_longtap", _userActionType] withUserInfo:nil];
 }
 
 @end

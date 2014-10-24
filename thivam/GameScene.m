@@ -224,10 +224,10 @@
     __block int currentNodeCount = 0;
     __block NSDictionary *targetValues = [levelInfo objectForKey:@"targets"];
     
-    IBActionDescriptor *boomActionDesc = [[IBActionDescriptor alloc] init];
-    boomActionDesc.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
+    IBActionDescriptor *boomActionDesc_touchup = [[IBActionDescriptor alloc] init];
+    boomActionDesc_touchup.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
         currentNodeCount++;
-        GameObject *targetNode = (GameObject *)target;
+        InteractionNode *targetNode = (InteractionNode *)target;
         CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
         double maxDiff = ((double)_gamePad.gridSize.width - 1 + (double)_gamePad.gridSize.height - 1);
         
@@ -253,10 +253,14 @@
         scaleRatio = (fabs(scaleRatio) < .5 ? scaleRatio : (scaleRatio / fabs(scaleRatio)) * .5);
         
         targetNode.zPosition = 100 + scaleRatio * 10;
-        ((InteractionNode *)targetNode).nodeValue += valueDiff;
+        targetNode.nodeValue += valueDiff;
+        if (targetNode.infoNode) {
+            [targetNode.infoNode removeFromParent];
+            targetNode.infoNode = nil;
+        }
         
-        SKAction *scaleSequence = [SKAction sequence:@[[SKAction scaleTo:1 + scaleRatio duration:.3]/*, [SKAction scaleTo:1.5 - damping * 0.5 duration:.3]*/, [SKAction group:@[[SKAction scaleTo:1 duration:.3], [SKAction runBlock:^{
-            ((InteractionNode *)targetNode).infoLabel.text = [NSString stringWithFormat:@"%d", ((InteractionNode *)targetNode).nodeValue];
+        SKAction *scaleSequence = [SKAction sequence:@[[SKAction scaleTo:1 + scaleRatio duration:.3], [SKAction group:@[[SKAction scaleTo:1 duration:.3], [SKAction runBlock:^{
+            ((InteractionNode *)targetNode).valueLabel.text = [NSString stringWithFormat:@"%d", ((InteractionNode *)targetNode).nodeValue];
         }]]]]];
         [targetNode runAction:scaleSequence];
         
@@ -309,6 +313,77 @@
         }
     };
     
+    IBActionDescriptor *boomActionDesc_touchup_long = [[IBActionDescriptor alloc] init];
+    boomActionDesc_touchup_long.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
+        InteractionNode *targetNode = (InteractionNode *)target;
+        
+        [targetNode.infoNode runAction:[SKAction sequence:@[[SKAction fadeAlphaTo:0 duration:.3], [SKAction removeFromParent], [SKAction runBlock:^{
+            targetNode.infoNode = nil;
+        }]]]];
+        
+        //[targetNode.infoLabel removeFromParent];
+        //targetNode.infoLabel = nil;
+        [targetNode runAction:[SKAction scaleTo:1 duration:.3]];
+    };
+    
+    IBActionDescriptor *boomActionDesc_touchdown = [[IBActionDescriptor alloc] init];
+    boomActionDesc_touchdown.action = ^(id<IBActionNodeActor>target, NSDictionary *userInfo) {
+        InteractionNode *targetNode = (InteractionNode *)target;
+        CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
+        double maxDiff = ((double)_gamePad.gridSize.width - 1 + (double)_gamePad.gridSize.height - 1);
+        
+        
+        int distX = (int)targetNode.columnIndex - (int)sourcePosition.x;
+        int distY = (int)targetNode.rowIndex - (int)sourcePosition.y;
+        
+        int distX_ref = 0;
+        int distY_ref = 0;
+        
+        for (NSString *refPoint_str in referencePoints) {
+            NSArray* members = [refPoint_str componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @";"]];
+            NSNumber *columnIndex = [members objectAtIndex:0];
+            NSNumber *rowIndex = [members objectAtIndex:1];
+            distX_ref += targetNode.columnIndex - columnIndex.intValue;
+            distY_ref += targetNode.rowIndex - rowIndex.intValue;
+        }
+        
+        int valueDiff = (distX_ref + distY_ref) + (distX + distY);
+        
+        double scaleRatio = ((double)valueDiff / (maxDiff));
+        
+        scaleRatio = (fabs(scaleRatio) < .3 ? scaleRatio : (scaleRatio / fabs(scaleRatio)) * .3);
+        if (targetNode.isActionSource) {
+            targetNode.zPosition = 100 + fabs(scaleRatio) * 10;
+        } else {
+            targetNode.zPosition = 100;
+        }
+        
+        //if (targetNode.isActionSource) {
+        SKLabelNode *infoLabel = [SKLabelNode labelNodeWithFontNamed:@"Copperplate-Bold"];
+        infoLabel = [SKLabelNode labelNodeWithFontNamed:@"Copperplate-Bold"];
+        infoLabel.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
+        infoLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
+        infoLabel.fontSize = 17;
+        infoLabel.position = CGPointMake(0, 0);
+        infoLabel.fontColor = valueDiff < 0 ? [UIColor redColor] : [UIColor greenColor];
+        infoLabel.text = valueDiff <= 0 ? [NSString stringWithFormat:@"%d", valueDiff] : [NSString stringWithFormat:@"+%d", valueDiff];
+        
+        SKSpriteNode *infoNode = [[SKSpriteNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(targetNode.size.width, targetNode.size.height / 2.0)];
+        infoNode.alpha = 0;
+        infoNode.position = CGPointMake(0, -targetNode.size.height / 4);
+        [infoNode addChild:infoLabel];
+        
+        [infoNode runAction:[SKAction sequence:@[/*[SKAction waitForDuration:.3], */[SKAction fadeAlphaTo:targetNode.isActionSource ? .6 : .4 duration:.3]]]];
+        targetNode.infoNode = infoNode;
+        [targetNode addChild:targetNode.infoNode];
+        //}
+        
+        /*SKAction *scaleSequence = [SKAction sequence:@[[SKAction scaleTo:1 + scaleRatio duration:.3], [SKAction group:@[[SKAction scaleTo:1 duration:.3], [SKAction runBlock:^{
+            ((InteractionNode *)targetNode).infoLabel.text = [NSString stringWithFormat:@"%d", ((InteractionNode *)targetNode).nodeValue];
+        }]]]]];*/
+        [targetNode runAction:[SKAction scaleTo:1 + scaleRatio duration:.3]];
+    };
+    
     bgColorCodes = [NSArray arrayWithObjects:@"F20C23", @"DE091E", @"CC081C", @"B50415", nil];
     _nodeCount = _gridSize.width * _gridSize.height;
     
@@ -318,7 +393,9 @@
     
     _gamePad = [[PadNode alloc] initWithColor:[UIColor clearColor] size:playAreaSize andGridSize:_gridSize withPhysicsBody:NO andNodeColorCodes:@[_currentColorScheme] andInteractionMode:kInteractionMode_touch forActionType:@"boom" isInteractive:YES withborderColor:[UIColor blackColor]];
     _gamePad.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
-    [_gamePad loadActionDescriptor:boomActionDesc andConnectionDescriptor:boomConn forActionType:@"boom"];
+    [_gamePad loadActionDescriptor:boomActionDesc_touchup andConnectionDescriptor:boomConn forActionType:@"boom_touchup"];
+    [_gamePad loadActionDescriptor:boomActionDesc_touchdown andConnectionDescriptor:boomConn forActionType:@"boom_longtap"];
+    [_gamePad loadActionDescriptor:boomActionDesc_touchup_long andConnectionDescriptor:boomConn forActionType:@"boom_touchup_longtap"];
     [_gamePad loadActionDescriptor:boomActionDesc_help andConnectionDescriptor:nil forActionType:@"help"];
     [self loadNextLevelEffect];
     _gamePad.alpha = 0;
@@ -343,14 +420,14 @@
         SKSpriteNode *marker = [[SKSpriteNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(3 * refNode.size.width / 4, 3 * refNode.size.height / 4)];
         marker.position = CGPointMake(0, 0);
         marker.userInteractionEnabled = NO;
-        if (refNode.infoLabel) {
-            [refNode.infoLabel removeFromParent];
+        if (refNode.valueLabel) {
+            [refNode.valueLabel removeFromParent];
         }
         //marker.zPosition = ((InteractionNode *)refNode).infoLabel.zPosition - 1;
         [refNode addChild:marker];
         
-        refNode.infoLabel.fontColor = [UIColor whiteColor];
-        [marker addChild:refNode.infoLabel];
+        refNode.valueLabel.fontColor = [UIColor whiteColor];
+        [marker addChild:refNode.valueLabel];
     }
     
     for (int column = 0; column < _gamePad.gridSize.width; column++) {
@@ -360,13 +437,13 @@
             if ([[targetValues allKeys] containsObject:[NSString stringWithFormat:@"%d;%d", node.columnIndex, node.rowIndex]]) {
                 NSNumber *targetValue = [targetValues objectForKey:[NSString stringWithFormat:@"%d;%d", node.columnIndex, node.rowIndex]];
 
-                ((InteractionNode *)node).infoLabel.hidden = NO;
-                ((InteractionNode *)node).infoLabel.text = [NSString stringWithFormat:@"%d", -targetValue.intValue];
+                ((InteractionNode *)node).valueLabel.hidden = NO;
+                ((InteractionNode *)node).valueLabel.text = [NSString stringWithFormat:@"%d", -targetValue.intValue];
                 ((InteractionNode *)node).nodeValue = -targetValue.intValue;
                 node.isActionSource = YES;
                 
             } else {
-                ((InteractionNode *)node).infoLabel.hidden = YES;
+                ((InteractionNode *)node).valueLabel.hidden = YES;
                 node.isActionSource = NO;
             }
         }
@@ -444,6 +521,11 @@
     }
 }
 
+-(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    
+}
+
 -(void)update:(CFTimeInterval)currentTime {
     /* Called before each frame is rendered */
     
@@ -511,7 +593,7 @@
          }*/
         
         SKAction *scaleSequence = [SKAction sequence:@[[SKAction scaleTo:.1 + damping * 0.9 duration:.3], [SKAction scaleTo:1.5 - damping * 0.5 duration:.3], [SKAction group:@[[SKAction scaleTo:1 duration:.3], [SKAction runBlock:^{
-            ((InteractionNode *)targetNode).infoLabel.text = [NSString stringWithFormat:@"%d", ((InteractionNode *)targetNode).nodeValue];
+            ((InteractionNode *)targetNode).valueLabel.text = [NSString stringWithFormat:@"%d", ((InteractionNode *)targetNode).nodeValue];
         }]]]]];
         [targetNode runAction:scaleSequence];
         //}

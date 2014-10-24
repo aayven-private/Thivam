@@ -72,7 +72,7 @@
             node.position = blockPosition;
             
             if (!isInteractive) {
-                node.infoLabel.hidden = YES;
+                node.valueLabel.hidden = YES;
             }
             
             //node.zPosition = 1;
