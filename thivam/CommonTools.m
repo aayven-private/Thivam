@@ -59,9 +59,10 @@
     UIColor *targetColor;
     CGFloat red = 0.0, green = 0.0, blue = 0.0, alpha = 0.0;
     // iOS 5
+    CGFloat diff = [CommonTools getRandomFloatFromFloat:-dispersion toFloat:dispersion];
     if ([sourceColor respondsToSelector:@selector(getRed:green:blue:alpha:)]) {
         [sourceColor getRed:&red green:&green blue:&blue alpha:&alpha];
-        targetColor = [UIColor colorWithRed:red + [self getRandomFloatFromFloat:-dispersion toFloat:dispersion] green:green + [self getRandomFloatFromFloat:-dispersion toFloat:dispersion] blue:blue + [self getRandomFloatFromFloat:-dispersion toFloat:dispersion] alpha:alpha];
+        targetColor = [UIColor colorWithRed:red + diff green:green + diff blue:blue + diff alpha:alpha];
     } else {
         // < iOS 5
         const CGFloat *components = CGColorGetComponents(sourceColor.CGColor);
@@ -69,7 +70,7 @@
         green = components[1];
         blue = components[2];
         alpha = components[3];
-        targetColor = [UIColor colorWithRed:red + [self getRandomFloatFromFloat:-dispersion toFloat:dispersion] green:green + [self getRandomFloatFromFloat:-dispersion toFloat:dispersion] blue:blue + [self getRandomFloatFromFloat:-dispersion toFloat:dispersion] alpha:alpha];
+        targetColor = [UIColor colorWithRed:red + diff green:green + diff blue:blue + diff alpha:alpha];
     }
     
     // This is a non-RGB color

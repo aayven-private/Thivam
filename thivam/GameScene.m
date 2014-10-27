@@ -135,7 +135,7 @@
     NSArray *bgColorCodes = [NSArray arrayWithObjects:@"F20C23", @"DE091E", @"CC081C", @"B50415", nil];
     _resetNode = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(60, 60) andGridSize:CGSizeMake(5, 5) withPhysicsBody:NO andNodeColorCodes:@[_currentColorScheme] andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO withborderColor:nil];
     _resetNode.name = @"reset";
-    _resetNode.position = CGPointMake(self.size.width / 2 + 100, self.size.height - 50);
+    
     
     SKLabelNode *resetLabel = [SKLabelNode labelNodeWithFontNamed:@"Copperplate-Bold"];
     resetLabel.position = CGPointMake(0, 0);
@@ -149,7 +149,7 @@
     
     _helpButton = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(60, 60) andGridSize:CGSizeMake(5, 5) withPhysicsBody:NO andNodeColorCodes:@[_currentColorScheme] andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO withborderColor:nil];
     _helpButton.name = @"help";
-    _helpButton.position = CGPointMake(self.size.width / 2, 50);
+    
     
     SKLabelNode *helpLabel = [SKLabelNode labelNodeWithFontNamed:@"Copperplate-Bold"];
     helpLabel.position = CGPointMake(0, 0);
@@ -183,7 +183,7 @@
     
     _menuButton = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(60, 60) andGridSize:CGSizeMake(5, 5) withPhysicsBody:NO andNodeColorCodes:@[_currentColorScheme] andInteractionMode:kInteractionMode_none forActionType:@"boom" isInteractive:NO withborderColor:nil];
     _menuButton.name = @"menu";
-    _menuButton.position = CGPointMake(self.size.width / 2 - 100, self.size.height - 50);
+    
     
     SKLabelNode *menuLabel = [SKLabelNode labelNodeWithFontNamed:@"Copperplate-Bold"];
     menuLabel.position = CGPointMake(0, 0);
@@ -389,7 +389,12 @@
     
     _clicks = [levelInfo objectForKey:@"clicks"];
     
-    CGSize playAreaSize = CGSizeMake(self.size.width - 40, self.size.width - 40);
+    CGFloat edgeSize = self.size.width - 40;
+    if (edgeSize > 450) {
+        edgeSize = 450;
+    }
+    CGSize playAreaSize = CGSizeMake(edgeSize, edgeSize);
+    
     
     _gamePad = [[PadNode alloc] initWithColor:[UIColor clearColor] size:playAreaSize andGridSize:_gridSize withPhysicsBody:NO andNodeColorCodes:@[_currentColorScheme] andInteractionMode:kInteractionMode_touch forActionType:@"boom" isInteractive:YES withborderColor:[UIColor blackColor]];
     _gamePad.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
@@ -409,6 +414,10 @@
     [_menuButton runAction:fadeAction];
     [_helpButton runAction:fadeAction];
     _gamePad.disableOnFirstTrigger = NO;
+    
+    _resetNode.position = CGPointMake(self.size.width / 2 + _gamePad.size.width / 2 - _resetNode.size.width / 2, self.size.height / 2 + _gamePad.size.height / 2 + _resetNode.size.height / 2 + 20);
+    _helpButton.position = CGPointMake(self.size.width / 2, self.size.height / 2 - _gamePad.size.height / 2 - _helpButton.size.height / 2 - 20);
+    _menuButton.position = CGPointMake(self.size.width / 2 - _gamePad.size.width / 2 + _menuButton.size.width / 2, self.size.height / 2 + _gamePad.size.height / 2 + _menuButton.size.height / 2 + 20);
     
     for (NSString *refPoint_str in referencePoints) {
         NSArray* members = [refPoint_str componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @";"]];
@@ -516,7 +525,7 @@
             NSNumber *columnIndex = [members objectAtIndex:0];
             NSNumber *rowIndex = [members objectAtIndex:1];
             [_gamePad triggerNodeAtPosition:CGPointMake(columnIndex.intValue, rowIndex.intValue) forActionType:@"help" withUserInfo:nil forceDisable:NO withNodeReset:NO];
-            [_helpButton runAction:fadeAction];
+            [_helpButton runAction:[SKAction sequence:@[fadeAction, [SKAction removeFromParent]]]];
         }
     }
 }

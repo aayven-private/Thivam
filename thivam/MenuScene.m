@@ -212,7 +212,7 @@
     //_nodeCount = bgGridSize.width * bgGridSize.height;
     _bgPad = [[PadNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(self.size.width, self.size.height) andGridSize:bgGridSize withPhysicsBody:NO andNodeColorCodes:@[desc.bgColorScheme] andInteractionMode:kInteractionMode_touch forActionType:@"boom" isInteractive:NO withborderColor:[UIColor blackColor]];
     _bgPad.position = CGPointMake(self.size.width / 2.0, self.size.height / 2.0);
-    [_bgPad loadActionDescriptor:boomActionDesc_bg andConnectionDescriptor:boomConn forActionType:@"boom"];
+    [_bgPad loadActionDescriptor:boomActionDesc_bg andConnectionDescriptor:boomConn forActionType:@"boom_touchup"];
     _bgPad.alpha = .6;
     [self addChild:_bgPad];
     _bgPad.disableOnFirstTrigger = NO;
