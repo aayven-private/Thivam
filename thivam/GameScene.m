@@ -288,7 +288,7 @@
             }
         }
         if (currentNodeCount == nodeCount) {
-            if (matchingNodes.count == targetValues.allKeys.count) {
+            if (matchingNodes.count >= targetValues.allKeys.count) {
                 CGPoint sourcePosition = ((NSValue *)[userInfo objectForKey:@"position"]).CGPointValue;
                 SKAction *fadeAction = [SKAction fadeAlphaTo:0.0 duration:1.3];
                 [_resetNode runAction:fadeAction];
@@ -358,29 +358,29 @@
             targetNode.zPosition = 100;
         }
         
-        //if (targetNode.isActionSource) {
-        SKLabelNode *infoLabel = [SKLabelNode labelNodeWithFontNamed:@"Copperplate-Bold"];
-        infoLabel = [SKLabelNode labelNodeWithFontNamed:@"Copperplate-Bold"];
-        infoLabel.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
-        infoLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
-        infoLabel.fontSize = 17;
-        infoLabel.position = CGPointMake(0, 0);
-        infoLabel.fontColor = valueDiff < 0 ? [UIColor redColor] : [UIColor greenColor];
-        infoLabel.text = valueDiff <= 0 ? [NSString stringWithFormat:@"%d", valueDiff] : [NSString stringWithFormat:@"+%d", valueDiff];
-        
-        SKSpriteNode *infoNode = [[SKSpriteNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(targetNode.size.width, targetNode.size.height / 2.0)];
-        infoNode.alpha = 0;
-        infoNode.position = CGPointMake(0, -targetNode.size.height / 4);
-        [infoNode addChild:infoLabel];
-        
-        [infoNode runAction:[SKAction sequence:@[/*[SKAction waitForDuration:.3], */[SKAction fadeAlphaTo:targetNode.isActionSource ? .6 : .4 duration:.3]]]];
-        targetNode.infoNode = infoNode;
-        [targetNode addChild:targetNode.infoNode];
-        //}
+        if (targetNode.isActionSource) {
+            SKLabelNode *infoLabel = [SKLabelNode labelNodeWithFontNamed:@"Copperplate-Bold"];
+            infoLabel = [SKLabelNode labelNodeWithFontNamed:@"Copperplate-Bold"];
+            infoLabel.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
+            infoLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
+            infoLabel.fontSize = 17;
+            infoLabel.position = CGPointMake(0, 0);
+            infoLabel.fontColor = valueDiff < 0 ? [UIColor redColor] : [UIColor greenColor];
+            infoLabel.text = valueDiff <= 0 ? [NSString stringWithFormat:@"%d", valueDiff] : [NSString stringWithFormat:@"+%d", valueDiff];
+            
+            SKSpriteNode *infoNode = [[SKSpriteNode alloc] initWithColor:[UIColor blackColor] size:CGSizeMake(targetNode.size.width, targetNode.size.height / 2.0)];
+            infoNode.alpha = 0;
+            infoNode.position = CGPointMake(0, -targetNode.size.height / 4);
+            [infoNode addChild:infoLabel];
+            
+            [infoNode runAction:[SKAction sequence:@[/*[SKAction waitForDuration:.3], */[SKAction fadeAlphaTo:targetNode.isActionSource ? .6 : .4 duration:.3]]]];
+            targetNode.infoNode = infoNode;
+            [targetNode addChild:targetNode.infoNode];
+        }
         
         /*SKAction *scaleSequence = [SKAction sequence:@[[SKAction scaleTo:1 + scaleRatio duration:.3], [SKAction group:@[[SKAction scaleTo:1 duration:.3], [SKAction runBlock:^{
-            ((InteractionNode *)targetNode).infoLabel.text = [NSString stringWithFormat:@"%d", ((InteractionNode *)targetNode).nodeValue];
-        }]]]]];*/
+         ((InteractionNode *)targetNode).infoLabel.text = [NSString stringWithFormat:@"%d", ((InteractionNode *)targetNode).nodeValue];
+         }]]]]];*/
         [targetNode runAction:[SKAction scaleTo:1 + scaleRatio duration:.3]];
     };
     
