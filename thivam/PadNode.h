@@ -44,6 +44,7 @@ static NSString *kInteractionMode_none = @"interaction_mode_none";
 -(void)placeToken:(IBToken *)token atPosition:(CGPoint)position;
 -(void)triggerToken:(IBToken *)token forActionType:(NSString *)actionType;
 -(void)recolorizeWithColorScheme:(NSString *)colorScheme;
+-(void)clearActionPad;
 
 
 @end

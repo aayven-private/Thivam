@@ -49,6 +49,10 @@
 @property (nonatomic) PadNode *menuButton;
 @property (nonatomic) PadNode *helpButton;
 
+@property (nonatomic) int secondsRemaining;
+@property (nonatomic) SKSpriteNode *timerBg;
+@property (nonatomic) SKLabelNode *timerLabel;
+
 @property (nonatomic) BOOL isCompletedLevel;
 @property (nonatomic) BOOL isQuestLevel;
 
@@ -115,10 +119,17 @@
     [self addChild:_bgPad];
     _bgPad.disableOnFirstTrigger = NO;
     _bgPad.name = @"permanent";
+    
+    _timerBg = [[SKSpriteNode alloc] initWithColor:[UIColor colorWithRed:.8 green:.8 blue:.8 alpha:.7] size:CGSizeMake(80, 50)];
+    
 }
 
 -(void)loadLevel:(NSDictionary *)levelInfo isCompleted:(BOOL)isCompleted andGridColorScheme:(NSString *)colorScheme andBgColorScheme:(NSString *)bgColorScheme isQuest:(BOOL)isQuest
 {
+    if (_gamePad) {
+        [_gamePad clearActionPad];
+    }
+    
     if (bgColorScheme) {
         [_bgPad recolorizeWithColorScheme:bgColorScheme];
     }

@@ -8,6 +8,7 @@
 
 #import "IBActionNode.h"
 #import "IBConnectionDescriptor.h"
+#import "WeakReference.h"
 
 @implementation IBActionNode
 
@@ -95,9 +96,9 @@
             if (shouldPropagate) {
                 dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, desc.autoFireDelay * NSEC_PER_SEC);
                 dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-                    for (IBActionNode *connectedNode in [_connections objectForKey:actionType]) {
-                        connectedNode.isActive = YES;
-                        [connectedNode triggerConnectionsWithSource:source shouldPropagate:desc.isAutoFired forActionType:actionType withUserInfo:userInfo withNodeReset:reset withActionId:actionId];
+                    for (WeakReference *connectedNode in [_connections objectForKey:actionType]) {
+                        ((IBActionNode *)connectedNode.nonretainedObjectValue).isActive = YES;
+                        [((IBActionNode *)connectedNode.nonretainedObjectValue) triggerConnectionsWithSource:source shouldPropagate:desc.isAutoFired forActionType:actionType withUserInfo:userInfo withNodeReset:reset withActionId:actionId];
                     }
                 });
             }
@@ -108,9 +109,9 @@
         if (shouldPropagate) {
             dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, desc.autoFireDelay * NSEC_PER_SEC);
             dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-                for (IBActionNode *connectedNode in [_connections objectForKey:actionType]) {
-                    connectedNode.isActive = YES;
-                    [connectedNode triggerConnectionsWithSource:source shouldPropagate:desc.isAutoFired forActionType:actionType withUserInfo:userInfo withNodeReset:reset withActionId:actionId];
+                for (WeakReference *connectedNode in [_connections objectForKey:actionType]) {
+                    ((IBActionNode *)connectedNode.nonretainedObjectValue).isActive = YES;
+                    [((IBActionNode *)connectedNode.nonretainedObjectValue) triggerConnectionsWithSource:source shouldPropagate:desc.isAutoFired forActionType:actionType withUserInfo:userInfo withNodeReset:reset withActionId:actionId];
                 }
             });
         }
@@ -173,11 +174,11 @@
         [_tokens removeObject:token];
         [_nodeObject fireTokenAction_exitForToken:token];
         for (int i=0; i<connectedNodes.count; i++) {
-            IBActionNode *connectedNode = [connectedNodes objectAtIndex:i];
+            WeakReference *connectedNode = [connectedNodes objectAtIndex:i];
             if (i==0) {
-                [connectedNode getToken:token];
+                [((IBActionNode *)connectedNode.nonretainedObjectValue) getToken:token];
             } else if (token.shouldCopyToken) {
-                [connectedNode getToken:[token mutableCopy]];
+                [((IBActionNode *)connectedNode.nonretainedObjectValue) getToken:[token mutableCopy]];
             }
         }
     }

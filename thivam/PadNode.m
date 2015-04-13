@@ -344,4 +344,9 @@
     }
 }
 
+-(void)clearActionPad
+{
+    [_actionPad clearActionPad];
+}
+
 @end

@@ -33,8 +33,8 @@
 -(id)getElementAtRow:(int)row andColumn:(int)column
 {
     NSMutableArray *matrixRow = [_matrix objectAtIndex:column];
-    id retVal = [matrixRow objectAtIndex:row];
-    return retVal;
+    return [matrixRow objectAtIndex:row];
+    
 }
 
 -(void)setElement:(id)element atRow:(int)row andColumn:(int)column

@@ -15,6 +15,7 @@
 #import "IBActionDescriptor.h"
 #import "IBConnectionDescriptor.h"
 #import "IBToken.h"
+#import "WeakReference.h"
 
 typedef id<IBActionNodeActor>(^nodeInit)(int row, int column);
 

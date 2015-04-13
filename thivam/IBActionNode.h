@@ -17,7 +17,7 @@
 
 @property (nonatomic, weak) id<IBActionNodeControllerDelegate> delegate;
 @property (nonatomic) CGPoint position;
-@property (nonatomic) id<IBActionNodeActor> nodeObject;
+@property (nonatomic, weak) id<IBActionNodeActor> nodeObject;
 @property (nonatomic) NSMutableDictionary *connections;
 @property (nonatomic) NSMutableDictionary *actions;
 @property (nonatomic) int actionHeapSize;

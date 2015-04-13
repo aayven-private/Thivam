@@ -41,17 +41,19 @@
 
 -(void)createGridWithNodesActivated:(BOOL)isActivated
 {
-    for (int i=0; i<_objectGrid.columns; i++) {
-        for (int j=0; j<_objectGrid.rows; j++) {
-            id<IBActionNodeActor> node = _initRule(j, i);
-            
-            IBActionNode *actionNode = [[IBActionNode alloc] init];
-            actionNode.nodeObject = node;
-            actionNode.position = CGPointMake(i, j);
-            actionNode.delegate = self;
-            actionNode.isActive = isActivated;
-            actionNode.actionHeapSize = _actionHeapSize;
-            [_objectGrid setElement:actionNode atRow:j andColumn:i];
+    @autoreleasepool {
+        for (int i=0; i<_objectGrid.columns; i++) {
+            for (int j=0; j<_objectGrid.rows; j++) {
+                id<IBActionNodeActor> node = _initRule(j, i);
+                
+                IBActionNode *actionNode = [[IBActionNode alloc] init];
+                actionNode.nodeObject = node;
+                actionNode.position = CGPointMake(i, j);
+                actionNode.delegate = self;
+                actionNode.isActive = isActivated;
+                actionNode.actionHeapSize = _actionHeapSize;
+                [_objectGrid setElement:actionNode atRow:j andColumn:i];
+            }
         }
     }
 }
@@ -101,7 +103,9 @@
                         
                         IBActionNode *targetnode = [_objectGrid getElementAtRow:r andColumn:c];
                         
-                        [connectionsForType addObject:targetnode];
+                        WeakReference *weakNode = [WeakReference weakReferenceWithObject:targetnode];
+                        
+                        [connectionsForType addObject:weakNode];
                     }
                 }
                 [sourceNode.connections setObject:connectionsForType forKey:actionType];
@@ -132,7 +136,9 @@
                         
                         IBActionNode *targetNode = [_objectGrid getElementAtRow:connRow andColumn:connCol];
                         
-                        [connectionsForType addObject:targetNode];
+                        WeakReference *weakNode = [WeakReference weakReferenceWithObject:targetNode];
+                        
+                        [connectionsForType addObject:weakNode];
                     }
                 }
                 [sourceNode.connections setObject:connectionsForType forKey:actionType];
@@ -174,7 +180,9 @@
                         targetNode = [_objectGrid getElementAtRow:j andColumn:i+1];
                     }
                     if (targetNode) {
-                        [connectionsForType addObject:targetNode];
+                        WeakReference *weakNode = [WeakReference weakReferenceWithObject:targetNode];
+                        
+                        [connectionsForType addObject:weakNode];
                     }
                 }
                 [sourceNode.connections setObject:connectionsForType forKey:actionType];
@@ -191,7 +199,9 @@
                 if (j<_objectGrid.rows - 1) {
                     IBActionNode *targetNode = [_objectGrid getElementAtRow:j+1 andColumn:i];
                     
-                    [connectionsForType addObject:targetNode];
+                    WeakReference *weakNode = [WeakReference weakReferenceWithObject:targetNode];
+                    
+                    [connectionsForType addObject:weakNode];
                 }
                 [sourceNode.connections setObject:connectionsForType forKey:actionType];
             }
@@ -207,7 +217,9 @@
                 if (j>0) {
                     IBActionNode *targetNode = [_objectGrid getElementAtRow:j-1 andColumn:i];
                     
-                    [connectionsForType addObject:targetNode];
+                    WeakReference *weakNode = [WeakReference weakReferenceWithObject:targetNode];
+                    
+                    [connectionsForType addObject:weakNode];
                 }
                 [sourceNode.connections setObject:connectionsForType forKey:actionType];
             }
@@ -223,7 +235,9 @@
                 if (i < _objectGrid.columns - 1) {
                     IBActionNode *targetNode = [_objectGrid getElementAtRow:j andColumn:i+1];
                     
-                    [connectionsForType addObject:targetNode];
+                    WeakReference *weakNode = [WeakReference weakReferenceWithObject:targetNode];
+                    
+                    [connectionsForType addObject:weakNode];
                 }
                 [sourceNode.connections setObject:connectionsForType forKey:actionType];
             }
@@ -239,7 +253,9 @@
                 if (i>0) {
                     IBActionNode *targetNode = [_objectGrid getElementAtRow:j andColumn:i-1];
                     
-                    [connectionsForType addObject:targetNode];
+                    WeakReference *weakNode = [WeakReference weakReferenceWithObject:targetNode];
+                    
+                    [connectionsForType addObject:weakNode];
                 }
                 [sourceNode.connections setObject:connectionsForType forKey:actionType];
             }
@@ -403,7 +419,9 @@
                         
                         IBActionNode *targetNode = [_objectGrid getElementAtRow:row andColumn:column];
                         targetNode.isActive = YES;
-                        [connectionsForType addObject:targetNode];
+                        WeakReference *weakNode = [WeakReference weakReferenceWithObject:targetNode];
+                        
+                        [connectionsForType addObject:weakNode];
                     }
                     [node.connections setObject:connectionsForType forKey:actionType];
                 }
